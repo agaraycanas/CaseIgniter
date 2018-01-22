@@ -6,13 +6,15 @@ class Attribute {
 	public $mode;
 	public $hidden_create;
 	public $hidden_recover;
-	public function __construct($name, $type, $collection, $mode, $hidden_create = false, $hidden_recover = false) {
+	public $main;
+	public function __construct($name, $type, $collection, $mode, $hidden_create = false, $hidden_recover = false, $main=false) {
 		$this->name = $name;
 		$this->type = $type;
 		$this->collection = $collection;
 		$this->mode = $mode;
 		$this->hidden_create = $hidden_create;
 		$this->hidden_recover = $hidden_recover;
+		$this->main = $main;
 	}
 	public function is_dependant() {
 		$m = $this->mode;
@@ -43,6 +45,15 @@ class MyClass {
 			$answer |= $a->is_dependant ();
 		}
 		return $answer;
+	}
+	public function setMainAttribute() {
+		$exist_main = false;
+		foreach ($this->attributes as $a) {
+			$exist_main |= ($a->main);
+		}
+		if (!$exist_main) {
+			$this->add_attribute(new Attribute("name", "String", false, "NO_MODE", false, false, true));
+		}
 	}
 }
 
@@ -78,6 +89,7 @@ function process_domain_model($modelData) {
 		} else if ($line == "--") {
 			$class = ! $class;
 			if ($class) { // Done of proccessing attributes
+				$current_class->setMainAttribute();
 				array_push ( $classes, $current_class );
 				$current_class = null;
 			} else { // Starting proccessing attributes
@@ -93,14 +105,17 @@ function process_domain_model($modelData) {
 				$collection = false;
 				$hidden_create = false;
 				$hidden_recover = false;
+				$main = false;
 				
 				if (strlen ( $line ) > 1) {
 					if (substr ( $line, 0, 1 ) == '_') {
 						$hidden_create = true;
 					} else if (substr ( $line, 0, 1 ) == '_') {
 						$hidden_recover = true;
+					} else if (substr ( $line, 0, 1 ) == '&') {
+						$main = true;
 					}
-					$line = trim ( $line, '_-' );
+					$line = trim ( $line, '_-&' );
 					
 					if (substr ( $line, 0, 2 ) == '**') {
 						$collection = true;
@@ -127,7 +142,7 @@ function process_domain_model($modelData) {
 					$name = substr ( $line, 0, 1 );
 				}
 				
-				$current_class->add_attribute ( new Attribute ( $name, $type, $collection, $mode, $hidden_create, $hidden_recover ) );
+				$current_class->add_attribute ( new Attribute ( $name, $type, $collection, $mode, $hidden_create, $hidden_recover, $main ) );
 			}
 		}
 	}

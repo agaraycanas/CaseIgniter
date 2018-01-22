@@ -1,4 +1,4 @@
-<?php $title="NQST"; ?>
+<?php $title="MyWeb"; ?>
 <!DOCTYPE html >
 <html>
 <head>
