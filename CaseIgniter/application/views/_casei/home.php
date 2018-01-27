@@ -3,20 +3,22 @@
 		
 		<div class="row">
 			<div class="col-lg-6 ">
-				<input type="submit" class="btn btn-primary" value="Push to generate application"/>
+				<input type="submit" class="btn btn-primary" value="Pulsa para generar tu
+					aplicación"/>
 			</div>
 		</div>
 		
 		<div class="row">
-			<label for="idTitle">Application title</label>
+			<label for="idTitle">Título de la aplcación</label>
 			<input type="text" name="appTitle" id="idTitle" class="form-control">
 		</div>		
 		
 		<div class="row">
 			<div class="form-group col-lg-6">
-				<label for="idMenu">MENUS</label>
+				<label for="idMenu">MENÚS</label>
 				<textarea name="menuData" class="form-control" cols="10" rows="10" id="idMenu"
-					placeholder="Menu1>submenu1-1(action_1-1),submenu1-2(action_1-2)
+					placeholder="
+Menu1>submenu1-1(action_1-1),submenu1-2(action_1-2)
 Menu2>submenu2-1(action_2-1),submenu2-2(action_1-2),submenu2-3(action2-3)
 Menu3>submenu3-1(action_3-1)
 [rol1]Menu_rol1>submenu_rol1(..),[rol2,rol3]submenu_rol1_rol2_rol3(..)
@@ -30,9 +32,10 @@ CRUD_to_generate_a_menu_for_all_the_beans
 			<div class="form-group col-lg-6">
 				<label for="idModel">MODELO</label>
 				<textarea name="modelData" class="form-control" cols="15" rows="30" id="idModel"
-					placeholder="bean
+					placeholder="
+bean
 --
-&main_attribute_(if_not_specified_name_is_its_name)
+first_attribute_is_the_MAIN_attribute
 attribute_type_String
 attribute_type_number:#
 attribute_type_date:%

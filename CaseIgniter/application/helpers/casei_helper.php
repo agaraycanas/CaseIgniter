@@ -7,7 +7,7 @@ class Attribute {
 	public $hidden_create;
 	public $hidden_recover;
 	public $main;
-	public function __construct($name, $type, $collection, $mode, $hidden_create = false, $hidden_recover = false, $main=false) {
+	public function __construct($name, $type, $collection, $mode, $hidden_create = false, $hidden_recover = false, $main = false) {
 		$this->name = $name;
 		$this->type = $type;
 		$this->collection = $collection;
@@ -48,12 +48,21 @@ class MyClass {
 	}
 	public function setMainAttribute() {
 		$exist_main = false;
-		foreach ($this->attributes as $a) {
+		foreach ( $this->attributes as $a ) {
 			$exist_main |= ($a->main);
 		}
-		if (!$exist_main) {
-			$this->add_attribute(new Attribute("name", "String", false, "NO_MODE", false, false, true));
+		if (! $exist_main) {
+			$this->add_attribute ( new Attribute ( "nombre", "String", false, "NO_MODE", false, false, true ) );  // TODO LOCALIZE
 		}
+	}
+	public function getMainAttribute() {
+		$name = 'nombre'; //TODO LOCALIZE
+		foreach ($this->attributes as $a) {
+			if ($a->main) {
+				$name = $a -> name;
+			}
+		}
+		return $name;
 	}
 }
 
@@ -89,7 +98,7 @@ function process_domain_model($modelData) {
 		} else if ($line == "--") {
 			$class = ! $class;
 			if ($class) { // Done of proccessing attributes
-				$current_class->setMainAttribute();
+				$current_class->setMainAttribute ();
 				array_push ( $classes, $current_class );
 				$current_class = null;
 			} else { // Starting proccessing attributes
@@ -151,34 +160,48 @@ function process_domain_model($modelData) {
 }
 
 // ------------------------------
-function delete_directory($dir, $ignore_files) {
-	if (! file_exists ( $dir )) {
+function delete_directory($path, $ignore_files, $first_level) {
+	// echo "<h4>$path</h4>($first_level)"; //TODO DEBUG
+	if (! file_exists ( $path )) { // Name not correct
 		return true;
 	}
 	
-	if (! is_dir ( $dir ) && ! in_array ( basename ( $dir ), $ignore_files )) {
-		return unlink ( $dir );
+	if (! is_dir ( $path )) { // It's a file
+		if (! in_array ( basename ( $path ), $ignore_files )) {
+			return unlink ( $path );
+		} else {
+			return true;
+		}
 	}
 	
-	foreach ( scandir ( $dir ) as $item ) {
-		if ($item == '.' || $item == '..') {
+	foreach ( scandir ( $path ) as $item ) { // It's a directory. Let's process its content
+		if ($item == '.' || $item == '..') { // Ignore . and ..
 			continue;
 		}
 		
-		if (! delete_directory ( $dir . DIRECTORY_SEPARATOR . $item, $ignore_files )) {
+		if (! in_array ( $item, $ignore_files ) && ! delete_directory ( $path . DIRECTORY_SEPARATOR . $item, $ignore_files, false )) {
 			return false;
 		}
 	}
 	
-	return rmdir ( $dir );
+	if (! $first_level) { // It's a directory of deeper levels than first
+		if (! in_array ( basename ( $path ), $ignore_files )) {
+			return rmdir ( $path );
+		} else {
+			return true;
+		}
+	} else { // IT's the first level. We're done
+		return true;
+	}
 }
+
 // ------------------------------
 function delete_attribute($classes, $class_name, $attribute_name) {
 	foreach ( $classes as $class ) {
 		if ($class->name == $class_name) {
-			foreach ($class->attributes as $i => $a) {
+			foreach ( $class->attributes as $i => $a ) {
 				if ($a->name == $attribute_name) {
-					unset($class->attributes[$i]);
+					unset ( $class->attributes [$i] );
 				}
 			}
 		}
@@ -232,7 +255,7 @@ function generate_yuml($classes) {
 			}
 			$i ++;
 		}
-		$html .= ('{bg:'.$colors[($c++)].'}');
+		$html .= ('{bg:' . $colors [($c ++)] . '}');
 		$html .= '],';
 	}
 	
@@ -240,20 +263,20 @@ function generate_yuml($classes) {
 		foreach ( $class->attributes as $i => $a ) {
 			switch ($a->mode) {
 				case 'M2O' :
-					$html .= '[' . ($class->name) . ']*- '.$a->name.'  1[' . ($a->type) . '],';
+					$html .= '[' . ($class->name) . ']*- ' . $a->name . '  1[' . ($a->type) . '],';
 					break;
 				case 'O2M' :
-					$html .= '[' . ($class->name) . ']1  '.$a->name.'-*[' . ($a->type) . '],';
+					$html .= '[' . ($class->name) . ']1  ' . $a->name . '-*[' . ($a->type) . '],';
 					break;
 				case 'O2O' :
-					$html .= '[' . ($class->name) . ']1- '.$a->name.'  1[' . ($a->type) . '],';
+					$html .= '[' . ($class->name) . ']1- ' . $a->name . '  1[' . ($a->type) . '],';
 					break;
 				case 'M2M' :
-					$html .= '[' . ($class->name) . ']*- '.$a->name.'  *[' . ($a->type) . '],';
+					$html .= '[' . ($class->name) . ']*- ' . $a->name . '  *[' . ($a->type) . '],';
 					break;
 			}
 			unset ( $class->attributes [$i] );
-			delete_attribute($classes, $a->type, $a->name);
+			delete_attribute ( $classes, $a->type, $a->name );
 		}
 	}
 	return $html . '">';
@@ -262,11 +285,16 @@ function generate_yuml($classes) {
 // ------------------------------
 function delete_directories() {
 	$ignore_files = [ 
-			'controllers',
 			'_casei.php',
+			'_casei',
+			'errors',
+			'templates',
 			'index.html' 
 	];
-	delete_directory ( APPPATH . 'controllers', $ignore_files );
+	
+	delete_directory ( APPPATH . 'controllers', $ignore_files, true );
+	delete_directory ( APPPATH . 'models', $ignore_files, true );
+	delete_directory ( APPPATH . 'views', $ignore_files, true );
 }
 
 // ------------------------------
@@ -360,24 +388,8 @@ function is_dependant($attribute) {
 }
 
 // ------------------------------
-function write_main($code) {
-	global $packageApp, $pathApp;
-	$nombreApp = ucfirst ( array_pop ( explode ( '.', $packageApp ) ) );
-	
-	// echo "Creando {$pathApp}/" . $nombreApp . ".java\n";
-	if (! file_exists ( $pathApp )) {
-		mkdir ( $pathApp, 0777, true );
-	}
-	file_put_contents ( $pathApp . '/' . $nombreApp . '.java', $code );
-}
-
-// ------------------------------
-function process_main() {
-	write_main ( addMain () );
-}
-
-// ------------------------------
 function generate_application_files($classes) {
+	delete_directories ();
 	generate_controllers ( $classes );
 	generate_models ( $classes );
 	generate_views ( $classes );
@@ -385,14 +397,133 @@ function generate_application_files($classes) {
 
 // ------------------------------
 function generate_controllers($classes) {
+	foreach ( $classes as $class ) {
+		generate_controller ( $class );
+	}
 }
 
 // ------------------------------
 function generate_models($classes) {
+	foreach ( $classes as $class ) {
+		generate_model ( $class );
+	}
 }
 
 // ------------------------------
 function generate_views($classes) {
+	foreach ( $classes as $class ) {
+		generate_view ( $class , $classes);
+	}
 }
+// ------------------------------
+function generate_controller($class) {
+	$cn = $class->name;
+	$code = <<<CODE
+<?php
+/**
+* Controller code autogenerated by CASE IGNITER
+*/
+class $cn extends CI_Controller {
+	public function create() {
+	}
+
+	public function create_post() {
+	}
+
+	public function list() {
+		\$this->load->model({$cn}_model);
+		\$filter = isset(\$_POST['filter'])?\$_POST['filter']:'';
+		\$data['body']['$cn'] = (\$filter == '' ? \$this->{$cn}_model->getAll() : \$this->{$cn}_model->getFiltered( \$filter ) );
+		enmarcar(\$this, '{$cn}/list', \$data);
+	}
+}
+?>
+CODE;
+	file_put_contents ( APPPATH . DIRECTORY_SEPARATOR . 'controllers' . DIRECTORY_SEPARATOR . $class->name . '.php', $code );
+}
+
+// ------------------------------
+function generate_model($class) {
+	$code = <<<CODE
+<?php
+// CODIGO del MODELO {$class->name}
+?>
+CODE;
+	file_put_contents ( APPPATH . DIRECTORY_SEPARATOR . 'models' . DIRECTORY_SEPARATOR . $class->name . '_model.php', $code );
+}
+
+// ------------------------------
+function generate_view($class, $classes) {
+	mkdir(APPPATH .  'views' . DIRECTORY_SEPARATOR . $class->name);
+	generate_view_create ( $class );
+	generate_view_create_post ($class);
+	generate_view_list ( $class , $classes);
+}
+// ------------------------------
+function generate_view_create($class) {
+	$code = <<<CODE
+<?php
+// CODIGO de la VISTA {$class->name} CREATE
+?>
+CODE;
+	file_put_contents ( APPPATH .  'views' . DIRECTORY_SEPARATOR . $class->name . DIRECTORY_SEPARATOR . 'create.php', $code );
+}
+// ------------------------------
+function generate_view_create_post($class) {
+	$code = <<<CODE
+<?php
+// CODIGO de la VISTA {$class->name} CREATE POST AJAX
+?>
+CODE;
+	file_put_contents ( APPPATH . 'views' . DIRECTORY_SEPARATOR . $class->name . DIRECTORY_SEPARATOR . 'create_post.php', $code );
+}
+
+// ------------------------------
+
+function getMainAttributeName($classes, $class_name) {
+	$name = 'unknown';
+	foreach ($classes as $c ) {
+		if ($c->name == $class_name) {
+			$name = $c->getMainAttribute();
+		}
+	}
+	return $name;
+}
+
+// ------------------------------
+function generate_view_list($class, $classes) {
+	$title = 'LISTA de '; //TODO LOCALIZE
+	$cn = $class -> name;
+	$ma = $class -> getMainAttribute();
+	$code = <<<CODE
+<div class="container">
+<h1>$title $cn</h1>
+<table>
+	<tr>
+		<th>$ma<th>
+CODE;
+foreach ($class->attributes as $a) {
+	if (!$a->main) {
+		if (!($a->is_dependant())) {
+			$code .= '		<th>'.$a->name.'</th>'.PHP_EOL;
+		}
+		else {
+			$code .= '		<th>'.getMainAttributeName($classes, $a->type).'</th>'.PHP_EOL;
+		}
+	}
+}
+	$code .= <<<CODE
+	</tr>
+
+	<?php foreach (\$body['$cn'] as \$$cn): ?>
+	<?php endforeach; ?>
+</div>
+CODE;
+
+	file_put_contents ( APPPATH .  'views' . DIRECTORY_SEPARATOR . $class->name . DIRECTORY_SEPARATOR . 'list.php', $code );
+}
+
+
+// ------------------------------
 
 ?>

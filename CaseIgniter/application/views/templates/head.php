@@ -1,4 +1,4 @@
-<?php $title="MyWeb"; ?>
+<?php $title="BASICO"; ?>
 <!DOCTYPE html >
 <html>
 <head>
