@@ -31,7 +31,7 @@ CRUD_to_generate_a_menu_for_all_the_beans
 		
 			<div class="form-group col-lg-6">
 				<label for="idModel">MODELO</label>
-				<textarea name="modelData" class="form-control" cols="15" rows="30" id="idModel"
+				<textarea name="modelData" class="form-control" cols="15" rows="30" id="idModel" style="overflow:scroll;"
 					placeholder="
 bean
 --

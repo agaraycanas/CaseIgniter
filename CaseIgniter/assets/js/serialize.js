@@ -15,6 +15,7 @@ function serialize(form) {
 			case "password":
 			case "button":
 			case "date":
+			case "number":
 			case "reset":
 			case "submit":
 				q.push(form.elements[i].name + "="
