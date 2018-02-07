@@ -3,10 +3,12 @@
 <h1>LISTA de  aficion</h1>
 <table>
 	<tr>
-		<th>nombre<th>		<th>nombre</th>
+		<th>nombre<th>		<th>nombre(aficion)</th>
 	</tr>
 
 	<?php foreach ($body['aficion'] as $aficion): ?>
+		<tr>		<th>nombre(aficion)</th>
+		</tr>
 	<?php endforeach; ?>
 </table>
 </div>

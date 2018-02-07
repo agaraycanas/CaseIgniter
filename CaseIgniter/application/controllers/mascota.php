@@ -10,8 +10,7 @@ class mascota extends CI_Controller {
 	*/
 	public function create() {
 
-		$this->load->model('persona_model');
-		$data['body']['persona'] = $this->persona_model->get_all();
+		$data = [];
 
 		enmarcar($this, 'mascota/create', $data);
 	}
@@ -27,10 +26,9 @@ class mascota extends CI_Controller {
 		$this->load->model('mascota_model');
 
 		$nombre = ( isset( $_POST['nombre']) ? $_POST['nombre'] : null );
-		$amo = ( isset( $_POST['amo']) ? $_POST['amo'] : null );
 
 		try {
-			$this->mascota_model->create( $nombre, $amo );
+			$this->mascota_model->create( $nombre );
 			$data['status'] = 'ok';
 			$data['message'] = "Mascota $nombre creado/a correctamente";
 			$this->load->view('mascota/create_message',$data);

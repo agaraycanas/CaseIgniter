@@ -652,12 +652,25 @@ function generate_model_create($class) {
 	$code .= "\t\$bean = R::dispense( '{$class->name}' );" . PHP_EOL . PHP_EOL;
 	foreach ( $class->attributes as $a ) {
 		if (! $a->hidden_create) {
-			if ($a->mode == "M2M") {
-				$code .= "// TODO M2M";
+			if ($a->mode == "O2O") {
+				$code .= <<<O2O
+
+	// "one to one" attribute
+	\$o2o = R::load('{$a->type}',\${$a->name});
+	\$bean -> {$a->name} = \$o2o;
+	R::store(\$bean);
+	\$o2o -> {$a->name} = \$bean;
+	R::store(\$o2o);
+
+O2O;
+			} else if ($a->mode == "M2O") {
+				$code .= "\t// \"many to one\" attribute\n\t\$bean -> {$a->name} = R::load('{$a->type}',\${$a->name});" . PHP_EOL;
 			} else if ($a->mode == "O2M") {
-				$code .= "// TODO O2M";
+				$code .= "\t// TODO O2M\n";
+			} else if ($a->mode == "M2M") {
+				$code .= "// TODO M2M\n";
 			} else {
-				$code .= "\t\$bean -> {$a->name} = \${$a->name};" . PHP_EOL;
+				$code .= "\t// Regular attribute\n\t\$bean -> {$a->name} = \${$a->name};" . PHP_EOL;
 			}
 		}
 	}
@@ -743,7 +756,7 @@ CODE;
 
 // ------------------------------
 function generate_view_create_ajax($class_name) {
-	$code = <<<JAVASCRIPT
+	$code = <<<JS
 
 <script type="text/javascript" src="<?= base_url() ?>assets/js/serialize.js"></script>
 
@@ -774,23 +787,28 @@ function actionAJAX() {
 
 </script>
 
-<!--------------------------------------------->
+<!-- ----------------------------------------- -->
 
 
-JAVASCRIPT;
+JS;
 	return $code;
 }
 
 // ------------------------------
+
 function generate_view_create_header($class_name) {
 	$code = <<<HTML
+
+
 <div class="container">
 <h2> Crear $class_name </h2>
 
-<form class="col-sm-4" id="idForm">
+<form class="row col-sm-4" id="idForm">
 
 
 HTML;
+
+
 	return $code;
 }
 // ------------------------------
@@ -819,19 +837,19 @@ function generate_view_create_dependants($class, $classes) {
 	
 	foreach ( $class->attributes as $a ) {
 		
-		if ($a->is_dependant ()) {
+		if ($a->is_dependant () && !$a->hidden_create) {
 			$capitalized = ucfirst ( explode ( '_', $a->name ) [0] );
 			$plural_capitalized = ucfirst ( plural ( $a->type ) );
 			$main_attribute = getMainAttributeName ( $classes, $a->type );
 			
-			if ($a->mode == 'M2O') {
+			if ($a->mode == 'M2O' || $a->mode == 'O2O') {
 				$code .= <<<SELECT
 
 	<div class="form-group">
 		<label for="id-{$a->name}">$capitalized</label>
 		<select id="id-{$a->name}" name="{$a->name}" class="form-control">
 		<?php foreach (\$body['{$a->type}'] as \${$a->type} ): ?>
-			<option value="{$a->type}->id">{$a->type}->\$$main_attribute</option>
+			<option value="<?= \${$a->type}->id ?>"><?= \${$a->type}->$main_attribute ?></option>
 		<?php endforeach; ?>
 		
 		</select>
@@ -842,13 +860,13 @@ SELECT;
 			}
 			if ($a->mode == 'O2M' || $a->mode == 'M2M') {
 				$code .= <<<CHECKBOX
-	<fieldset>
-		<legend>$plural_capitalized</legend>
-		<div class="form-group">
+	<fieldset class="scheduler-border">
+		<legend class="scheduler-border">$plural_capitalized</legend>
+		<div class="form-check form-check-inline">
 			<?php foreach (\$body['{$a->type}'] as \${$a->type} ): ?>
-				<label for="id-{$a->name}" class="checkbox-inline">$capitalized</label>
-				<input type="checkbox" id="id-{$a->name}" name="{$a->name}[]" class="form-control" value="{$a->type}->id">
 
+				<input class="form-check-input" type="checkbox" id="id-{$a->name}-<?=\${$a->type}->id?>" name="{$a->name}[]" value="\${$a->type}->id">
+				<label class="form-check-label" for="id-{$a->name}-<?=\${$a->type}->id?>" ><?= \${$a->type}->$main_attribute ?></label>
 			<?php endforeach; ?>
 
 		</div>
@@ -870,7 +888,7 @@ function generate_view_create_end() {
 
 </form>
 
-<div id="idMessage" class="col-sm-4">
+<div id="idMessage" class="row col-sm-4">
 </div>
 
 </div>	
@@ -916,7 +934,7 @@ CODE;
 			if (! ($a->is_dependant ())) {
 				$code .= '		<th>' . $a->name . '</th>' . PHP_EOL;
 			} else {
-				$code .= '		<th>' . getMainAttributeName ( $classes, $a->type ) . '</th>' . PHP_EOL;
+				$code .= '		<th>' . getMainAttributeName ( $classes, $a->type ) . "($cn)</th>" . PHP_EOL;
 			}
 		}
 	}
@@ -924,6 +942,19 @@ CODE;
 	</tr>
 
 	<?php foreach (\$body['$cn'] as \$$cn): ?>
+		<tr>
+CODE;
+	foreach ( $class->attributes as $a ) {
+		if (! $a->main) {
+			if (! ($a->is_dependant ())) {
+				$code .= '		<th>' . $a->name . '</th>' . PHP_EOL;
+			} else {
+				$code .= '		<th>' . getMainAttributeName ( $classes, $a->type ) . "($cn)</th>" . PHP_EOL;
+			}
+		}
+	}
+	$code .= <<<CODE
+		</tr>
 	<?php endforeach; ?>
 </table>
 </div>

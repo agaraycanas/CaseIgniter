@@ -28,12 +28,14 @@ function actionAJAX() {
 
 </script>
 
-<!--------------------------------------------->
+<!-- ----------------------------------------- -->
+
+
 
 <div class="container">
 <h2> Crear persona </h2>
 
-<form class="col-sm-4" id="idForm">
+<form class="row col-sm-4" id="idForm">
 
 	<div class="form-group">
 		<label for="id-nombre">Nombre</label>
@@ -41,8 +43,8 @@ function actionAJAX() {
 	</div>
 
 	<div class="form-group">
-		<label for="id-fecha_nac">Fecha_nac</label>
-		<input id="id-fecha_nac" type="date" name="fecha_nac" class="form-control">
+		<label for="id-fecha_nacimiento">Fecha_nacimiento</label>
+		<input id="id-fecha_nacimiento" type="date" name="fecha_nacimiento" class="form-control">
 	</div>
 
 	<div class="form-group">
@@ -52,22 +54,33 @@ function actionAJAX() {
 
 
 	<div class="form-group">
-		<label for="id-pais_nacimiento">Pais</label>
-		<select id="id-pais_nacimiento" name="pais_nacimiento" class="form-control">
-		<?php foreach ($body['pais'] as $pais ): ?>
-			<option value="pais->id">pais->$nombre</option>
+		<label for="id-amo">Amo</label>
+		<select id="id-amo" name="amo" class="form-control">
+		<?php foreach ($body['mascota'] as $mascota ): ?>
+			<option value="<?= $mascota->id ?>"><?= $mascota->nombre ?></option>
 		<?php endforeach; ?>
 		
 		</select>
 	</div>
 
-	<fieldset>
-		<legend>Aficiones</legend>
-		<div class="form-group">
-			<?php foreach ($body['aficion'] as $aficion ): ?>
-				<label for="id-tiene_pa" class="checkbox-inline">Tiene</label>
-				<input type="checkbox" id="id-tiene_pa" name="tiene_pa[]" class="form-control" value="aficion->id">
 
+	<div class="form-group">
+		<label for="id-pais_nacimiento">Pais</label>
+		<select id="id-pais_nacimiento" name="pais_nacimiento" class="form-control">
+		<?php foreach ($body['pais'] as $pais ): ?>
+			<option value="<?= $pais->id ?>"><?= $pais->nombre ?></option>
+		<?php endforeach; ?>
+		
+		</select>
+	</div>
+
+	<fieldset class="scheduler-border">
+		<legend class="scheduler-border">Aficiones</legend>
+		<div class="form-check form-check-inline">
+			<?php foreach ($body['aficion'] as $aficion ): ?>
+
+				<input class="form-check-input" type="checkbox" id="id-aficiones_pa-<?=$aficion->id?>" name="aficiones_pa[]" value="$aficion->id">
+				<label class="form-check-label" for="id-aficiones_pa-<?=$aficion->id?>" ><?= $aficion->nombre ?></label>
 			<?php endforeach; ?>
 
 		</div>
@@ -78,7 +91,7 @@ function actionAJAX() {
 
 </form>
 
-<div id="idMessage" class="col-sm-4">
+<div id="idMessage" class="row col-sm-4">
 </div>
 
 </div>	

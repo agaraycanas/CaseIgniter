@@ -10,8 +10,7 @@ class pais extends CI_Controller {
 	*/
 	public function create() {
 
-		$this->load->model('persona_model');
-		$data['body']['persona'] = $this->persona_model->get_all();
+		$data = [];
 
 		enmarcar($this, 'pais/create', $data);
 	}
@@ -27,10 +26,9 @@ class pais extends CI_Controller {
 		$this->load->model('pais_model');
 
 		$nombre = ( isset( $_POST['nombre']) ? $_POST['nombre'] : null );
-		$pais_nacimiento = ( isset( $_POST['pais_nacimiento']) ? $_POST['pais_nacimiento'] : [] );
 
 		try {
-			$this->pais_model->create( $nombre, $pais_nacimiento );
+			$this->pais_model->create( $nombre );
 			$data['status'] = 'ok';
 			$data['message'] = "Pais $nombre creado/a correctamente";
 			$this->load->view('pais/create_message',$data);

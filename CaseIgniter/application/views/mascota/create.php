@@ -28,12 +28,14 @@ function actionAJAX() {
 
 </script>
 
-<!--------------------------------------------->
+<!-- ----------------------------------------- -->
+
+
 
 <div class="container">
 <h2> Crear mascota </h2>
 
-<form class="col-sm-4" id="idForm">
+<form class="row col-sm-4" id="idForm">
 
 	<div class="form-group">
 		<label for="id-nombre">Nombre</label>
@@ -45,7 +47,7 @@ function actionAJAX() {
 
 </form>
 
-<div id="idMessage" class="col-sm-4">
+<div id="idMessage" class="row col-sm-4">
 </div>
 
 </div>	

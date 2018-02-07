@@ -3,10 +3,12 @@
 <h1>LISTA de  pais</h1>
 <table>
 	<tr>
-		<th>nombre<th>		<th>nombre</th>
+		<th>nombre<th>		<th>nombre(pais)</th>
 	</tr>
 
 	<?php foreach ($body['pais'] as $pais): ?>
+		<tr>		<th>nombre(pais)</th>
+		</tr>
 	<?php endforeach; ?>
 </table>
 </div>

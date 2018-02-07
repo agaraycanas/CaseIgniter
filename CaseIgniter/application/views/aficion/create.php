@@ -28,36 +28,26 @@ function actionAJAX() {
 
 </script>
 
-<!--------------------------------------------->
+<!-- ----------------------------------------- -->
+
+
 
 <div class="container">
 <h2> Crear aficion </h2>
 
-<form class="col-sm-4" id="idForm">
+<form class="row col-sm-4" id="idForm">
 
 	<div class="form-group">
 		<label for="id-nombre">Nombre</label>
 		<input id="id-nombre" type="text" name="nombre" class="form-control">
 	</div>
 
-	<fieldset>
-		<legend>Personas</legend>
-		<div class="form-group">
-			<?php foreach ($body['persona'] as $persona ): ?>
-				<label for="id-tiene_pa" class="checkbox-inline">Tiene</label>
-				<input type="checkbox" id="id-tiene_pa" name="tiene_pa[]" class="form-control" value="persona->id">
-
-			<?php endforeach; ?>
-
-		</div>
-	</fieldset>
-
 
 	<input type="button" class="btn btn-primary" onclick="create()" value="Crear">
 
 </form>
 
-<div id="idMessage" class="col-sm-4">
+<div id="idMessage" class="row col-sm-4">
 </div>
 
 </div>	

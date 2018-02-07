@@ -33,14 +33,14 @@ class persona extends CI_Controller {
 		$this->load->model('persona_model');
 
 		$nombre = ( isset( $_POST['nombre']) ? $_POST['nombre'] : null );
-		$fecha_nac = ( isset( $_POST['fecha_nac']) ? $_POST['fecha_nac'] : null );
+		$fecha_nacimiento = ( isset( $_POST['fecha_nacimiento']) ? $_POST['fecha_nacimiento'] : null );
 		$peso = ( isset( $_POST['peso']) ? $_POST['peso'] : null );
 		$amo = ( isset( $_POST['amo']) ? $_POST['amo'] : null );
 		$pais_nacimiento = ( isset( $_POST['pais_nacimiento']) ? $_POST['pais_nacimiento'] : null );
-		$tiene_pa = ( isset( $_POST['tiene_pa']) ? $_POST['tiene_pa'] : [] );
+		$aficiones_pa = ( isset( $_POST['aficiones_pa']) ? $_POST['aficiones_pa'] : [] );
 
 		try {
-			$this->persona_model->create( $nombre, $fecha_nac, $peso, $amo, $pais_nacimiento, $tiene_pa );
+			$this->persona_model->create( $nombre, $fecha_nacimiento, $peso, $amo, $pais_nacimiento, $aficiones_pa );
 			$data['status'] = 'ok';
 			$data['message'] = "Persona $nombre creado/a correctamente";
 			$this->load->view('persona/create_message',$data);

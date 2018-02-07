@@ -10,8 +10,7 @@ class aficion extends CI_Controller {
 	*/
 	public function create() {
 
-		$this->load->model('persona_model');
-		$data['body']['persona'] = $this->persona_model->get_all();
+		$data = [];
 
 		enmarcar($this, 'aficion/create', $data);
 	}
@@ -27,10 +26,9 @@ class aficion extends CI_Controller {
 		$this->load->model('aficion_model');
 
 		$nombre = ( isset( $_POST['nombre']) ? $_POST['nombre'] : null );
-		$tiene_pa = ( isset( $_POST['tiene_pa']) ? $_POST['tiene_pa'] : [] );
 
 		try {
-			$this->aficion_model->create( $nombre, $tiene_pa );
+			$this->aficion_model->create( $nombre );
 			$data['status'] = 'ok';
 			$data['message'] = "Aficion $nombre creado/a correctamente";
 			$this->load->view('aficion/create_message',$data);

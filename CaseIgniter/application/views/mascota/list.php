@@ -3,10 +3,12 @@
 <h1>LISTA de  mascota</h1>
 <table>
 	<tr>
-		<th>nombre<th>		<th>nombre</th>
+		<th>nombre<th>		<th>nombre(mascota)</th>
 	</tr>
 
 	<?php foreach ($body['mascota'] as $mascota): ?>
+		<tr>		<th>nombre(mascota)</th>
+		</tr>
 	<?php endforeach; ?>
 </table>
 </div>
