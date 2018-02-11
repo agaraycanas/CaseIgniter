@@ -35,7 +35,7 @@ class aficion extends CI_Controller {
 		}
 		catch (Exception $e) {
 			$data['status'] = 'error';
-			$data['message'] = 'Error al crear el/la aficion $nombre';
+			$data['message'] = "Error al crear el/la aficion $nombre";
 			$this->load->view('aficion/create_message',$data);
 		}	
 	

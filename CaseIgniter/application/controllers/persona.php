@@ -33,21 +33,21 @@ class persona extends CI_Controller {
 		$this->load->model('persona_model');
 
 		$nombre = ( isset( $_POST['nombre']) ? $_POST['nombre'] : null );
-		$fecha_nacimiento = ( isset( $_POST['fecha_nacimiento']) ? $_POST['fecha_nacimiento'] : null );
+		$fechaNacimiento = ( isset( $_POST['fechaNacimiento']) ? $_POST['fechaNacimiento'] : null );
 		$peso = ( isset( $_POST['peso']) ? $_POST['peso'] : null );
 		$amo = ( isset( $_POST['amo']) ? $_POST['amo'] : null );
-		$pais_nacimiento = ( isset( $_POST['pais_nacimiento']) ? $_POST['pais_nacimiento'] : null );
-		$aficiones_pa = ( isset( $_POST['aficiones_pa']) ? $_POST['aficiones_pa'] : [] );
+		$paisNacimiento = ( isset( $_POST['paisNacimiento']) ? $_POST['paisNacimiento'] : null );
+		$aficiones = ( isset( $_POST['aficiones']) ? $_POST['aficiones'] : [] );
 
 		try {
-			$this->persona_model->create( $nombre, $fecha_nacimiento, $peso, $amo, $pais_nacimiento, $aficiones_pa );
+			$this->persona_model->create( $nombre, $fechaNacimiento, $peso, $amo, $paisNacimiento, $aficiones );
 			$data['status'] = 'ok';
 			$data['message'] = "Persona $nombre creado/a correctamente";
 			$this->load->view('persona/create_message',$data);
 		}
 		catch (Exception $e) {
 			$data['status'] = 'error';
-			$data['message'] = 'Error al crear el/la persona $nombre';
+			$data['message'] = "Error al crear el/la persona $nombre";
 			$this->load->view('persona/create_message',$data);
 		}	
 	

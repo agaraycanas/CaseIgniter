@@ -3,7 +3,7 @@
 <h1>LISTA de  persona</h1>
 <table>
 	<tr>
-		<th>nombre<th>		<th>fecha_nacimiento</th>
+		<th>nombre<th>		<th>fechaNacimiento</th>
 		<th>peso</th>
 		<th>nombre(persona)</th>
 		<th>nombre(persona)</th>
@@ -11,7 +11,7 @@
 	</tr>
 
 	<?php foreach ($body['persona'] as $persona): ?>
-		<tr>		<th>fecha_nacimiento</th>
+		<tr>		<th>fechaNacimiento</th>
 		<th>peso</th>
 		<th>nombre(persona)</th>
 		<th>nombre(persona)</th>

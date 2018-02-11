@@ -516,7 +516,7 @@ function generate_controller_create_post_middle($class) {
 		}
 		catch (Exception \$e) {
 			\$data['status'] = 'error';
-			\$data['message'] = 'Error al crear el/la {$class->name} \$$main_attribute';
+			\$data['message'] = "Error al crear el/la {$class->name} \$$main_attribute";
 			\$this->load->view('{$class->name}/create_message',\$data);
 		}
 CATCH;
@@ -664,11 +664,24 @@ function generate_model_create($class) {
 
 O2O;
 			} else if ($a->mode == "M2O") {
-				$code .= "\t// \"many to one\" attribute\n\t\$bean -> {$a->name} = R::load('{$a->type}',\${$a->name});" . PHP_EOL;
+				$code .= "\n\t// \"many to one\" attribute\n\t\$bean -> {$a->name} = R::load('{$a->type}',\${$a->name});" . PHP_EOL;
 			} else if ($a->mode == "O2M") {
 				$code .= "\t// TODO O2M\n";
 			} else if ($a->mode == "M2M") {
-				$code .= "// TODO M2M\n";
+				$code .= <<<M2M
+				
+	// "many to many" attribute
+	foreach (\${$a->name} as \$id) {
+		\$another_bean = R::load('{$a->type}', \$id);
+		\$m2m = R::dispense('{$a->name}');
+		R::store(\$bean);
+		\$m2m -> {$class->name} = \$bean;
+		\$m2m -> {$a->type} = \$another_bean;
+		R::store(\$m2m);
+	}
+	
+	
+M2M;
 			} else {
 				$code .= "\t// Regular attribute\n\t\$bean -> {$a->name} = \${$a->name};" . PHP_EOL;
 			}
@@ -865,7 +878,7 @@ SELECT;
 		<div class="form-check form-check-inline">
 			<?php foreach (\$body['{$a->type}'] as \${$a->type} ): ?>
 
-				<input class="form-check-input" type="checkbox" id="id-{$a->name}-<?=\${$a->type}->id?>" name="{$a->name}[]" value="\${$a->type}->id">
+				<input class="form-check-input" type="checkbox" id="id-{$a->name}-<?=\${$a->type}->id?>" name="{$a->name}[]" value="<?= \${$a->type}->id ?>">
 				<label class="form-check-label" for="id-{$a->name}-<?=\${$a->type}->id?>" ><?= \${$a->type}->$main_attribute ?></label>
 			<?php endforeach; ?>
 

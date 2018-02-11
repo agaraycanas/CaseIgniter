@@ -35,7 +35,7 @@ class pais extends CI_Controller {
 		}
 		catch (Exception $e) {
 			$data['status'] = 'error';
-			$data['message'] = 'Error al crear el/la pais $nombre';
+			$data['message'] = "Error al crear el/la pais $nombre";
 			$this->load->view('pais/create_message',$data);
 		}	
 	

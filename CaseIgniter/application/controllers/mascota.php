@@ -35,7 +35,7 @@ class mascota extends CI_Controller {
 		}
 		catch (Exception $e) {
 			$data['status'] = 'error';
-			$data['message'] = 'Error al crear el/la mascota $nombre';
+			$data['message'] = "Error al crear el/la mascota $nombre";
 			$this->load->view('mascota/create_message',$data);
 		}	
 	
