@@ -4,6 +4,13 @@
 <script type="text/javascript">
 var connection;
 
+function detect(e) {
+		key = document.all ? e.keyCode : e.which;
+		if (key==13) {
+			create();
+		}
+	}
+
 function create() {
 	var createForm = document.getElementById('idForm');
 	var serializedData = serialize(createForm);
@@ -39,17 +46,17 @@ function actionAJAX() {
 
 	<div class="form-group">
 		<label for="id-nombre">Nombre</label>
-		<input id="id-nombre" type="text" name="nombre" class="form-control">
+		<input id="id-nombre" type="text" name="nombre" class="form-control" onkeypress="detect(event);">
 	</div>
 
 	<div class="form-group">
-		<label for="id-fechaNacimiento">FechaNacimiento</label>
-		<input id="id-fechaNacimiento" type="date" name="fechaNacimiento" class="form-control">
+		<label for="id-fechanacimiento">Fechanacimiento</label>
+		<input id="id-fechanacimiento" type="date" name="fechanacimiento" class="form-control" onkeypress="detect(event);">
 	</div>
 
 	<div class="form-group">
 		<label for="id-peso">Peso</label>
-		<input id="id-peso" type="number" name="peso" class="form-control">
+		<input id="id-peso" type="number" name="peso" class="form-control" onkeypress="detect(event);">
 	</div>
 
 
@@ -65,8 +72,8 @@ function actionAJAX() {
 
 
 	<div class="form-group">
-		<label for="id-paisNacimiento">PaisNacimiento</label>
-		<select id="id-paisNacimiento" name="paisNacimiento" class="form-control">
+		<label for="id-paisnacimiento">Paisnacimiento</label>
+		<select id="id-paisnacimiento" name="paisnacimiento" class="form-control">
 		<?php foreach ($body['pais'] as $pais ): ?>
 			<option value="<?= $pais->id ?>"><?= $pais->nombre ?></option>
 		<?php endforeach; ?>
@@ -81,6 +88,18 @@ function actionAJAX() {
 
 				<input class="form-check-input" type="checkbox" id="id-aficiones-<?=$aficion->id?>" name="aficiones[]" value="<?= $aficion->id ?>">
 				<label class="form-check-label" for="id-aficiones-<?=$aficion->id?>" ><?= $aficion->nombre ?></label>
+			<?php endforeach; ?>
+
+		</div>
+	</fieldset>
+
+	<fieldset class="scheduler-border">
+		<legend class="scheduler-border">Expertoen</legend>
+		<div class="form-check form-check-inline">
+			<?php foreach ($body['aficion'] as $aficion ): ?>
+
+				<input class="form-check-input" type="checkbox" id="id-expertoen-<?=$aficion->id?>" name="expertoen[]" value="<?= $aficion->id ?>">
+				<label class="form-check-label" for="id-expertoen-<?=$aficion->id?>" ><?= $aficion->nombre ?></label>
 			<?php endforeach; ?>
 
 		</div>

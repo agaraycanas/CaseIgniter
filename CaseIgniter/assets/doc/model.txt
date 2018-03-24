@@ -1,10 +1,11 @@
 persona
 --
-fechaNacimiento:%
+fechanacimiento:%
 peso:#
 .amo:mascota
->paisNacimiento:pais
+>paisnacimiento:pais
 **aficiones:aficion
+*expertoen:aficion
 --
 mascota
 --
@@ -12,9 +13,10 @@ _.amo:persona
 --
 pais
 --
-_*paisNacimiento:persona
+_*paisnacimiento:persona
 --
 aficion
 --
 _**aficiones:persona
+_>expertoen:persona
 --

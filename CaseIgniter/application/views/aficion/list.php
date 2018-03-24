@@ -1,14 +1,43 @@
+<?php error_reporting(0); ?>
 <div class="container">
 <form action="<?=base_url()?>aficion/create"><input type="submit" class="btn btn-primary" value="Crear aficion"></form>
 <h1>LISTA de  aficion</h1>
-<table>
+<table class="table table-striped">
 	<tr>
-		<th>nombre<th>		<th>nombre(aficion)</th>
+		<th>nombre</th>		<th>nombre(persona)</th>
+		<th>nombre(persona)</th>
+		<th>Acciones</td>
 	</tr>
 
 	<?php foreach ($body['aficion'] as $aficion): ?>
-		<tr>		<th>nombre(aficion)</th>
+		<tr>
+			<td class="alert alert-success"><?= $aficion -> nombre ?></td>
+					
+				<td>
+				<?php foreach ($aficion -> aggr('ownAficionesList', 'persona') as $data): ?>
+					<span><?= $data -> nombre ?> </span>
+				<?php endforeach; ?>
+				</td>
+						<td><?= $aficion ->  fetchAs('persona') -> expertoen -> nombre ?></td>
+
+			<td class="form-inline">
+				<form action="<?= base_url() ?>aficion/update" method="post" class="form-group">
+					<input type="hidden" name="id" value="<?= $aficion -> id ?>">
+					<button onclick="submit()">
+						<img src="<?= base_url() ?>assets/img/icons/png/pencil-2x.png" heigth="15" width="15">
+					</button>
+				</form>
+
+				<form action="<?= base_url() ?>aficion/delete" method="post" class="form-group">
+					<input type="hidden" name="id" value="<?= $aficion -> id ?>">
+					<button onclick="submit()">
+						<img src="<?= base_url() ?>assets/img/icons/png/trash-2x.png" heigth="15" width="15">
+					</button>
+				</form>
+			</td>
+
 		</tr>
 	<?php endforeach; ?>
 </table>
 </div>
+<?php error_reporting(E_ALL); ?>
