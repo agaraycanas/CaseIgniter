@@ -63,10 +63,9 @@ function actionAJAX() {
 	<div class="form-group">
 		<label for="id-amo">Amo</label>
 		<select id="id-amo" name="amo" class="form-control">
-		<?php foreach ($body['mascota'] as $mascota ): ?>
-			<option value="<?= $mascota->id ?>"><?= $mascota->nombre ?></option>
-		<?php endforeach; ?>
-		
+			<?php foreach ($body['mascota'] as $mascota ): ?>
+				<option value="<?= $mascota->id ?>"><?= $mascota->nombre ?></option>
+			<?php endforeach; ?>
 		</select>
 	</div>
 
@@ -74,10 +73,9 @@ function actionAJAX() {
 	<div class="form-group">
 		<label for="id-paisnacimiento">Paisnacimiento</label>
 		<select id="id-paisnacimiento" name="paisnacimiento" class="form-control">
-		<?php foreach ($body['pais'] as $pais ): ?>
-			<option value="<?= $pais->id ?>"><?= $pais->nombre ?></option>
-		<?php endforeach; ?>
-		
+			<?php foreach ($body['pais'] as $pais ): ?>
+				<option value="<?= $pais->id ?>"><?= $pais->nombre ?></option>
+			<?php endforeach; ?>
 		</select>
 	</div>
 
@@ -85,11 +83,19 @@ function actionAJAX() {
 		<legend class="scheduler-border">Aficiones</legend>
 		<div class="form-check form-check-inline">
 			<?php foreach ($body['aficion'] as $aficion ): ?>
-
 				<input class="form-check-input" type="checkbox" id="id-aficiones-<?=$aficion->id?>" name="aficiones[]" value="<?= $aficion->id ?>">
 				<label class="form-check-label" for="id-aficiones-<?=$aficion->id?>" ><?= $aficion->nombre ?></label>
 			<?php endforeach; ?>
+		</div>
+	</fieldset>
 
+	<fieldset class="scheduler-border">
+		<legend class="scheduler-border">Odia</legend>
+		<div class="form-check form-check-inline">
+			<?php foreach ($body['aficion'] as $aficion ): ?>
+				<input class="form-check-input" type="checkbox" id="id-odia-<?=$aficion->id?>" name="odia[]" value="<?= $aficion->id ?>">
+				<label class="form-check-label" for="id-odia-<?=$aficion->id?>" ><?= $aficion->nombre ?></label>
+			<?php endforeach; ?>
 		</div>
 	</fieldset>
 
@@ -97,11 +103,19 @@ function actionAJAX() {
 		<legend class="scheduler-border">Expertoen</legend>
 		<div class="form-check form-check-inline">
 			<?php foreach ($body['aficion'] as $aficion ): ?>
-
 				<input class="form-check-input" type="checkbox" id="id-expertoen-<?=$aficion->id?>" name="expertoen[]" value="<?= $aficion->id ?>">
 				<label class="form-check-label" for="id-expertoen-<?=$aficion->id?>" ><?= $aficion->nombre ?></label>
 			<?php endforeach; ?>
+		</div>
+	</fieldset>
 
+	<fieldset class="scheduler-border">
+		<legend class="scheduler-border">Inutilen</legend>
+		<div class="form-check form-check-inline">
+			<?php foreach ($body['aficion'] as $aficion ): ?>
+				<input class="form-check-input" type="checkbox" id="id-inutilen-<?=$aficion->id?>" name="inutilen[]" value="<?= $aficion->id ?>">
+				<label class="form-check-label" for="id-inutilen-<?=$aficion->id?>" ><?= $aficion->nombre ?></label>
+			<?php endforeach; ?>
 		</div>
 	</fieldset>
 

@@ -5,7 +5,9 @@ peso:#
 .amo:mascota
 >paisnacimiento:pais
 **aficiones:aficion
+**odia:aficion
 *expertoen:aficion
+*inutilen:aficion
 --
 mascota
 --
@@ -17,6 +19,8 @@ _*paisnacimiento:persona
 --
 aficion
 --
+_**odia:persona
 _**aficiones:persona
 _>expertoen:persona
+_>inutilen:persona
 --

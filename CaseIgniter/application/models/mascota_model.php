@@ -4,7 +4,18 @@
 */
 class mascota_model extends CI_Model {
 public function create( $nombre ) {
+
 	$bean = R::dispense( 'mascota' );
+
+	// Regular attribute
+	$bean -> nombre = $nombre;
+
+	R::store($bean);
+}
+
+public function update( $id, $nombre ) {
+
+	$bean = R::load( 'mascota', $id );
 
 	// Regular attribute
 	$bean -> nombre = $nombre;

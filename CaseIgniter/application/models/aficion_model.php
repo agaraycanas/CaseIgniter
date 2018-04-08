@@ -4,7 +4,18 @@
 */
 class aficion_model extends CI_Model {
 public function create( $nombre ) {
+
 	$bean = R::dispense( 'aficion' );
+
+	// Regular attribute
+	$bean -> nombre = $nombre;
+
+	R::store($bean);
+}
+
+public function update( $id, $nombre ) {
+
+	$bean = R::load( 'aficion', $id );
 
 	// Regular attribute
 	$bean -> nombre = $nombre;

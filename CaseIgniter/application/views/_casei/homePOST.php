@@ -5,5 +5,4 @@
 			<?= generate_yuml($classes)?>
 		</div>
 	</div>
-	<a href="<?=base_url()?>"> KEL </a>
 </div>
