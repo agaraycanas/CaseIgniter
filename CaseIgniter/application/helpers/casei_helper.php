@@ -285,7 +285,7 @@ function generate_yuml($classes) {
 }
 
 // ------------------------------
-function delete_directories() {
+function delete_directories($classes) {
 	$ignore_files = [ 
 			'_casei.php',
 			'_casei',
@@ -293,6 +293,12 @@ function delete_directories() {
 			'templates',
 			'index.html' 
 	];
+	
+	foreach ( $classes as $class ) {
+		$ignore_files [] = $class->name;
+		$ignore_files [] = $class->name . '.php';
+		$ignore_files [] = $class->name . '_model.php';
+	}
 	
 	delete_directory ( APPPATH . 'controllers', $ignore_files, true );
 	delete_directory ( APPPATH . 'models', $ignore_files, true );
@@ -391,7 +397,7 @@ function is_dependant($attribute) {
 
 // ------------------------------
 function generate_application_files($classes) {
-	delete_directories ();
+	delete_directories ( $classes );
 	generate_controllers ( $classes );
 	generate_models ( $classes );
 	generate_views ( $classes );
@@ -420,13 +426,10 @@ function generate_views($classes) {
 
 // ------------------------------
 function backup_and_save($filename, $code) {
-	$code_bak = 'ERROR en el BACKUP';
-	try {
-		$code_bak = file_get_contents ( APPPATH . $filename );
-	} catch ( Exception $e ) {
+	if (file_exists ( $filename )) {
+		file_put_contents ( substr ( $filename, 0, - 4 ) . '_bak.php', file_get_contents ( $filename ) );
 	}
 	file_put_contents ( $filename, $code );
-	file_put_contents ( substr ( $filename, 0, - 4 ) . '_bak.php', $code_bak );
 }
 
 // ------------------------------
@@ -440,7 +443,8 @@ function generate_controller($class) {
 	$code .= generate_controller_update ( $class );
 	$code .= generate_controller_update_post ( $class );
 	$code .= generate_controller_end ();
-	backup_and_save ( 'controllers' . DIRECTORY_SEPARATOR . $class->name . '.php', $code );
+	$filename = APPPATH . 'controllers' . DIRECTORY_SEPARATOR . $class->name . '.php';
+	backup_and_save ( $filename, $code );
 }
 
 // ------------------------------
@@ -803,7 +807,9 @@ function generate_model($class) {
 	$code .= generate_model_delete ( $class );
 	$code .= generate_model_get_by_id ( $class );
 	$code .= generate_model_end ();
-	file_put_contents ( APPPATH . DIRECTORY_SEPARATOR . 'models' . DIRECTORY_SEPARATOR . $class->name . '_model.php', $code );
+	
+	$filename = APPPATH . DIRECTORY_SEPARATOR . 'models' . DIRECTORY_SEPARATOR . $class->name . '_model.php';
+	backup_and_save ( $filename, $code );
 }
 
 // --------------------------------
@@ -1055,7 +1061,12 @@ CODE;
 
 // ------------------------------
 function generate_view($class, $classes) {
-	mkdir ( APPPATH . 'views' . DIRECTORY_SEPARATOR . $class->name );
+	$dirname = APPPATH . 'views' . DIRECTORY_SEPARATOR . $class->name;
+	
+	if (! file_exists ( $dirname )) {
+		mkdir ( $dirname );
+	}
+	
 	generate_view_create ( $class, $classes );
 	generate_view_create_post ( $class );
 	generate_view_create_message ( $class );
@@ -1418,11 +1429,21 @@ function generate_view_list($class, $classes) {
 	$cn = $class->name;
 	$ma = $class->getMainAttribute ();
 	$code = <<<CODE
+
+<script>
+	$(document).ready(function() 
+	    { 
+	        $("#myTable").tablesorter(); 
+	    } 
+	);
+</script>
+
 <?php error_reporting(0); ?>
 <div class="container">
 <form action="<?=base_url()?>$cn/create"><input type="submit" class="btn btn-primary" value="Crear $cn"></form>
 <h1>$title $cn</h1>
-<table class="table table-striped">
+<table id="myTable" class="table table-striped tablesorter">
+	<thead>
 	<tr>
 		<th>$ma</th>
 CODE;
@@ -1438,7 +1459,9 @@ CODE;
 	$code .= <<<CODE
 		<th>Acciones</th>
 	</tr>
+	</thead>
 
+	<tbody>
 	<?php foreach (\$body['$cn'] as \$$cn): ?>
 		<tr>
 			<td class="alert alert-success"><?= \$$cn -> $ma ?></td>
@@ -1484,20 +1507,21 @@ CODE;
 				<form action="<?= base_url() ?>$cn/update" method="post" class="form-group">
 					<input type="hidden" name="id" value="<?= \$$cn -> id ?>">
 					<button onclick="submit()">
-						<img src="<?= base_url() ?>assets/img/icons/png/pencil-2x.png" height="15" width="15">
+						<img src="<?= base_url() ?>assets/img/icons/png/pencil-2x.png" height="15" width="15" alt="editar">
 					</button>
 				</form>
 
 				<form action="<?= base_url() ?>$cn/delete" method="post" class="form-group">
 					<input type="hidden" name="id" value="<?= \$$cn -> id ?>">
 					<button onclick="submit()">
-						<img src="<?= base_url() ?>assets/img/icons/png/trash-2x.png" height="15" width="15">
+						<img src="<?= base_url() ?>assets/img/icons/png/trash-2x.png" height="15" width="15" alt="borrar">
 					</button>
 				</form>
 			</td>
 
 		</tr>
 	<?php endforeach; ?>
+	</tbody>
 </table>
 </div>
 <?php error_reporting(E_ALL); ?>

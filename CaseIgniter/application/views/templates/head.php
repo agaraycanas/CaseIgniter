@@ -1,15 +1,23 @@
 <?php $title="MyWeb"; ?>
 <!DOCTYPE html >
-<html>
+<html lang="es">
 <head>
 	<meta charset="utf-8">
 	
     <meta name="viewport" content="width=device-width, initial-scale=1">
 	
-	<!--  BOOTSTRAP 3 -->
+	<!--  BOOTSTRAP 3 ONLINE
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="/path/to/jquery.tablesorter.js"></script> 
+	-->
+
+	<!--  BOOTSTRAP 3 OFFLINE -->
+	<link  href="<?=base_url()?>assets/css/bootstrap.min.css" rel="stylesheet">
+	<script src="<?=base_url()?>assets/js/jquery.min.js"></script>
+	<script src="<?=base_url()?>assets/js/bootstrap.min.js"></script>
+	<script src="<?=base_url()?>assets/js/jquery.tablesorter.js"></script> 
 	
 	
 	<!--  BOOTSTRAP 4
@@ -19,11 +27,6 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 	-->
 	
-	<!-- PARA CUANDO FUNCIONEN LOS GLYPHICONS OFFLINE 
-	<link href="<?=base_url()?>assets/css/bootstrap.min.css" rel="stylesheet">
-	<script src="<?=base_url()?>assets/js/jquery.min.js"></script>
-	<script src="<?=base_url()?>assets/js/bootstrap.min.js"></script>
-	-->
 	
 	<title><?=$title?></title>
 </head>
