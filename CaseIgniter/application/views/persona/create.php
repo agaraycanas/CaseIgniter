@@ -80,11 +80,11 @@ function actionAJAX() {
 	</div>
 
 	<fieldset class="scheduler-border">
-		<legend class="scheduler-border">Aficiones</legend>
+		<legend class="scheduler-border">Gusta</legend>
 		<div class="form-check form-check-inline">
 			<?php foreach ($body['aficion'] as $aficion ): ?>
-				<input class="form-check-input" type="checkbox" id="id-aficiones-<?=$aficion->id?>" name="aficiones[]" value="<?= $aficion->id ?>">
-				<label class="form-check-label" for="id-aficiones-<?=$aficion->id?>" ><?= $aficion->nombre ?></label>
+				<input class="form-check-input" type="checkbox" id="id-gusta-<?=$aficion->id?>" name="gusta[]" value="<?= $aficion->id ?>">
+				<label class="form-check-label" for="id-gusta-<?=$aficion->id?>" ><?= $aficion->nombre ?></label>
 			<?php endforeach; ?>
 		</div>
 	</fieldset>

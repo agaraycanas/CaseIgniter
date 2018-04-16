@@ -46,13 +46,13 @@ class persona extends CI_Controller {
 		$peso = ( isset( $_POST['peso']) ? $_POST['peso'] : null );
 		$amo = ( isset( $_POST['amo']) ? $_POST['amo'] : null );
 		$paisnacimiento = ( isset( $_POST['paisnacimiento']) ? $_POST['paisnacimiento'] : null );
-		$aficiones = ( isset( $_POST['aficiones']) ? $_POST['aficiones'] : [] );
+		$gusta = ( isset( $_POST['gusta']) ? $_POST['gusta'] : [] );
 		$odia = ( isset( $_POST['odia']) ? $_POST['odia'] : [] );
 		$expertoen = ( isset( $_POST['expertoen']) ? $_POST['expertoen'] : [] );
 		$inutilen = ( isset( $_POST['inutilen']) ? $_POST['inutilen'] : [] );
 
 		try {
-			$this->persona_model->create( $nombre, $fechanacimiento, $peso, $amo, $paisnacimiento, $aficiones, $odia, $expertoen, $inutilen );
+			$this->persona_model->create( $nombre, $fechanacimiento, $peso, $amo, $paisnacimiento, $gusta, $odia, $expertoen, $inutilen );
 			$data['status'] = 'ok';
 			$data['message'] = "Persona $nombre creado/a correctamente";
 			$this->load->view('persona/create_message',$data);
@@ -135,13 +135,13 @@ class persona extends CI_Controller {
 		$peso = ( isset( $_POST['peso']) ? $_POST['peso'] : null );
 		$amo = ( isset( $_POST['amo']) ? $_POST['amo'] : null );
 		$paisnacimiento = ( isset( $_POST['paisnacimiento']) ? $_POST['paisnacimiento'] : null );
-		$aficiones = ( isset( $_POST['aficiones']) ? $_POST['aficiones'] : [] );
+		$gusta = ( isset( $_POST['gusta']) ? $_POST['gusta'] : [] );
 		$odia = ( isset( $_POST['odia']) ? $_POST['odia'] : [] );
 		$expertoen = ( isset( $_POST['expertoen']) ? $_POST['expertoen'] : [] );
 		$inutilen = ( isset( $_POST['inutilen']) ? $_POST['inutilen'] : [] );
 
 		try {
-			$this->persona_model->update( $id, $nombre, $fechanacimiento, $peso, $amo, $paisnacimiento, $aficiones, $odia, $expertoen, $inutilen );
+			$this->persona_model->update( $id, $nombre, $fechanacimiento, $peso, $amo, $paisnacimiento, $gusta, $odia, $expertoen, $inutilen );
 
 
 			redirect( base_url() . 'persona/list' );

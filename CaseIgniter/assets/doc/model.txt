@@ -4,10 +4,17 @@ fechanacimiento:%
 peso:#
 .amo:mascota
 >paisnacimiento:pais
-**aficiones:aficion
+**gusta:aficion
 **odia:aficion
 *expertoen:aficion
 *inutilen:aficion
+--
+aficion
+--
+_**odia:persona
+_**gusta:persona
+_>expertoen:persona
+_>inutilen:persona
 --
 mascota
 --
@@ -16,12 +23,5 @@ _.amo:persona
 pais
 --
 _*paisnacimiento:persona
---
-aficion
---
-_**odia:persona
-_**aficiones:persona
-_>expertoen:persona
-_>inutilen:persona
 --
 

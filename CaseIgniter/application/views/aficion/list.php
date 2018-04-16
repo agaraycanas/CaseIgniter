@@ -15,7 +15,7 @@
 	<thead>
 	<tr>
 		<th>nombre</th>		<th>odia - nombre(persona)</th>
-		<th>aficiones - nombre(persona)</th>
+		<th>gusta - nombre(persona)</th>
 		<th>expertoen - nombre(persona)</th>
 		<th>inutilen - nombre(persona)</th>
 		<th>Acciones</th>
@@ -34,7 +34,7 @@
 				</td>
 									
 				<td>
-				<?php foreach ($aficion -> aggr('ownAficionesList', 'persona') as $data): ?>
+				<?php foreach ($aficion -> aggr('ownGustaList', 'persona') as $data): ?>
 					<span><?= $data -> nombre ?> </span>
 				<?php endforeach; ?>
 				</td>

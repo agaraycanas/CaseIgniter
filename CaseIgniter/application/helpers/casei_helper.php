@@ -262,19 +262,22 @@ function generate_yuml($classes) {
 	}
 	
 	foreach ( $classes as $class ) {
+		$alt = true;
 		foreach ( $class->attributes as $i => $a ) {
+			$rel_name = ($alt?'        ':'').$a->name.($alt?'':'         ');
+			$alt = !$alt;
 			switch ($a->mode) {
 				case 'M2O' :
-					$html .= '[' . ($class->name) . ']*- ' . $a->name . '  1[' . ($a->type) . '],';
+					$html .= '[' . ($class->name) . ']- ' . $rel_name . '  ++[' . ($a->type) . '],';
 					break;
 				case 'O2M' :
-					$html .= '[' . ($class->name) . ']1  ' . $a->name . '-*[' . ($a->type) . '],';
+					$html .= '[' . ($class->name) . ']++  ' . $rel_name . '-[' . ($a->type) . '],';
 					break;
 				case 'O2O' :
-					$html .= '[' . ($class->name) . ']1- ' . $a->name . '  1[' . ($a->type) . '],';
+					$html .= '[' . ($class->name) . ']1- ' . $rel_name . '  1[' . ($a->type) . '],';
 					break;
 				case 'M2M' :
-					$html .= '[' . ($class->name) . ']*- ' . $a->name . '  *[' . ($a->type) . '],';
+					$html .= '[' . ($class->name) . ']- ' . $rel_name . '  [' . ($a->type) . '],';
 					break;
 			}
 			unset ( $class->attributes [$i] );
@@ -980,10 +983,26 @@ M2O;
 			} else if ($a->mode == "O2M") { // =========== ONE TO MANY RELATIONSHIP ======================
 				$code .= <<<O2M
 				
-	// "one to many" attribute
-	foreach (\${$a->name} as \$id) { 
-		\$o2m = R::load('{$a->type}', \$id);
-		\$bean -> alias('{$a->name}') ->own{$type_capitalized}List[] = \$o2m;
+	// "one to many" attribute (O2M)
+
+	foreach (\$bean->alias('{$a->name}')->own{$type_capitalized}List as \${$a->name}_bean ) {
+		\$key = array_search( \${$a->name}_bean->{$a->name}->id, \${$a->name} );
+		
+		if (\$key !== false) { // O2M we keep only the keys to add
+			unset(\${$a->name}[\$key]);
+		}
+		else { // O2M Element to be deleted
+			R::store(\$bean);
+			\${$a->name}_bean -> {$a->name} = null;
+			R::store(\${$a->name}_bean);
+		}
+	}
+
+	// O2M Elements to be added
+	foreach (\${$a->name} as \$idf) {
+		\$o2m = R::load('{$a->type}', \$idf);
+		\$o2m -> {$a->name} = \$bean;
+		R::store(\$o2m);
 	}
 
 
@@ -1272,6 +1291,7 @@ function generate_view_create_dependants($class, $classes) {
 	<div class="form-group">
 		<label for="id-{$a->name}">$name_capitalized</label>
 		<select id="id-{$a->name}" name="{$a->name}" class="form-control">
+			<option value="0"> ----- </option>
 			<?php foreach (\$body['{$a->type}'] as \${$a->type} ): ?>
 				<option value="<?= \${$a->type}->id ?>"><?= \${$a->type}->$main_attribute ?></option>
 			<?php endforeach; ?>
@@ -1287,8 +1307,10 @@ SELECT_CODE;
 		<legend class="scheduler-border">$legend_2m</legend>
 		<div class="form-check form-check-inline">
 			<?php foreach (\$body['{$a->type}'] as \${$a->type} ): ?>
-				<input class="form-check-input" type="checkbox" id="id-{$a->name}-<?=\${$a->type}->id?>" name="{$a->name}[]" value="<?= \${$a->type}->id ?>">
-				<label class="form-check-label" for="id-{$a->name}-<?=\${$a->type}->id?>" ><?= \${$a->type}->$main_attribute ?></label>
+				<?php if (\${$a->type}->\${$a->name} == null): ?>
+						<input class="form-check-input" type="checkbox" id="id-{$a->name}-<?=\${$a->type}->id?>" name="{$a->name}[]" value="<?= \${$a->type}->id ?>">
+						<label class="form-check-label" for="id-{$a->name}-<?=\${$a->type}->id?>" ><?= \${$a->type}->$main_attribute ?></label>
+				<?php endif; ?>
 			<?php endforeach; ?>
 		</div>
 	</fieldset>
@@ -1305,6 +1327,7 @@ CHECKBOX_CODE;
 // ------------------------------
 function code_get_ids() {
 	$code = <<<CODE
+
 
 	function get_ids(\$beans) {
 		\$sol = [];

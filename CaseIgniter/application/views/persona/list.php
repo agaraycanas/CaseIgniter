@@ -18,7 +18,7 @@
 		<th>peso</th>
 		<th>amo - nombre(mascota)</th>
 		<th>paisnacimiento - nombre(pais)</th>
-		<th>aficiones - nombre(aficion)</th>
+		<th>gusta - nombre(aficion)</th>
 		<th>odia - nombre(aficion)</th>
 		<th>expertoen - nombre(aficion)</th>
 		<th>inutilen - nombre(aficion)</th>
@@ -36,7 +36,7 @@
 		<td><?= $persona ->  fetchAs('pais') -> paisnacimiento -> nombre ?></td>
 					
 				<td>
-				<?php foreach ($persona -> aggr('ownAficionesList', 'aficion') as $data): ?>
+				<?php foreach ($persona -> aggr('ownGustaList', 'aficion') as $data): ?>
 					<span><?= $data -> nombre ?> </span>
 				<?php endforeach; ?>
 				</td>
