@@ -1,6 +1,6 @@
 <nav class="container navbar navbar-inverse">
   <div class="navbar-header">
-    <a class="navbar-brand" href="<?=base_url()?>"><span class="glyphicon glyphicon-home"></span></a>
+    <a class="navbar-brand" href="<?=base_url()?>">INICIO</a>
   </div>
   <div class="collapse navbar-collapse" id="myNavbar">
     <ul class="nav navbar-nav">      <li class="dropdown">

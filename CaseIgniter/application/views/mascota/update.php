@@ -1,5 +1,6 @@
 <?php
 
+
 	function get_ids($beans) {
 		$sol = [];
 		foreach ($beans as $bean) {
@@ -8,8 +9,8 @@
 		return $sol;
 	}
 
-	function selected($id_selected, $id_to_be_tested) {
-		return $id_selected == $id_to_be_tested ? 'selected="selected"' : '';
+	function selected($bean_selected, $id_to_be_tested) {
+		return $bean_selected != null && $bean_selected->id == $id_to_be_tested ? 'selected="selected"' : '';
 	}
 
 	function checked($list, $id_to_be_tested) {

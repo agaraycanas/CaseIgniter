@@ -1,5 +1,6 @@
 <?php
 
+
 	function get_ids($beans) {
 		$sol = [];
 		foreach ($beans as $bean) {
@@ -8,8 +9,8 @@
 		return $sol;
 	}
 
-	function selected($id_selected, $id_to_be_tested) {
-		return $id_selected == $id_to_be_tested ? 'selected="selected"' : '';
+	function selected($bean_selected, $id_to_be_tested) {
+		return $bean_selected != null && $bean_selected->id == $id_to_be_tested ? 'selected="selected"' : '';
 	}
 
 	function checked($list, $id_to_be_tested) {
@@ -46,8 +47,11 @@
 	<div class="form-group">
 		<label for="id-amo">Amo</label>
 		<select id="id-amo" name="amo" class="form-control">
+			<option value="0" <?= $body['persona']->fetchAs('mascota')->amo == null ? 'selected="selected"' : '' ?> > ----- </option> 
 		<?php foreach ($body['mascota'] as $mascota ): ?>
-			<option value="<?= $mascota->id ?>" <?= selected($body['persona']->fetchAs('mascota')->amo->id, $mascota->id ) ?>><?= $mascota->nombre ?></option>
+			<?php if ( $mascota -> amo_id == null  || $mascota -> fetchAs('persona') -> amo -> id == $body['persona']->id ): ?>
+			<option value="<?= $mascota->id ?>" <?= selected($body['persona']->fetchAs('mascota')->amo, $mascota->id ) ?>><?= $mascota->nombre ?></option>
+			<?php endif; ?>
 		<?php endforeach; ?>
 					
 		</select>
@@ -56,8 +60,11 @@
 	<div class="form-group">
 		<label for="id-paisnacimiento">Paisnacimiento</label>
 		<select id="id-paisnacimiento" name="paisnacimiento" class="form-control">
+			<option value="0" <?= $body['persona']->fetchAs('pais')->paisnacimiento == null ? 'selected="selected"' : '' ?> > ----- </option> 
 		<?php foreach ($body['pais'] as $pais ): ?>
-			<option value="<?= $pais->id ?>" <?= selected($body['persona']->fetchAs('pais')->paisnacimiento->id, $pais->id ) ?>><?= $pais->nombre ?></option>
+			
+			<option value="<?= $pais->id ?>" <?= selected($body['persona']->fetchAs('pais')->paisnacimiento, $pais->id ) ?>><?= $pais->nombre ?></option>
+			
 		<?php endforeach; ?>
 					
 		</select>
@@ -68,8 +75,11 @@
 		<legend class="scheduler-border">Gusta</legend>
 		<div class="form-check form-check-inline">
 			<?php foreach ($body['aficion'] as $aficion ): ?>
+				
 				<input class="form-check-input" type="checkbox" id="id-gusta-<?=$aficion->id ?>" name="gusta[]" value="<?= $aficion->id ?>" <?= checked($body['persona']->aggr('ownGustaList','aficion'), $aficion->id ) ?>>
 				<label class="form-check-label" for="id-gusta-<?=$aficion->id?>" ><?= $aficion->nombre ?></label>
+
+				
 			<?php endforeach; ?>
 						
 		</div>
@@ -81,8 +91,11 @@
 		<legend class="scheduler-border">Odia</legend>
 		<div class="form-check form-check-inline">
 			<?php foreach ($body['aficion'] as $aficion ): ?>
+				
 				<input class="form-check-input" type="checkbox" id="id-odia-<?=$aficion->id ?>" name="odia[]" value="<?= $aficion->id ?>" <?= checked($body['persona']->aggr('ownOdiaList','aficion'), $aficion->id ) ?>>
 				<label class="form-check-label" for="id-odia-<?=$aficion->id?>" ><?= $aficion->nombre ?></label>
+
+				
 			<?php endforeach; ?>
 						
 		</div>
@@ -94,8 +107,11 @@
 		<legend class="scheduler-border">Expertoen</legend>
 		<div class="form-check form-check-inline">
 			<?php foreach ($body['aficion'] as $aficion ): ?>
+				<?php if ( $aficion -> fetchAs('persona') -> expertoen == null || $aficion -> fetchAs('persona') -> expertoen -> id == $body['persona']->id ): ?>
 				<input class="form-check-input" type="checkbox" id="id-expertoen-<?=$aficion->id ?>" name="expertoen[]" value="<?= $aficion->id ?>" <?= checked($body['persona']->alias('expertoen')->ownAficionList, $aficion->id ) ?>>
 				<label class="form-check-label" for="id-expertoen-<?=$aficion->id?>" ><?= $aficion->nombre ?></label>
+
+				<?php endif; ?>
 			<?php endforeach; ?>
 						
 		</div>
@@ -107,8 +123,11 @@
 		<legend class="scheduler-border">Inutilen</legend>
 		<div class="form-check form-check-inline">
 			<?php foreach ($body['aficion'] as $aficion ): ?>
+				<?php if ( $aficion -> fetchAs('persona') -> inutilen == null || $aficion -> fetchAs('persona') -> inutilen -> id == $body['persona']->id ): ?>
 				<input class="form-check-input" type="checkbox" id="id-inutilen-<?=$aficion->id ?>" name="inutilen[]" value="<?= $aficion->id ?>" <?= checked($body['persona']->alias('inutilen')->ownAficionList, $aficion->id ) ?>>
 				<label class="form-check-label" for="id-inutilen-<?=$aficion->id?>" ><?= $aficion->nombre ?></label>
+
+				<?php endif; ?>
 			<?php endforeach; ?>
 						
 		</div>
