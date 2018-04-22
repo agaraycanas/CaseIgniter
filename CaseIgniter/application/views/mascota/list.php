@@ -9,8 +9,21 @@
 
 <?php error_reporting(0); ?>
 <div class="container">
-<form action="<?=base_url()?>mascota/create"><input type="submit" class="btn btn-primary" value="Crear mascota"></form>
+<div class="row">
+	<div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4">
+		<form class="form-inline"  action="<?=base_url()?>mascota/create"><input type="submit" class="btn btn-primary" value="Crear mascota" autofocus=""></form>
+	</div>
+
+	<div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4">
+		<form class="form-inline" action="<?=base_url()?>mascota/list" method="post">
+			<label for="id-filter">Filtrar</label>
+			<input id="id-filter" type="text" name="filter" class="form-control" >
+		</form>
+	</div>
+</div>
+
 <h1>LISTA de  mascota</h1>
+
 <table id="myTable" class="table table-striped tablesorter">
 	<thead>
 	<tr>

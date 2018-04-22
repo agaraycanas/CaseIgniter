@@ -1,27 +1,54 @@
-persona
---
+=========================
+PERSONA
+.........................
+
 fechanacimiento:%
-peso:#
-.amo:mascota
->paisnacimiento:pais
-**gusta:aficion
-**odia:aficion
-*expertoen:aficion
-*inutilen:aficion
---
-aficion
---
-_**odia:persona
-_**gusta:persona
-_>expertoen:persona
-_>inutilen:persona
---
-mascota
---
-_.amo:persona
---
-pais
---
-_*paisnacimiento:persona
---
+peso:# [U]
+
+<> amo:mascota
+
+*> paisnacimiento:pais
+
+<* expertoen:aficion
+<* inutilen:aficion
+
+** gusta:aficion
+** odia:aficion
+
+
+=========================
+
+
+
+
+
+=========================
+AFICION
+.........................
+
+*> expertoen:persona [c-]
+*> inutilen:persona [c-]
+
+** odia:persona [c-]
+** gusta:persona [c-]
+
+=========================
+
+
+
+=========================
+MASCOTA
+.........................
+
+<> amo:persona [c-]
+=========================
+
+
+
+=========================
+PAIS
+.........................
+
+<* paisnacimiento:persona [c-]
+=========================
 

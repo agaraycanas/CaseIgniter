@@ -25,6 +25,7 @@
 		
 		
 	<input type="hidden" name="id" value="<?= $body['aficion']->id ?>">
+			
 
 	<div class="form-group">
 		<label for="id-nombre">Nombre</label>

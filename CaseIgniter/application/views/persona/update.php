@@ -25,19 +25,22 @@
 		
 		
 	<input type="hidden" name="id" value="<?= $body['persona']->id ?>">
+			
 
 	<div class="form-group">
 		<label for="id-nombre">Nombre</label>
 		<input id="id-nombre" type="text" name="nombre" value="<?=  $body['persona']->nombre ?>" class="form-control" onkeypress="detect(event);">
 	</div>
 				
-				
+							
+
 	<div class="form-group">
 		<label for="id-fechanacimiento">Fechanacimiento</label>
 		<input id="id-fechanacimiento" type="date" name="fechanacimiento" value="<?=  $body['persona']->fechanacimiento ?>" class="form-control" onkeypress="detect(event);">
 	</div>
 				
-				
+							
+
 	<div class="form-group">
 		<label for="id-peso">Peso</label>
 		<input id="id-peso" type="number" name="peso" value="<?=  $body['persona']->peso ?>" class="form-control" onkeypress="detect(event);">
@@ -72,38 +75,6 @@
 									
 
 	<fieldset class="scheduler-border">
-		<legend class="scheduler-border">Gusta</legend>
-		<div class="form-check form-check-inline">
-			<?php foreach ($body['aficion'] as $aficion ): ?>
-				
-				<input class="form-check-input" type="checkbox" id="id-gusta-<?=$aficion->id ?>" name="gusta[]" value="<?= $aficion->id ?>" <?= checked($body['persona']->aggr('ownGustaList','aficion'), $aficion->id ) ?>>
-				<label class="form-check-label" for="id-gusta-<?=$aficion->id?>" ><?= $aficion->nombre ?></label>
-
-				
-			<?php endforeach; ?>
-						
-		</div>
-	</fieldset>
-
-				
-
-	<fieldset class="scheduler-border">
-		<legend class="scheduler-border">Odia</legend>
-		<div class="form-check form-check-inline">
-			<?php foreach ($body['aficion'] as $aficion ): ?>
-				
-				<input class="form-check-input" type="checkbox" id="id-odia-<?=$aficion->id ?>" name="odia[]" value="<?= $aficion->id ?>" <?= checked($body['persona']->aggr('ownOdiaList','aficion'), $aficion->id ) ?>>
-				<label class="form-check-label" for="id-odia-<?=$aficion->id?>" ><?= $aficion->nombre ?></label>
-
-				
-			<?php endforeach; ?>
-						
-		</div>
-	</fieldset>
-
-				
-
-	<fieldset class="scheduler-border">
 		<legend class="scheduler-border">Expertoen</legend>
 		<div class="form-check form-check-inline">
 			<?php foreach ($body['aficion'] as $aficion ): ?>
@@ -128,6 +99,38 @@
 				<label class="form-check-label" for="id-inutilen-<?=$aficion->id?>" ><?= $aficion->nombre ?></label>
 
 				<?php endif; ?>
+			<?php endforeach; ?>
+						
+		</div>
+	</fieldset>
+
+				
+
+	<fieldset class="scheduler-border">
+		<legend class="scheduler-border">Gusta</legend>
+		<div class="form-check form-check-inline">
+			<?php foreach ($body['aficion'] as $aficion ): ?>
+				
+				<input class="form-check-input" type="checkbox" id="id-gusta-<?=$aficion->id ?>" name="gusta[]" value="<?= $aficion->id ?>" <?= checked($body['persona']->aggr('ownGustaList','aficion'), $aficion->id ) ?>>
+				<label class="form-check-label" for="id-gusta-<?=$aficion->id?>" ><?= $aficion->nombre ?></label>
+
+				
+			<?php endforeach; ?>
+						
+		</div>
+	</fieldset>
+
+				
+
+	<fieldset class="scheduler-border">
+		<legend class="scheduler-border">Odia</legend>
+		<div class="form-check form-check-inline">
+			<?php foreach ($body['aficion'] as $aficion ): ?>
+				
+				<input class="form-check-input" type="checkbox" id="id-odia-<?=$aficion->id ?>" name="odia[]" value="<?= $aficion->id ?>" <?= checked($body['persona']->aggr('ownOdiaList','aficion'), $aficion->id ) ?>>
+				<label class="form-check-label" for="id-odia-<?=$aficion->id?>" ><?= $aficion->nombre ?></label>
+
+				
 			<?php endforeach; ?>
 						
 		</div>

@@ -9,15 +9,28 @@
 
 <?php error_reporting(0); ?>
 <div class="container">
-<form action="<?=base_url()?>aficion/create"><input type="submit" class="btn btn-primary" value="Crear aficion"></form>
+<div class="row">
+	<div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4">
+		<form class="form-inline"  action="<?=base_url()?>aficion/create"><input type="submit" class="btn btn-primary" value="Crear aficion" autofocus=""></form>
+	</div>
+
+	<div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4">
+		<form class="form-inline" action="<?=base_url()?>aficion/list" method="post">
+			<label for="id-filter">Filtrar</label>
+			<input id="id-filter" type="text" name="filter" class="form-control" >
+		</form>
+	</div>
+</div>
+
 <h1>LISTA de  aficion</h1>
+
 <table id="myTable" class="table table-striped tablesorter">
 	<thead>
 	<tr>
-		<th>nombre</th>		<th>odia - nombre(persona)</th>
-		<th>gusta - nombre(persona)</th>
-		<th>expertoen - nombre(persona)</th>
+		<th>nombre</th>		<th>expertoen - nombre(persona)</th>
 		<th>inutilen - nombre(persona)</th>
+		<th>odia - nombre(persona)</th>
+		<th>gusta - nombre(persona)</th>
 		<th>Acciones</th>
 	</tr>
 	</thead>
@@ -26,6 +39,8 @@
 	<?php foreach ($body['aficion'] as $aficion): ?>
 		<tr>
 			<td class="alert alert-success"><?= $aficion -> nombre ?></td>
+		<td><?= $aficion ->  fetchAs('persona') -> expertoen -> nombre ?></td>
+		<td><?= $aficion ->  fetchAs('persona') -> inutilen -> nombre ?></td>
 					
 				<td>
 				<?php foreach ($aficion -> aggr('ownOdiaList', 'persona') as $data): ?>
@@ -38,9 +53,7 @@
 					<span><?= $data -> nombre ?> </span>
 				<?php endforeach; ?>
 				</td>
-						<td><?= $aficion ->  fetchAs('persona') -> expertoen -> nombre ?></td>
-		<td><?= $aficion ->  fetchAs('persona') -> inutilen -> nombre ?></td>
-
+				
 			<td class="form-inline col-md-1">
 				<form action="<?= base_url() ?>aficion/update" method="post" class="form-group">
 					<input type="hidden" name="id" value="<?= $aficion -> id ?>">

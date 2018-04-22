@@ -25,6 +25,7 @@
 		
 		
 	<input type="hidden" name="id" value="<?= $body['pais']->id ?>">
+			
 
 	<div class="form-group">
 		<label for="id-nombre">Nombre</label>
