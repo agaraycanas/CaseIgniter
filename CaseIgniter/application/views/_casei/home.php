@@ -33,31 +33,43 @@ CRUD_to_generate_a_menu_for_all_the_beans
 				<label for="idModel">MODELO</label>
 				<textarea name="modelData" class="form-control" cols="15" rows="30" id="idModel" style="overflow:scroll;"
 					placeholder="
-bean
---
-first_attribute_is_the_MAIN_attribute
-attribute_type_String
-attribute_type_number:#
-attribute_type_date:%
-!attribute_UNIQUE_constranint
-.one_to_one_attribute:one_bean
->many_to_one_attribute:one_bean
-*one_to_many_attribute:many_bean
-**many_to_many_attribute:many_bean
-_hidden_attribute_in_CREATE_form
--hidden_attribute_in_RECOVER_screen
-_**hidden_many_to_many_attribute_in_CREATE_form
---
-another_bean
---
-another_bean_attribute
-another_attribute_for_another_bean
---
-one_bean_more
---
-dont_forget_to_close_with_--_the_last_attribute_for_last_bean
---
-			"
+================================================
+BEANNAME [login]
+	c (all)
+	r (auth,anon)
+	u (auth)
+	d (auth)
+................................................
+
+regularstringattribute
+regularnumberattribute:#
+regulardateattribute:%
+regularimageattribute:@
+
+<> onetooneattribute:beanrelated
+<* onetomanyattribute:beanrelated
+*> manytooneattribute:beanrelated
+** manytomanyattribute:beanrelated
+
+regularattributewithmodifiers [M,U]
+** manytomanyattributewithmodifiers:beanrelated [c-,r-]
+
+================================================
+
+
+
+
+
+================================================
+ANOTHERBEAN
+.......
+moreattributes
+================================================
+
+================================================
+ABEANWITHNAMEATTRIBUTEONLY
+.......
+================================================			"
 			><?php if (isset($modelData)):?><?= $modelData ?><?php endif;?></textarea>
 			</div>
 		</div>

@@ -40,3 +40,9 @@ ERROR - 2018-04-22 19:04:38 --> Severity: Notice --> Trying to get property of n
 ERROR - 2018-04-22 19:04:38 --> Severity: Notice --> Trying to get property of non-object C:\Users\garay\git\CaseIgniter\CaseIgniter\application\views\aficion\update.php 32
 ERROR - 2018-04-22 19:06:49 --> Severity: Notice --> Trying to get property of non-object C:\Users\garay\git\CaseIgniter\CaseIgniter\application\views\aficion\update.php 27
 ERROR - 2018-04-22 19:06:49 --> Severity: Notice --> Trying to get property of non-object C:\Users\garay\git\CaseIgniter\CaseIgniter\application\views\aficion\update.php 32
+ERROR - 2018-04-22 21:35:22 --> Severity: error --> Exception: ERROR while parsing model.txt (line 15): Attribute or bean separator expected C:\Users\garay\git\CaseIgniter\CaseIgniter\application\helpers\parser.php 127
+ERROR - 2018-04-22 21:36:00 --> Severity: error --> Exception: ERROR while parsing model.txt (line 27): Attribute or bean separator expected C:\Users\garay\git\CaseIgniter\CaseIgniter\application\helpers\parser.php 127
+ERROR - 2018-04-22 21:36:20 --> Severity: error --> Exception: ERROR while parsing model.txt (line 39): Attribute or bean separator expected C:\Users\garay\git\CaseIgniter\CaseIgniter\application\helpers\parser.php 127
+ERROR - 2018-04-22 21:36:44 --> Severity: error --> Exception: ERROR while parsing model.txt (line 57): Bean name expected C:\Users\garay\git\CaseIgniter\CaseIgniter\application\helpers\parser.php 112
+ERROR - 2018-04-22 21:37:56 --> Severity: error --> Exception: ERROR while parsing model.txt (line 107): Attribute or bean separator expected C:\Users\garay\git\CaseIgniter\CaseIgniter\application\helpers\parser.php 127
+ERROR - 2018-04-22 21:38:37 --> Severity: error --> Exception: ERROR while parsing model.txt (line 159): Attribute or bean separator expected C:\Users\garay\git\CaseIgniter\CaseIgniter\application\helpers\parser.php 127

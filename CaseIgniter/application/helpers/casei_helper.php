@@ -27,7 +27,6 @@ class MyClass {
 	public $name;
 	public $attributes = [ ];
 	public $login_bean = false;
-	
 	public function __construct($name) {
 		$this->name = $name;
 	}
@@ -95,83 +94,82 @@ function plural($word) {
 include 'parser.php';
 
 /*
-function process_domain_model($modelData) {
-	$lines = $modelData;
-	
-	$classes = [ ];
-	$class = true; // Comenzamos procesando el nombre de una clase
-	$current_class = null;
-	
-	foreach ( explode ( "\n", $lines ) as $line ) {
-		$line = trim ( $line );
-		
-		if ($line == "") {
-		} else if ($line == "--") {
-			$class = ! $class;
-			if ($class) { // Done of proccessing attributes
-				$current_class->setMainAttribute ();
-				array_push ( $classes, $current_class );
-				$current_class = null;
-			} else { // Starting proccessing attributes
-			}
-		} else {
-			if ($class) { // CLASS PROCESSING
-				$class_name = $line;
-				$current_class = new MyClass ( $class_name );
-			} else { // ATTRIBUTE PROCCESSING
-				$mode = 'NO_MODE';
-				$type = 'String';
-				$name = 'NO_NAME';
-				$collection = false;
-				$hidden_create = false;
-				$hidden_recover = false;
-				$main = false;
-				
-				if (strlen ( $line ) > 1) {
-					if (substr ( $line, 0, 1 ) == '_') {
-						$hidden_create = true;
-					} else if (substr ( $line, 0, 1 ) == '_') {
-						$hidden_recover = true;
-					} else if (substr ( $line, 0, 1 ) == '&') {
-						$main = true;
-					}
-					$line = trim ( $line, '_-&' );
-					
-					if (substr ( $line, 0, 2 ) == '**') {
-						$collection = true;
-						$mode = "M2M";
-					} else if (substr ( $line, 0, 2 ) == '*>') {
-						$collection = true;
-						$mode = 'M2Mi';
-					} else if (substr ( $line, 0, 1 ) == '*') {
-						$collection = true;
-						$mode = 'O2M';
-					} else if (substr ( $line, 0, 1 ) == '>') {
-						$mode = "M2O";
-					} else if (substr ( $line, 0, 1 ) == '!') {
-						$mode = "UNIQUE";
-					} else if (substr ( $line, 0, 1 ) == '.') {
-						$mode = "O2O";
-					}
-					
-					$my_line = trim ( $line, '.!>*' );
-					$part = explode ( ':', $my_line );
-					$name = $part [0];
-					$type = sizeof ( $part ) == 1 ? 'String' : ($part [1] == '#' ? 'number' : ($part [1] == '%' ? 'date' : $part [1]));
-				} else { // Unique char. The name of the attribute
-					$name = substr ( $line, 0, 1 );
-				}
-				
-				$current_class->add_attribute ( new Attribute ( $name, $type, $collection, $mode, $hidden_create, $hidden_recover, $main ) );
-			}
-		}
-	}
-	
-	return $classes;
-}
-
-*/
-
+ * function process_domain_model($modelData) {
+ * $lines = $modelData;
+ *
+ * $classes = [ ];
+ * $class = true; // Comenzamos procesando el nombre de una clase
+ * $current_class = null;
+ *
+ * foreach ( explode ( "\n", $lines ) as $line ) {
+ * $line = trim ( $line );
+ *
+ * if ($line == "") {
+ * } else if ($line == "--") {
+ * $class = ! $class;
+ * if ($class) { // Done of proccessing attributes
+ * $current_class->setMainAttribute ();
+ * array_push ( $classes, $current_class );
+ * $current_class = null;
+ * } else { // Starting proccessing attributes
+ * }
+ * } else {
+ * if ($class) { // CLASS PROCESSING
+ * $class_name = $line;
+ * $current_class = new MyClass ( $class_name );
+ * } else { // ATTRIBUTE PROCCESSING
+ * $mode = 'NO_MODE';
+ * $type = 'String';
+ * $name = 'NO_NAME';
+ * $collection = false;
+ * $hidden_create = false;
+ * $hidden_recover = false;
+ * $main = false;
+ *
+ * if (strlen ( $line ) > 1) {
+ * if (substr ( $line, 0, 1 ) == '_') {
+ * $hidden_create = true;
+ * } else if (substr ( $line, 0, 1 ) == '_') {
+ * $hidden_recover = true;
+ * } else if (substr ( $line, 0, 1 ) == '&') {
+ * $main = true;
+ * }
+ * $line = trim ( $line, '_-&' );
+ *
+ * if (substr ( $line, 0, 2 ) == '**') {
+ * $collection = true;
+ * $mode = "M2M";
+ * } else if (substr ( $line, 0, 2 ) == '*>') {
+ * $collection = true;
+ * $mode = 'M2Mi';
+ * } else if (substr ( $line, 0, 1 ) == '*') {
+ * $collection = true;
+ * $mode = 'O2M';
+ * } else if (substr ( $line, 0, 1 ) == '>') {
+ * $mode = "M2O";
+ * } else if (substr ( $line, 0, 1 ) == '!') {
+ * $mode = "UNIQUE";
+ * } else if (substr ( $line, 0, 1 ) == '.') {
+ * $mode = "O2O";
+ * }
+ *
+ * $my_line = trim ( $line, '.!>*' );
+ * $part = explode ( ':', $my_line );
+ * $name = $part [0];
+ * $type = sizeof ( $part ) == 1 ? 'String' : ($part [1] == '#' ? 'number' : ($part [1] == '%' ? 'date' : $part [1]));
+ * } else { // Unique char. The name of the attribute
+ * $name = substr ( $line, 0, 1 );
+ * }
+ *
+ * $current_class->add_attribute ( new Attribute ( $name, $type, $collection, $mode, $hidden_create, $hidden_recover, $main ) );
+ * }
+ * }
+ * }
+ *
+ * return $classes;
+ * }
+ *
+ */
 
 // ------------------------------
 function delete_directory($path, $ignore_files, $first_level) {
@@ -254,14 +252,14 @@ function generate_yuml($classes) {
 			'peachpuff' 
 	];
 	$c = 0;
-	$html = '<img src="http://yuml.me/diagram/dir:lr;scale:150/class/';
+	$html = '<img src="http://yuml.me/diagram/dir:td;scale:150/class/';
 	foreach ( $classes as $class ) {
 		$html .= '[' . ucfirst ( $class->name );
 		$html .= '|';
 		$i = 0;
 		foreach ( $class->attributes as $a ) {
 			if (! is_dependant ( $a )) {
-				$html .= ( (($a->main)?'** ':'') .$a->name);
+				$html .= ((($a->main) ? '** ' : '') . $a->name);
 				$html .= ($a->type == 'String') ? '' : (':' . $a->type);
 				$html .= ';';
 				unset ( $class->attributes [$i] );
@@ -275,9 +273,9 @@ function generate_yuml($classes) {
 	foreach ( $classes as $class ) {
 		$alt = true;
 		foreach ( $class->attributes as $i => $a ) {
-			//$rel_name = ($alt?'        ':'').$a->name.($alt?'':'         ');
+			// $rel_name = ($alt?' ':'').$a->name.($alt?'':' ');
 			$rel_name = $a->name;
-			$alt = !$alt;
+			$alt = ! $alt;
 			switch ($a->mode) {
 				case 'M2O' :
 					$html .= '[' . ($class->name) . ']- ' . $rel_name . '  <>[' . ($a->type) . '],';
@@ -428,7 +426,7 @@ function generate_controllers($classes) {
 // ------------------------------
 function generate_models($classes) {
 	foreach ( $classes as $class ) {
-		generate_model ( $class );
+		generate_model ( $class, $classes );
 	}
 }
 
@@ -464,9 +462,8 @@ function generate_controller($class) {
 }
 
 // ------------------------------
-function generate_controller_list_id ( $class ) {
-	
-$code = <<<CODE
+function generate_controller_list_id($class) {
+	$code = <<<CODE
 
 
 	/**
@@ -480,13 +477,11 @@ $code = <<<CODE
 	}
 
 CODE;
-
-return $code;
+	
+	return $code;
 }
 
 // ------------------------------
-
-
 function generate_controller_delete($class) {
 	$code = <<<CODE
 
@@ -526,10 +521,10 @@ function generate_controller_update($class) {
 CODE;
 	
 	if ($class->has_dependants ()) {
-		$types_loaded = [];
+		$types_loaded = [ ];
 		foreach ( $class->attributes as $a ) {
-			if ($a->is_dependant () && ! ($a->hidden_create) && !in_array($a->type, $types_loaded)) {
-				$types_loaded[] = $a->type;
+			if ($a->is_dependant () && ! ($a->hidden_create) && ! in_array ( $a->type, $types_loaded )) {
+				$types_loaded [] = $a->type;
 				$code .= generate_controller_update_dependants ( $a );
 			}
 		}
@@ -584,10 +579,10 @@ function generate_controller_create($class) {
 	$has_dependants = false;
 	
 	if ($class->has_dependants ()) {
-		$models_loaded = [];
+		$models_loaded = [ ];
 		foreach ( $class->attributes as $a ) {
-			if ($a->is_dependant () && ! ($a->hidden_create) && !in_array($a->type, $models_loaded)) {
-				$models_loaded[] = $a->type;
+			if ($a->is_dependant () && ! ($a->hidden_create) && ! in_array ( $a->type, $models_loaded )) {
+				$models_loaded [] = $a->type;
 				$has_dependants = true;
 				$code .= generate_controller_create_dependants ( $a );
 			}
@@ -844,13 +839,13 @@ CODE;
 	return $code;
 }
 // --------------------------------
-function generate_model($class) {
+function generate_model($class, $classes) {
 	$code = '';
 	$code .= generate_model_header ( $class->name );
 	$code .= generate_model_create ( $class );
 	$code .= generate_model_update ( $class );
 	$code .= generate_model_get_all ( $class );
-	$code .= generate_model_get_filtered ();
+	$code .= generate_model_get_filtered ( $class, $classes );
 	$code .= generate_model_delete ( $class );
 	$code .= generate_model_get_by_id ( $class );
 	$code .= generate_model_end ();
@@ -912,7 +907,7 @@ function generate_model_create($class) {
 	*/
 	public function create( 
 CODE;
-
+	
 	$parameters = '';
 	
 	foreach ( $class->attributes as $a ) {
@@ -1020,7 +1015,7 @@ CODE;
 	$code .= "\n\t\$bean = R::load( '{$class->name}', \$id );" . PHP_EOL . PHP_EOL;
 	
 	foreach ( $class->attributes as $a ) {
-		if (! $a->hidden_create ) {
+		if (! $a->hidden_create) {
 			$type_capitalized = ucfirst ( $a->type );
 			$name_capitalized = ucfirst ( $a->name );
 			
@@ -1141,14 +1136,46 @@ CODE;
 }
 
 // --------------------------------
-function generate_model_get_filtered() {
+function generate_model_get_filtered($class, $classes) {
 	$code = <<<CODE
 
 	/**
 	* get_filtered MODEL action autogenerated by CASE IGNITER
 	*/
 	public function get_filtered(\$filter) {
-		return [];
+
+CODE;
+	$where_clause = [ ];
+	$param_count = 0;
+	foreach ( $class->attributes as $a ) {
+		if (! $a->hidden_recover) {
+			$param_count ++;
+			if (! $a->is_dependant ()) { // REGULAR ATTRIBUTE
+				$code .= "\n\t\t\$where_clause[] = '{$a->name} LIKE ?';";
+			} else {
+				if ($a->mode != 'M2M') { // NOT MANY TO MANY
+					$foreign_name = getMainAttributeName ( $classes, $a->type );
+					$code .= "\n\t\t\$where_clause[] = " . "'(SELECT $foreign_name FROM {$a->type} WHERE {$a->type}.id = {$class->name}.id) LIKE ?';";
+				} else { // MANY TO MANY
+					$foreign_name = getMainAttributeName ( $classes, $a->type );
+					$code .= "\n\t\t\$where_clause[] = " . "'(SELECT $foreign_name FROM {$a->type} WHERE {$a->type}.id = {$class->name}.id) LIKE ?';";
+				}
+			}
+		}
+	}
+	
+	$params = [ ];
+	for($i = 0; $i < $param_count; $i ++) {
+		$params [] = '$f';
+	}
+	$params = implode ( ',', $params );
+	
+	$code .= <<<CODE
+
+		\$f = "%\$filter%";
+		
+		return R::findAll('{$class->name}', implode(' OR ', \$where_clause) , [ $params ] );
+		
 	}
 
 CODE;
@@ -1183,7 +1210,7 @@ function generate_view($class, $classes) {
 // ------------------------------
 function generate_view_create($class, $classes) {
 	$code = '';
-	//$code .= generate_view_create_ajax ( $class->name );
+	// $code .= generate_view_create_ajax ( $class->name );
 	$code .= generate_view_create_header ( $class->name );
 	$code .= generate_view_create_non_dependants ( $class );
 	$code .= generate_view_create_dependants ( $class, $classes );
@@ -1322,8 +1349,9 @@ function generate_view_create_non_dependants($class) {
 		if (! $a->is_dependant ()) {
 			$capitalized = ucfirst ( $a->name );
 			$type = ($a->type == 'String' ? 'text' : $a->type);
-			$autofocus = $a->main ? 'autofocus=""' : '';
+			$autofocus = $a->main ? 'autofocus="autofocus"' : '';
 			$code .= <<<HTML
+			
 	<div class="form-group">
 		<label for="id-{$a->name}">$capitalized</label>
 		<input id="id-{$a->name}" type="$type" name="{$a->name}" class="form-control" $autofocus>
@@ -1451,8 +1479,8 @@ function generate_view_update_dependants($class, $classes) {
 			$legend_2m = ($a->mode == 'M2M' ? $type_plural_capitalized : ($a->mode == 'O2M') ? $name_capitalized : 'dontCare');
 			
 			if ($a->mode == 'M2O' || $a->mode == 'O2O') {
-				$if_O2O_start = $a->mode == 'O2O'?"<?php if ( \${$a->type} -> {$a->name}_id == null  || \${$a->type} -> fetchAs('{$class->name}') -> {$a->name} -> id == \$body['{$class->name}']->id ): ?>":'';
-				$if_O2O_end = $a->mode == 'O2O'?'<?php endif; ?>':'';
+				$if_O2O_start = $a->mode == 'O2O' ? "<?php if ( \${$a->type} -> {$a->name}_id == null  || \${$a->type} -> fetchAs('{$class->name}') -> {$a->name} -> id == \$body['{$class->name}']->id ): ?>" : '';
+				$if_O2O_end = $a->mode == 'O2O' ? '<?php endif; ?>' : '';
 				$code .= <<<SELECT_CODE
 				
 	<div class="form-group">
@@ -1472,8 +1500,8 @@ SELECT_CODE;
 			}
 			if ($a->mode == 'O2M' || $a->mode == 'M2M') {
 				$checked_string = ($a->mode == 'M2M' ? "<?= checked(\$body['{$class->name}']->aggr('own{$name_capitalized}List','$a->type'), \${$a->type}->id ) ?>" : "<?= checked(\$body['{$class->name}']->alias('{$a->name}')->own{$type_capitalized}List, \${$a->type}->id ) ?>");
-				$if_O2M_start = $a->mode == 'O2M'?"<?php if ( \${$a->type} -> fetchAs('{$class->name}') -> {$a->name} == null || \${$a->type} -> fetchAs('{$class->name}') -> {$a->name} -> id == \$body['{$class->name}']->id ): ?>":'';
-				$if_O2M_end = $a->mode == 'O2M'?'<?php endif; ?>':'';
+				$if_O2M_start = $a->mode == 'O2M' ? "<?php if ( \${$a->type} -> fetchAs('{$class->name}') -> {$a->name} == null || \${$a->type} -> fetchAs('{$class->name}') -> {$a->name} -> id == \$body['{$class->name}']->id ): ?>" : '';
+				$if_O2M_end = $a->mode == 'O2M' ? '<?php endif; ?>' : '';
 				$code .= <<<CHECKBOX_CODE
 				
 
@@ -1589,11 +1617,13 @@ function generate_view_list($class, $classes) {
 		<th>$ma</th>
 CODE;
 	foreach ( $class->attributes as $a ) {
-		if (! $a->main) {
-			if (! ($a->is_dependant ())) {
-				$code .= '		<th>' . $a->name . '</th>' . PHP_EOL;
-			} else {
-				$code .= '		<th>' . $a->name . ' - ' . getMainAttributeName ( $classes, $a->type ) . "({$a->type})</th>" . PHP_EOL;
+		if (! $a->hidden_recover) {
+			if (! $a->main) {
+				if (! ($a->is_dependant ())) {
+					$code .= '		<th>' . $a->name . '</th>' . PHP_EOL;
+				} else {
+					$code .= '		<th>' . $a->name . ' - ' . getMainAttributeName ( $classes, $a->type ) . "({$a->type})</th>" . PHP_EOL;
+				}
 			}
 		}
 	}
@@ -1609,6 +1639,7 @@ CODE;
 
 CODE;
 	foreach ( $class->attributes as $a ) {
+		if (! $a->hidden_recover ) {
 		if (! $a->main) {
 			if (! ($a->is_dependant ())) { // ============ REGULAR ATTRIBUTE ===============
 				$code .= "\t\t\t<td><?= \$$cn -> {$a->name} ?></td>" . PHP_EOL;
@@ -1640,6 +1671,7 @@ CODE;
 CODE;
 				}
 			}
+		}
 		}
 	}
 	$code .= <<<CODE
