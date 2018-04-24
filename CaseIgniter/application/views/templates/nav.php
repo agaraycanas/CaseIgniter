@@ -7,7 +7,7 @@
         <a class="dropdown-toggle" data-toggle="dropdown" href="#">
            BEANS<span class="caret"></span>
         </a>
-		<ul class="dropdown-menu">		<li><a href="<?=base_url()?>ies/list">ies</a></li>		<li><a href="<?=base_url()?>cursoacademico/list">cursoacademico</a></li>		<li><a href="<?=base_url()?>usuario/list">usuario</a></li>		<li><a href="<?=base_url()?>grupo/list">grupo</a></li>		<li><a href="<?=base_url()?>departamento/list">departamento</a></li>		<li><a href="<?=base_url()?>asignatura/list">asignatura</a></li>		<li><a href="<?=base_url()?>imparticion/list">imparticion</a></li>		<li><a href="<?=base_url()?>curso/list">curso</a></li>		<li><a href="<?=base_url()?>plantillaencuesta/list">plantillaencuesta</a></li>		<li><a href="<?=base_url()?>encuesta/list">encuesta</a></li>		<li><a href="<?=base_url()?>preguntacerrada/list">preguntacerrada</a></li>		<li><a href="<?=base_url()?>preguntaabierta/list">preguntaabierta</a></li>		<li><a href="<?=base_url()?>respuestacerrada/list">respuestacerrada</a></li>		<li><a href="<?=base_url()?>respuestaabierta/list">respuestaabierta</a></li>		<li><a href="<?=base_url()?>categoria/list">categoria</a></li>		<li><a href="<?=base_url()?>titulacion/list">titulacion</a></li>	    </ul>
+		<ul class="dropdown-menu">		<li><a href="<?=base_url()?>persona/list">persona</a></li>		<li><a href="<?=base_url()?>aficion/list">aficion</a></li>		<li><a href="<?=base_url()?>mascota/list">mascota</a></li>		<li><a href="<?=base_url()?>pais/list">pais</a></li>	    </ul>
       </li>    </ul>
   </div>
 </nav>

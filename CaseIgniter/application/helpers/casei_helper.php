@@ -88,89 +88,167 @@ function plural($word) {
 }
 
 // ---------------------------------------------
-
-// TODO process_domain_model
-
-include 'parser.php';
-
-/*
- * function process_domain_model($modelData) {
- * $lines = $modelData;
- *
- * $classes = [ ];
- * $class = true; // Comenzamos procesando el nombre de una clase
- * $current_class = null;
- *
- * foreach ( explode ( "\n", $lines ) as $line ) {
- * $line = trim ( $line );
- *
- * if ($line == "") {
- * } else if ($line == "--") {
- * $class = ! $class;
- * if ($class) { // Done of proccessing attributes
- * $current_class->setMainAttribute ();
- * array_push ( $classes, $current_class );
- * $current_class = null;
- * } else { // Starting proccessing attributes
- * }
- * } else {
- * if ($class) { // CLASS PROCESSING
- * $class_name = $line;
- * $current_class = new MyClass ( $class_name );
- * } else { // ATTRIBUTE PROCCESSING
- * $mode = 'NO_MODE';
- * $type = 'String';
- * $name = 'NO_NAME';
- * $collection = false;
- * $hidden_create = false;
- * $hidden_recover = false;
- * $main = false;
- *
- * if (strlen ( $line ) > 1) {
- * if (substr ( $line, 0, 1 ) == '_') {
- * $hidden_create = true;
- * } else if (substr ( $line, 0, 1 ) == '_') {
- * $hidden_recover = true;
- * } else if (substr ( $line, 0, 1 ) == '&') {
- * $main = true;
- * }
- * $line = trim ( $line, '_-&' );
- *
- * if (substr ( $line, 0, 2 ) == '**') {
- * $collection = true;
- * $mode = "M2M";
- * } else if (substr ( $line, 0, 2 ) == '*>') {
- * $collection = true;
- * $mode = 'M2Mi';
- * } else if (substr ( $line, 0, 1 ) == '*') {
- * $collection = true;
- * $mode = 'O2M';
- * } else if (substr ( $line, 0, 1 ) == '>') {
- * $mode = "M2O";
- * } else if (substr ( $line, 0, 1 ) == '!') {
- * $mode = "UNIQUE";
- * } else if (substr ( $line, 0, 1 ) == '.') {
- * $mode = "O2O";
- * }
- *
- * $my_line = trim ( $line, '.!>*' );
- * $part = explode ( ':', $my_line );
- * $name = $part [0];
- * $type = sizeof ( $part ) == 1 ? 'String' : ($part [1] == '#' ? 'number' : ($part [1] == '%' ? 'date' : $part [1]));
- * } else { // Unique char. The name of the attribute
- * $name = substr ( $line, 0, 1 );
- * }
- *
- * $current_class->add_attribute ( new Attribute ( $name, $type, $collection, $mode, $hidden_create, $hidden_recover, $main ) );
- * }
- * }
- * }
- *
- * return $classes;
- * }
- *
- */
-
+function process_domain_model($modelData) {
+	
+	// ----------------------------------
+	
+	/**
+	 *
+	 * @param unknown $line        	
+	 * @return $string BEAN_SEPARATOR, ATTRIBUTE_SEPARATOR, BEAN_NAME, ROL_LINE, ATTRIBUTE or UNKNOWN
+	 */
+	function pdm_line_type($line) {
+		$type = 'UNKNOWN';
+		
+		if (preg_match ( "/[=]+$/", $line )) {
+			$type = 'BEAN_SEPARATOR';
+		}
+		if (preg_match ( "/[\.]+$/", $line )) {
+			$type = 'ATTRIBUTE_SEPARATOR';
+		}
+		if (preg_match ( "/^[A-Z]+(\s\[login\])?$/", $line )) {
+			$type = 'BEAN_NAME';
+		}
+		if (preg_match ( "/^(\s)*[crud]\s\([a-z]+(,[a-z]+)*\)$/", $line )) {
+			$type = 'ROL_LINE';
+		}
+		if (preg_match ( "/^((\*\*|\*>|<>|<\*)\s)?[a-z_]+(:([a-z]+|\@|\%|\#))?(\s\[[a-zA-Z\-]+(,[a-zA-Z\-]+)*\])?$/", $line )) {
+			$type = 'ATTRIBUTE';
+		}
+		
+		return $type;
+	}
+	
+	// ----------------------------------
+	function pdm_process_bean_name($line) {
+		$class = new MyClass ( strtolower ( explode ( ' ', $line ) [0] ) );
+		if (strpos ( $line, ' ' )) {
+			$class->login_bean = true;
+		}
+		return $class;
+	}
+	
+	// =============================================================
+	function pdm_process_attribute($line) {
+		error_reporting ( 0 );
+		$name = 'NO_NAME';
+		$type = 'String';
+		$collection = false;
+		$mode = 'NO_MODE';
+		$hidden_create = false;
+		$hidden_recover = false;
+		$main = false;
+		
+		$pattern = "/^([\*\<\>]+\s)?([a-z_]+)(\:[a-z\%\@\#]+)?(\s\[[a-zA-Z,\-]+\])?$/";
+		preg_match ( $pattern, $line, $matches );
+		$multiplicity = $matches [1] != '' ? rtrim ( $matches [1] ) : 'REGULAR';
+		$name = $matches [2];
+		$type = $matches [3] != '' ? ltrim ( $matches [3], "\s\:" ) : 'String';
+		$modifiers = trim ( $matches [4], " []" );
+		
+		$collection = ($multiplicity != 'REGULAR');
+		
+		switch ($multiplicity) {
+			case '<>' :
+				$mode = 'O2O';
+				break;
+			case '*>' :
+				$mode = 'M2O';
+				break;
+			case '<*' :
+				$mode = 'O2M';
+				break;
+			case '**' :
+				$mode = 'M2M';
+				break;
+		}
+		
+		switch ($type) {
+			case '#' :
+				$type = 'number';
+				break;
+			case '%' :
+				$type = 'date';
+				break;
+			case '@' :
+				$type = 'file';
+				break;
+		}
+		
+		$hidden_create = (strpos ( $modifiers, 'c-' ) !== false);
+		$hidden_recover = (strpos ( $modifiers, 'r-' ) !== false);
+		$main = (strpos ( $modifiers, 'M' ) !== false);
+		$mode = (strpos ( $modifiers, 'U' ) !== false) ? 'UNIQUE' : $mode;
+		if ($multiplicity != 'REGULAR' && $mode == 'UNIQUE') {
+			throw new Exception ( "ERROR while parsing model.txt: Only REGULAR attributes can be UNIQUE <br/><b>$line</b>" );
+		}
+		if ($mode == 'M2M' && strpos ( $name, '_' ) !== false) {
+			throw new Exception ( "ERROR while parsing model.txt: <i>Many to many</i> attribute name cannot contain underscores <br/><b>$line</b>" );
+		}
+		
+		error_reporting ( E_ALL );
+		
+		return new Attribute ( $name, $type, $collection, $mode, $hidden_create, $hidden_recover, $main );
+	}
+	
+	// =============================================================
+	
+	$lines = $modelData;
+	$line_number = 0;
+	$classes = [ ];
+	$current_class = null;
+	
+	$state = 'idle';
+	
+	foreach ( explode ( "\n", $lines ) as $line ) {
+		$line_number ++;
+		$line = trim ( $line );
+		if ($line != "") {
+			switch ($state) {
+				case 'idle' :
+					if (pdm_line_type ( $line ) != 'BEAN_SEPARATOR') {
+						throw new Exception ( "ERROR while parsing model.txt (line $line_number): Bean separator expected <br/><b>$line</b>" );
+					}
+					$state = 'bean_name';
+					break;
+				case 'bean_name' :
+					if (pdm_line_type ( $line ) != 'BEAN_NAME') {
+						throw new Exception ( "ERROR while parsing model.txt (line $line_number): Bean name expected <br/><b>$line</b>" );
+					}
+					$current_class = pdm_process_bean_name ( $line );
+					$state = 'rol_line';
+					break;
+				case 'rol_line' :
+					if (! (pdm_line_type ( $line ) == 'ROL_LINE' || pdm_line_type ( $line ) == 'ATTRIBUTE_SEPARATOR')) {
+						throw new Exception ( "ERROR while parsing model.txt (line $line_number): Rol line or attribute separator expected <br/><b>$line</b>" );
+					}
+					if (pdm_line_type ( $line ) == 'ATTRIBUTE_SEPARATOR') {
+						$state = 'attribute';
+					}
+					break;
+				case 'attribute' :
+					if (! (pdm_line_type ( $line ) == 'ATTRIBUTE' || pdm_line_type ( $line ) == 'BEAN_SEPARATOR')) {
+						throw new Exception ( "ERROR while parsing model.txt (line $line_number): Attribute or bean separator expected <br/><b>$line</b>" );
+					}
+					if (pdm_line_type ( $line ) == 'BEAN_SEPARATOR') {
+						$current_class->setMainAttribute ();
+						$classes [] = $current_class;
+						$current_class = null;
+						$state = 'idle';
+					} else {
+						$current_class->add_attribute ( pdm_process_attribute ( $line ) );
+					}
+					break;
+			}
+		}
+	}
+	
+	if ($state != 'idle') {
+		throw new Exception ( "MODEL PARSE ERROR ($line_number): Unexpected end of file <br/><b>$line</b>" );
+	}
+	
+	return $classes;
+}
 // ------------------------------
 function delete_directory($path, $ignore_files, $first_level) {
 	if (! file_exists ( $path )) { // Name not correct
@@ -273,8 +351,8 @@ function generate_yuml($classes) {
 	foreach ( $classes as $class ) {
 		$alt = true;
 		foreach ( $class->attributes as $i => $a ) {
-			// $rel_name = ($alt?' ':'').$a->name.($alt?'':' ');
-			$rel_name = $a->name;
+			$rel_name = ($alt ? ' ' : '') . $a->name . ($alt ? '' : ' ');
+			// $rel_name = $a->name;
 			$alt = ! $alt;
 			switch ($a->mode) {
 				case 'M2O' :
@@ -833,6 +911,7 @@ function generate_controller_list($class) {
 		\$this->load->model('{$cn}_model');
 		\$filter = isset(\$_POST['filter'])?\$_POST['filter']:'';
 		\$data['body']['$cn'] = (\$filter == '' ? \$this->{$cn}_model->get_all() : \$this->{$cn}_model->get_filtered( \$filter ) );
+		\$data['body']['filter'] = \$filter ;
 		enmarcar(\$this, '{$cn}/list', \$data);
 	}
 CODE;
@@ -955,6 +1034,7 @@ M2O;
 	foreach (\${$a->name} as \$id) {
 		\$o2m = R::load('{$a->type}', \$id);
 		\$bean -> alias('{$a->name}') ->own{$type_capitalized}List[] = \$o2m;
+		R::store(\$bean);
 	}
 				
 				
@@ -1153,12 +1233,15 @@ CODE;
 			if (! $a->is_dependant ()) { // REGULAR ATTRIBUTE
 				$code .= "\n\t\t\$where_clause[] = '{$a->name} LIKE ?';";
 			} else {
-				if ($a->mode != 'M2M') { // NOT MANY TO MANY
+				if ($a->mode == 'O2O' || $a->mode == 'M2O') { // O2O or M2O
 					$foreign_name = getMainAttributeName ( $classes, $a->type );
-					$code .= "\n\t\t\$where_clause[] = " . "'(SELECT $foreign_name FROM {$a->type} WHERE {$a->type}.id = {$class->name}.id) LIKE ?';";
-				} else { // MANY TO MANY
+					$code .= "\n\t\t\$where_clause[] = " . "'(SELECT $foreign_name FROM {$a->type} WHERE {$a->type}.id = {$class->name}.{$a->name}_id) LIKE ?';";
+				} else if ($a->mode == 'O2M') { // O2M
 					$foreign_name = getMainAttributeName ( $classes, $a->type );
-					$code .= "\n\t\t\$where_clause[] = " . "'(SELECT $foreign_name FROM {$a->type} WHERE {$a->type}.id = {$class->name}.id) LIKE ?';";
+					$code .= "\n\t\t\$where_clause[] = " . "'(SELECT count(*) FROM {$a->type} WHERE $foreign_name LIKE ? AND {$a->name}_id = {$class->name}.id) > 0';";
+				} else if ($a->mode == 'M2M') {
+					$foreign_name = getMainAttributeName ( $classes, $a->type );
+					$code .= "\n\t\t\$where_clause[] = " . "'(SELECT count(*) FROM {$a->type} WHERE $foreign_name LIKE ? AND {$a->type}.id IN (SELECT {$a->type}_id FROM {$a->name} WHERE {$class->name}_id = {$class->name}.id)) > 0';";
 				}
 			}
 		}
@@ -1598,13 +1681,13 @@ function generate_view_list($class, $classes) {
 <div class="container">
 <div class="row">
 	<div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4">
-		<form class="form-inline"  action="<?=base_url()?>$cn/create"><input type="submit" class="btn btn-primary" value="Crear $cn" autofocus=""></form>
+		<form class="form-inline"  action="<?=base_url()?>$cn/create"><input type="submit" class="btn btn-primary" value="Crear $cn" autofocus="autofocus"></form>
 	</div>
 
 	<div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4">
 		<form class="form-inline" action="<?=base_url()?>$cn/list" method="post">
 			<label for="id-filter">Filtrar</label>
-			<input id="id-filter" type="text" name="filter" class="form-control" >
+			<input id="id-filter" type="search" name="filter" value="<?=\$body['filter']?>" class="form-control" >
 		</form>
 	</div>
 </div>
@@ -1635,43 +1718,46 @@ CODE;
 	<tbody>
 	<?php foreach (\$body['$cn'] as \$$cn): ?>
 		<tr>
-			<td class="alert alert-success"><?= \$$cn -> $ma ?></td>
+			<td class="alert alert-success"><?= str_ireplace(\$body['filter'], '<kbd>'.\$body['filter'].'</kbd>', \$$cn -> $ma) ?></td>
 
 CODE;
 	foreach ( $class->attributes as $a ) {
-		if (! $a->hidden_recover ) {
-		if (! $a->main) {
-			if (! ($a->is_dependant ())) { // ============ REGULAR ATTRIBUTE ===============
-				$code .= "\t\t\t<td><?= \$$cn -> {$a->name} ?></td>" . PHP_EOL;
-			} else {
-				$main_attribute_name = getMainAttributeName ( $classes, $a->type );
-				if ($a->mode == 'M2O' || $a->mode == 'O2O') { // ===== SOMETHING TO ONE RELATIONSHIPS =======
-					$code .= "		<td><?= \$$cn ->  fetchAs('{$a->type}') -> {$a->name} -> {$main_attribute_name} ?></td>" . PHP_EOL;
-				} else if ($a->mode == 'O2M') { // ============ ONE TO MANY RELATIONSHIP ===============
-					$capital_type = ucfirst ( $a->type );
-					$code .= <<<CODE
+		if (! $a->hidden_recover) {
+			if (! $a->main) {
+				if (! ($a->is_dependant ())) { // ============ REGULAR ATTRIBUTE ===============
+					$td_content = "\$$cn -> {$a->name}";
+					$code .= "\t\t\t<td><?= str_ireplace(\$body['filter'], '<kbd>'.\$body['filter'].'</kbd>',$td_content) ?></td>" . PHP_EOL;
+				} else {
+					$main_attribute_name = getMainAttributeName ( $classes, $a->type );
+					if ($a->mode == 'M2O' || $a->mode == 'O2O') { // ===== SOMETHING TO ONE RELATIONSHIPS =======
+						$td_content = "\$$cn ->  fetchAs('{$a->type}') -> {$a->name} -> {$main_attribute_name}";
+						$code .= "		<td><?= str_ireplace(\$body['filter'], '<kbd>'.\$body['filter'].'</kbd>',$td_content) ?></td>" . PHP_EOL;
+					} else if ($a->mode == 'O2M') { // ============ ONE TO MANY RELATIONSHIP ===============
+						$capital_type = ucfirst ( $a->type );
+						
+						$code .= <<<CODE
 
 				<td>
 				<?php foreach (\$$cn -> alias ('{$a->name}') -> own{$capital_type}List as \$data): ?>
-					<span><?= \$data -> $main_attribute_name ?> </span>
+					<span><?= str_ireplace(\$body['filter'], '<kbd>'.\$body['filter'].'</kbd>', \$data -> $main_attribute_name) ?> </span>
 				<?php endforeach; ?>
 				</td>
 
 CODE;
-				} else if ($a->mode == 'M2M') { // ============ MANY TO MANY RELATIONSHIP ===============
-					$capital_name = ucfirst ( $a->name );
-					$code .= <<<CODE
+					} else if ($a->mode == 'M2M') { // ============ MANY TO MANY RELATIONSHIP ===============
+						$capital_name = ucfirst ( $a->name );
+						$code .= <<<CODE
 					
 				<td>
 				<?php foreach (\$$cn -> aggr('own{$capital_name}List', '{$a->type}') as \$data): ?>
-					<span><?= \$data -> $main_attribute_name ?> </span>
+					<span><?= str_ireplace(\$body['filter'], '<kbd>'.\$body['filter'].'</kbd>', \$data -> $main_attribute_name ) ?> </span>
 				<?php endforeach; ?>
 				</td>
 				
 CODE;
+					}
 				}
 			}
-		}
 		}
 	}
 	$code .= <<<CODE

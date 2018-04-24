@@ -1,178 +1,54 @@
 =========================
-IES
+PERSONA
 .........................
-<* ocurre:cursoacademico
+
+fechanacimiento:%
+peso:# [U]
+
+<> amo:mascota
+
+*> ciudadanos:pais
+
+<* expertoen:aficion
+<* inutilen:aficion
+
+** gusta:aficion
+** odia:aficion
+
+
 =========================
 
 
 
+
+
 =========================
-CURSOACADEMICO
+AFICION
 .........................
-anyoini:# [M]
 
-*> ocurre:ies
-<* tieneim:imparticion
-** trabaja:usuario
-=========================
+*> expertoen:persona [c-]
+*> inutilen:persona [c-]
 
-
+** odia:persona [c-]
+** gusta:persona [c-]
 
 =========================
-USUARIO
+
+
+
+=========================
+MASCOTA
 .........................
-pwd [r-]
-rol
 
-** trabaja:cursoacademico
-** pertenece:departamento
-<* realiza:encuesta
-<* desarrolla:imparticion
-*> grreferencia:grupo
+<> amo:persona [c-]
 =========================
 
 
 
 =========================
-GRUPO
+PAIS
 .........................
-<* grreferencia:usuario
-<* impartida:imparticion
-*> pertenece:curso
-=========================
 
-
-
-=========================
-DEPARTAMENTO
-.........................
-** pertenece:usuario
-<* imparte:asignatura
-** gestiona:titulacion
-=========================
-
-
-
-=========================
-ASIGNATURA
-.........................
-*> imparte:departamento
-<* refierea:imparticion
-=========================
-
-
-
-=========================
-IMPARTICION
-.........................
-*> desarrolla:usuario
-*> impartida:grupo
-*> refierea:asignatura
-** asociaa:plantillaencuesta
-<* realizada:encuesta
-*> tieneim:cursoacademico
-=========================
-
-
-
-=========================
-CURSO
-.........................
-nivel:# [M]
-
-<* pertenece:grupo
-*> tienetit:titulacion
-=========================
-
-
-
-=========================
-PLANTILLAENCUESTA
-.........................
-** asociaa:imparticion
-<* componepc:preguntacerrada
-<* componepa:preguntaabierta
-<* acercade:encuesta
-=========================
-
-
-
-=========================
-ENCUESTA
-.........................
-fecha:% [M]
-
-*> realiza:usuario
-*> realizada:imparticion
-*> acercade:plantillaencuesta
-*> responderc:respuestacerrada
-<* respondera:respuestaabierta
-=========================
-
-
-
-=========================
-PREGUNTACERRADA
-.........................
-enunciado
-enunciadofacil
-min:#
-max:#
-
-*> versacerrada:asignatura
-*> componepc:plantillaencuesta
-*> respuestasrc:respuestacerrada
-*> contienepc:categoria
-=========================
-
-
-
-=========================
-PREGUNTAABIERTA
-.........................
-enunciado [M]
-enunciadofacil
-
-*> versaabierta:asignatura
-*> componepa:plantillaencuesta
-<* respuestasra:respuestaabierta
-*> contienepa:categoria
-=========================
-
-
-
-=========================
-RESPUESTACERRADA
-.........................
-numero:# [M]
-*> responderc:encuesta
-*> respuestasrc:preguntacerrada
-=========================
-
-
-
-=========================
-RESPUESTAABIERTA
-.........................
-texto [M]
-*> respondera:encuesta
-*> respuestasra:preguntaabierta
-=========================
-
-
-
-=========================
-CATEGORIA
-.........................
-<* contienepc:preguntacerrada
-<* contienepa:preguntaabierta
-=========================
-
-
-
-=========================
-TITULACION
-.........................
-<* tienetit:curso
+<* ciudadanos:persona [c-]
 =========================
 

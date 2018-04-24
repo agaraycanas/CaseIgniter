@@ -23,7 +23,7 @@ function process_domain_model($modelData) {
 		if (preg_match ( "/^(\s)*[crud]\s\([a-z]+(,[a-z]+)*\)$/", $line )) {
 			$type = 'ROL_LINE';
 		}
-		if (preg_match ( "/^((\*\*|\*>|<>|<\*)\s)?[a-z]+(:([a-z]+|\@|\%|\#))?(\s\[[a-zA-Z\-]+(,[a-zA-Z\-]+)*\])?$/", $line )) {
+		if (preg_match ( "/^((\*\*|\*>|<>|<\*)\s)?[a-z_]+(:([a-z]+|\@|\%|\#))?(\s\[[a-zA-Z\-]+(,[a-zA-Z\-]+)*\])?$/", $line )) {
 			$type = 'ATTRIBUTE';
 		}
 		
@@ -50,7 +50,7 @@ function process_domain_model($modelData) {
 		$hidden_recover = false;
 		$main = false;
 		
-		$pattern = "/^([\*\<\>]+\s)?([a-z]+)(\:[a-z\%\@\#]+)?(\s\[[a-zA-Z,\-]+\])?$/";
+		$pattern = "/^([\*\<\>]+\s)?([a-z_]+)(\:[a-z\%\@\#]+)?(\s\[[a-zA-Z,\-]+\])?$/";
 		preg_match ( $pattern, $line, $matches );
 		$multiplicity = $matches[1] != '' ? rtrim($matches[1]) : 'REGULAR';
 		$name = $matches [2] ;
@@ -77,10 +77,12 @@ function process_domain_model($modelData) {
 		$main = (strpos($modifiers, 'M') !== false ); 
 		$mode = (strpos($modifiers, 'U') !== false ) ? 'UNIQUE' : $mode ;
 		if ($multiplicity != 'REGULAR' && $mode == 'UNIQUE') {
-			throw new Exception ( "ERROR while parsing model.txt: Only REGULAR attributes can be UNIQUE" );
+			throw new Exception ( "ERROR while parsing model.txt: Only REGULAR attributes can be UNIQUE <br/><b>$line</b>" );
+		}
+		if ($mode == 'M2M' && strpos($name, '_') !== false ) {
+			throw new Exception ( "ERROR while parsing model.txt: <i>Many to many</i> attribute name cannot contain underscores <br/><b>$line</b>" );
 		}
 		
-		//echo "<pre>$line..$multiplicity||$name||$type||$modifiers</pre>"; //TODO DEBUG
 		
 		error_reporting(E_ALL);
 		
@@ -103,20 +105,20 @@ function process_domain_model($modelData) {
 			switch ($state) {
 				case 'idle' :
 					if (line_type ( $line ) != 'BEAN_SEPARATOR') {
-						throw new Exception ( "ERROR while parsing model.txt (line $line_number): Bean separator expected" );
+						throw new Exception ( "ERROR while parsing model.txt (line $line_number): Bean separator expected <br/><b>$line</b>" );
 					}
 					$state = 'bean_name';
 					break;
 				case 'bean_name' :
 					if (line_type ( $line ) != 'BEAN_NAME') {
-						throw new Exception ( "ERROR while parsing model.txt (line $line_number): Bean name expected" );
+						throw new Exception ( "ERROR while parsing model.txt (line $line_number): Bean name expected <br/><b>$line</b>" );
 					}
 					$current_class = process_bean_name ( $line );
 					$state = 'rol_line';
 					break;
 				case 'rol_line' :
 					if (! (line_type ( $line ) == 'ROL_LINE' || line_type ( $line ) == 'ATTRIBUTE_SEPARATOR')) {
-						throw new Exception ( "ERROR while parsing model.txt (line $line_number): Rol line or attribute separator expected" );
+						throw new Exception ( "ERROR while parsing model.txt (line $line_number): Rol line or attribute separator expected <br/><b>$line</b>" );
 					}
 					if (line_type ( $line ) == 'ATTRIBUTE_SEPARATOR') {
 						$state = 'attribute';
@@ -124,7 +126,7 @@ function process_domain_model($modelData) {
 					break;
 				case 'attribute' :
 					if (! (line_type ( $line ) == 'ATTRIBUTE' || line_type ( $line ) == 'BEAN_SEPARATOR')) {
-						throw new Exception ( "ERROR while parsing model.txt (line $line_number): Attribute or bean separator expected" );
+						throw new Exception ( "ERROR while parsing model.txt (line $line_number): Attribute or bean separator expected <br/><b>$line</b>" );
 					}
 					if (line_type ( $line ) == 'BEAN_SEPARATOR') {
 						$current_class->setMainAttribute();
@@ -140,7 +142,7 @@ function process_domain_model($modelData) {
 	}
 	
 	if ($state != 'idle') {
-		throw new Exception ( "MODEL PARSE ERROR ($line_number): Unexpected end of file " );
+		throw new Exception ( "MODEL PARSE ERROR ($line_number): Unexpected end of file <br/><b>$line</b>" );
 	}
 	
 	return $classes;

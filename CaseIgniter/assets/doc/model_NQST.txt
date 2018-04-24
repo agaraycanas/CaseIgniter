@@ -12,23 +12,34 @@ CURSOACADEMICO
 anyoini:# [M]
 
 *> ocurre:ies
+
 <* tieneim:imparticion
-** trabaja:usuario
+
+<* participa:usuario
 =========================
 
+
+=========================
+ROL
+.........................
+** roles:usuario
+=========================
 
 
 =========================
 USUARIO
 .........................
-pwd
-rol
+pwd [r-]
 
-** trabaja:cursoacademico
-** pertenece:departamento
+
+*> grreferencia:grupo
+
 <* realiza:encuesta
 <* desarrolla:imparticion
-*> grreferencia:grupo
+
+** roles:rol
+*> participa:cursoacademico
+** pertenece:departamento
 =========================
 
 
@@ -36,9 +47,10 @@ rol
 =========================
 GRUPO
 .........................
+*> pertenece:curso
+
 <* grreferencia:usuario
 <* impartida:imparticion
-*> pertenece:curso
 =========================
 
 
@@ -46,8 +58,9 @@ GRUPO
 =========================
 DEPARTAMENTO
 .........................
-** pertenece:usuario
 <* imparte:asignatura
+
+** pertenece:usuario
 ** gestiona:titulacion
 =========================
 
@@ -57,6 +70,8 @@ DEPARTAMENTO
 ASIGNATURA
 .........................
 *> imparte:departamento
+*> pertenecec:curso
+
 <* refierea:imparticion
 =========================
 
@@ -68,9 +83,11 @@ IMPARTICION
 *> desarrolla:usuario
 *> impartida:grupo
 *> refierea:asignatura
-** asociaa:plantillaencuesta
-<* realizada:encuesta
 *> tieneim:cursoacademico
+
+<* realizada:encuesta
+
+** asociaa:plantillaencuesta
 =========================
 
 
@@ -81,6 +98,8 @@ CURSO
 nivel:# [M]
 
 <* pertenece:grupo
+<* pertenecec:asignatura
+
 *> tienetit:titulacion
 =========================
 
@@ -90,6 +109,7 @@ nivel:# [M]
 PLANTILLAENCUESTA
 .........................
 ** asociaa:imparticion
+
 <* componepc:preguntacerrada
 <* componepa:preguntaabierta
 <* acercade:encuesta
@@ -105,7 +125,8 @@ fecha:% [M]
 *> realiza:usuario
 *> realizada:imparticion
 *> acercade:plantillaencuesta
-*> responderc:respuestacerrada
+
+<* responderc:respuestacerrada
 <* respondera:respuestaabierta
 =========================
 
@@ -118,11 +139,12 @@ enunciado
 enunciadofacil
 min:#
 max:#
+peso:#
 
-*> versacerrada:asignatura
 *> componepc:plantillaencuesta
-*> respuestasrc:respuestacerrada
 *> contienepc:categoria
+
+<* respuestasrc:respuestacerrada
 =========================
 
 
@@ -133,10 +155,10 @@ PREGUNTAABIERTA
 enunciado [M]
 enunciadofacil
 
-*> versaabierta:asignatura
 *> componepa:plantillaencuesta
-<* respuestasra:respuestaabierta
 *> contienepa:categoria
+
+<* respuestasra:respuestaabierta
 =========================
 
 
@@ -145,6 +167,7 @@ enunciadofacil
 RESPUESTACERRADA
 .........................
 numero:# [M]
+
 *> responderc:encuesta
 *> respuestasrc:preguntacerrada
 =========================
@@ -155,6 +178,7 @@ numero:# [M]
 RESPUESTAABIERTA
 .........................
 texto [M]
+
 *> respondera:encuesta
 *> respuestasra:preguntaabierta
 =========================

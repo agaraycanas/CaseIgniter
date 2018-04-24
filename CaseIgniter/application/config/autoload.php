@@ -89,7 +89,7 @@ $autoload['drivers'] = array();
 |
 |	$autoload['helper'] = array('url', 'file');
 */
-$autoload['helper'] = ['marco','url','casei','file_get_contents_alt'];
+$autoload['helper'] = ['marco','url','casei'];
 
 /*
 | -------------------------------------------------------------------
