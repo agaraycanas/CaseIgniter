@@ -7,7 +7,7 @@ peso:# [U]
 
 <> amo:mascota
 
-*> ciudadanos:pais
+*> paisnacimiento:pais
 
 <* expertoen:aficion
 <* inutilen:aficion
@@ -49,6 +49,6 @@ MASCOTA
 PAIS
 .........................
 
-<* ciudadanos:persona [c-]
+<* paisnacimiento:persona [c-]
 =========================
 

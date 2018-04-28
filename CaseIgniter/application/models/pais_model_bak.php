@@ -14,7 +14,6 @@ class pais_model extends CI_Model {
 
 
 	// Regular attribute
-	$bean -> setMeta("buildcommand.unique" , array(array('nombre')) );
 	$bean -> nombre = $nombre;
 
 	R::store($bean);
@@ -50,8 +49,10 @@ class pais_model extends CI_Model {
 	*/
 	public function get_filtered($filter) {
 
+		$where_clause = [ ];
+
 		$where_clause[] = 'nombre LIKE ?';
-		$where_clause[] = '(SELECT count(*) FROM persona WHERE nombre LIKE ? AND ciudadanos_id = pais.id) > 0';
+		$where_clause[] = '(SELECT count(*) FROM persona WHERE nombre LIKE ? AND paisnacimiento_id = pais.id) > 0';
 		$f = "%$filter%";
 		
 		return R::findAll('pais', implode(' OR ', $where_clause) , [ $f,$f ] );

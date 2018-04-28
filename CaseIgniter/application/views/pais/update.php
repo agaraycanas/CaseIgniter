@@ -20,21 +20,35 @@
 	
 <div class="container">
 <h2> Editar pais </h2>
-		
-<form class="row col-sm-4" id="idForm" action="<?= base_url() ?>pais/update_post" method="post">
-		
+
+<form class="form" role="form" id="idForm" action="<?= base_url() ?>pais/update_post" method="post">
+	
+	<input type="hidden" name="filter" value="<?=$body['filter']?>" />
+	
 		
 	<input type="hidden" name="id" value="<?= $body['pais']->id ?>">
-			
+	
+	<div class="row form-inline form-group">
+		<label for="id-nombre" class="col-2 justify-content-end">Nombre</label>
+		<input id="id-nombre" type="text" name="nombre" class="col-6 form-control" autofocus="autofocus">
+	</div>
+		
 
-	<div class="form-group">
-		<label for="id-nombre">Nombre</label>
-		<input id="id-nombre" type="text" name="nombre" value="<?=  $body['pais']->nombre ?>" class="form-control" onkeypress="detect(event);">
+	<div class="row form-inline form-group">
+		<label for="id-nombre" class="col-2 justify-content-end">Nombre</label>
+		<input id="id-nombre" type="text" name="nombre" value="<?=  $body['pais']->nombre ?>" class="col-6 form-control">
 	</div>
 				
-				
+				<div class="row offset-2 col-6">
 	<input type="submit" class="btn btn-primary" value="Actualizar">
-			
 </form>
-			
+
+
+<form action="<?=base_url()?>pais/list" method="post">
+	<input type="hidden" name="filter" value="<?=$body['filter']?>" />
+	<input type="submit" class="offset-1 btn btn-primary" value="Cancelar">
+</form>
+
 </div>
+
+			

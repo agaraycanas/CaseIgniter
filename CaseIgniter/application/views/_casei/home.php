@@ -9,7 +9,7 @@
 		</div>
 		
 		<div class="row">
-			<label for="idTitle">Título de la aplcación</label>
+			<label for="idTitle">Título de la aplicación</label>
 			<input type="text" name="appTitle" id="idTitle" class="form-control">
 		</div>		
 		

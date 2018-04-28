@@ -11,7 +11,11 @@
 <div class="container">
 <div class="row">
 	<div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4">
-		<form class="form-inline"  action="<?=base_url()?>pais/create"><input type="submit" class="btn btn-primary" value="Crear pais" autofocus="autofocus"></form>
+		<form id="id-create" class="form-inline"  action="<?=base_url()?>pais/create">
+			<input type="hidden" id="id-createfilter" name="filter" value="" />
+			<input type="button" class="btn btn-primary" value="Crear pais" autofocus="autofocus"
+				onclick="getElementById('id-createfilter').value  = getElementById('id-filter').value ;getElementById('id-create').submit() ;">
+		</form>
 	</div>
 
 	<div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4">
@@ -24,10 +28,10 @@
 
 <h1>LISTA de  pais</h1>
 
-<table id="myTable" class="table table-striped tablesorter">
+<table id="myTable" class="table table-hover table-striped tablesorter">
 	<thead>
 	<tr>
-		<th>nombre</th>		<th>ciudadanos - nombre(persona)</th>
+		<th>nombre</th>		<th>paisnacimiento - nombre(persona)</th>
 		<th>Acciones</th>
 	</tr>
 	</thead>
@@ -38,25 +42,29 @@
 			<td class="alert alert-success"><?= str_ireplace($body['filter'], '<kbd>'.$body['filter'].'</kbd>', $pais -> nombre) ?></td>
 
 				<td>
-				<?php foreach ($pais -> alias ('ciudadanos') -> ownPersonaList as $data): ?>
+				<?php foreach ($pais -> alias ('paisnacimiento') -> ownPersonaList as $data): ?>
 					<span><?= str_ireplace($body['filter'], '<kbd>'.$body['filter'].'</kbd>', $data -> nombre) ?> </span>
 				<?php endforeach; ?>
 				</td>
 
-			<td class="form-inline col-md-1">
-				<form action="<?= base_url() ?>pais/update" method="post" class="form-group">
+			<td class="form-inline text-center">
+
+				<form id="id-update-<?= $pais -> id ?>" action="<?= base_url() ?>pais/update" method="post" class="form-group">
 					<input type="hidden" name="id" value="<?= $pais -> id ?>">
-					<button onclick="submit()">
+					<input type="hidden" name="filter" value="" id="id-updatefilter-<?= $pais -> id ?>">
+					<button onclick="getElementById('id-updatefilter-<?= $pais -> id ?>').value  = getElementById('id-filter').value ;getElementById('id-update').submit() ;">
 						<img src="<?= base_url() ?>assets/img/icons/png/pencil-2x.png" height="15" width="15" alt="editar">
 					</button>
 				</form>
 
-				<form action="<?= base_url() ?>pais/delete" method="post" class="form-group">
+				<form id="id-delete-<?= $pais -> id ?>" action="<?= base_url() ?>pais/delete" method="post" class="form-group">
 					<input type="hidden" name="id" value="<?= $pais -> id ?>">
-					<button onclick="submit()">
+					<input type="hidden" name="filter" value="" id="id-deletefilter-<?= $pais -> id ?>">
+					<button onclick="getElementById('id-deletefilter-<?= $pais -> id ?>').value  = getElementById('id-filter').value ;getElementById('id-delete').submit() ;">
 						<img src="<?= base_url() ?>assets/img/icons/png/trash-2x.png" height="15" width="15" alt="borrar">
 					</button>
 				</form>
+
 			</td>
 
 		</tr>

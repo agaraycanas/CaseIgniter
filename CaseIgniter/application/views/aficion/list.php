@@ -11,7 +11,11 @@
 <div class="container">
 <div class="row">
 	<div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4">
-		<form class="form-inline"  action="<?=base_url()?>aficion/create"><input type="submit" class="btn btn-primary" value="Crear aficion" autofocus="autofocus"></form>
+		<form id="id-create" class="form-inline"  action="<?=base_url()?>aficion/create">
+			<input type="hidden" id="id-createfilter" name="filter" value="" />
+			<input type="button" class="btn btn-primary" value="Crear aficion" autofocus="autofocus"
+				onclick="getElementById('id-createfilter').value  = getElementById('id-filter').value ;getElementById('id-create').submit() ;">
+		</form>
 	</div>
 
 	<div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4">
@@ -24,7 +28,7 @@
 
 <h1>LISTA de  aficion</h1>
 
-<table id="myTable" class="table table-striped tablesorter">
+<table id="myTable" class="table table-hover table-striped tablesorter">
 	<thead>
 	<tr>
 		<th>nombre</th>		<th>expertoen - nombre(persona)</th>
@@ -54,20 +58,24 @@
 				<?php endforeach; ?>
 				</td>
 				
-			<td class="form-inline col-md-1">
-				<form action="<?= base_url() ?>aficion/update" method="post" class="form-group">
+			<td class="form-inline text-center">
+
+				<form id="id-update-<?= $aficion -> id ?>" action="<?= base_url() ?>aficion/update" method="post" class="form-group">
 					<input type="hidden" name="id" value="<?= $aficion -> id ?>">
-					<button onclick="submit()">
+					<input type="hidden" name="filter" value="" id="id-updatefilter-<?= $aficion -> id ?>">
+					<button onclick="getElementById('id-updatefilter-<?= $aficion -> id ?>').value  = getElementById('id-filter').value ;getElementById('id-update').submit() ;">
 						<img src="<?= base_url() ?>assets/img/icons/png/pencil-2x.png" height="15" width="15" alt="editar">
 					</button>
 				</form>
 
-				<form action="<?= base_url() ?>aficion/delete" method="post" class="form-group">
+				<form id="id-delete-<?= $aficion -> id ?>" action="<?= base_url() ?>aficion/delete" method="post" class="form-group">
 					<input type="hidden" name="id" value="<?= $aficion -> id ?>">
-					<button onclick="submit()">
+					<input type="hidden" name="filter" value="" id="id-deletefilter-<?= $aficion -> id ?>">
+					<button onclick="getElementById('id-deletefilter-<?= $aficion -> id ?>').value  = getElementById('id-filter').value ;getElementById('id-delete').submit() ;">
 						<img src="<?= base_url() ?>assets/img/icons/png/trash-2x.png" height="15" width="15" alt="borrar">
 					</button>
 				</form>
+
 			</td>
 
 		</tr>

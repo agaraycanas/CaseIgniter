@@ -11,7 +11,11 @@
 <div class="container">
 <div class="row">
 	<div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4">
-		<form class="form-inline"  action="<?=base_url()?>persona/create"><input type="submit" class="btn btn-primary" value="Crear persona" autofocus="autofocus"></form>
+		<form id="id-create" class="form-inline"  action="<?=base_url()?>persona/create">
+			<input type="hidden" id="id-createfilter" name="filter" value="" />
+			<input type="button" class="btn btn-primary" value="Crear persona" autofocus="autofocus"
+				onclick="getElementById('id-createfilter').value  = getElementById('id-filter').value ;getElementById('id-create').submit() ;">
+		</form>
 	</div>
 
 	<div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4">
@@ -24,13 +28,13 @@
 
 <h1>LISTA de  persona</h1>
 
-<table id="myTable" class="table table-striped tablesorter">
+<table id="myTable" class="table table-hover table-striped tablesorter">
 	<thead>
 	<tr>
 		<th>nombre</th>		<th>fechanacimiento</th>
 		<th>peso</th>
 		<th>amo - nombre(mascota)</th>
-		<th>ciudadanos - nombre(pais)</th>
+		<th>paisnacimiento - nombre(pais)</th>
 		<th>expertoen - nombre(aficion)</th>
 		<th>inutilen - nombre(aficion)</th>
 		<th>gusta - nombre(aficion)</th>
@@ -46,7 +50,7 @@
 			<td><?= str_ireplace($body['filter'], '<kbd>'.$body['filter'].'</kbd>',$persona -> fechanacimiento) ?></td>
 			<td><?= str_ireplace($body['filter'], '<kbd>'.$body['filter'].'</kbd>',$persona -> peso) ?></td>
 		<td><?= str_ireplace($body['filter'], '<kbd>'.$body['filter'].'</kbd>',$persona ->  fetchAs('mascota') -> amo -> nombre) ?></td>
-		<td><?= str_ireplace($body['filter'], '<kbd>'.$body['filter'].'</kbd>',$persona ->  fetchAs('pais') -> ciudadanos -> nombre) ?></td>
+		<td><?= str_ireplace($body['filter'], '<kbd>'.$body['filter'].'</kbd>',$persona ->  fetchAs('pais') -> paisnacimiento -> nombre) ?></td>
 
 				<td>
 				<?php foreach ($persona -> alias ('expertoen') -> ownAficionList as $data): ?>
@@ -72,20 +76,24 @@
 				<?php endforeach; ?>
 				</td>
 				
-			<td class="form-inline col-md-1">
-				<form action="<?= base_url() ?>persona/update" method="post" class="form-group">
+			<td class="form-inline text-center">
+
+				<form id="id-update-<?= $persona -> id ?>" action="<?= base_url() ?>persona/update" method="post" class="form-group">
 					<input type="hidden" name="id" value="<?= $persona -> id ?>">
-					<button onclick="submit()">
+					<input type="hidden" name="filter" value="" id="id-updatefilter-<?= $persona -> id ?>">
+					<button onclick="getElementById('id-updatefilter-<?= $persona -> id ?>').value  = getElementById('id-filter').value ;getElementById('id-update').submit() ;">
 						<img src="<?= base_url() ?>assets/img/icons/png/pencil-2x.png" height="15" width="15" alt="editar">
 					</button>
 				</form>
 
-				<form action="<?= base_url() ?>persona/delete" method="post" class="form-group">
+				<form id="id-delete-<?= $persona -> id ?>" action="<?= base_url() ?>persona/delete" method="post" class="form-group">
 					<input type="hidden" name="id" value="<?= $persona -> id ?>">
-					<button onclick="submit()">
+					<input type="hidden" name="filter" value="" id="id-deletefilter-<?= $persona -> id ?>">
+					<button onclick="getElementById('id-deletefilter-<?= $persona -> id ?>').value  = getElementById('id-filter').value ;getElementById('id-delete').submit() ;">
 						<img src="<?= base_url() ?>assets/img/icons/png/trash-2x.png" height="15" width="15" alt="borrar">
 					</button>
 				</form>
+
 			</td>
 
 		</tr>

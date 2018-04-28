@@ -3,33 +3,37 @@
 <div class="container">
 <h2> Crear persona </h2>
 
+<!-- BOOTSTRAP3
 <form class="row col-sm-4" id="idForm" action="<?= base_url() ?>persona/create_post" method="post">
+-->
 
-			
-	<div class="form-group">
-		<label for="id-nombre">Nombre</label>
-		<input id="id-nombre" type="text" name="nombre" class="form-control" autofocus="autofocus">
+<form class="form" role="form" id="idForm" action="<?= base_url() ?>persona/create_post" method="post">
+
+	
+	<div class="row form-inline form-group">
+		<label for="id-nombre" class="col-2 justify-content-end">Nombre</label>
+		<input id="id-nombre" type="text" name="nombre" class="col-6 form-control" autofocus="autofocus">
 	</div>
 
-			
-	<div class="form-group">
-		<label for="id-fechanacimiento">Fechanacimiento</label>
-		<input id="id-fechanacimiento" type="date" name="fechanacimiento" class="form-control" >
+	
+	<div class="row form-inline form-group">
+		<label for="id-fechanacimiento" class="col-2 justify-content-end">Fechanacimiento</label>
+		<input id="id-fechanacimiento" type="date" name="fechanacimiento" class="col-3 form-control" >
 	</div>
 
-			
-	<div class="form-group">
-		<label for="id-peso">Peso</label>
-		<input id="id-peso" type="number" name="peso" class="form-control" >
+	
+	<div class="row form-inline form-group">
+		<label for="id-peso" class="col-2 justify-content-end">Peso</label>
+		<input id="id-peso" type="number" name="peso" class="col-6 form-control" >
 	</div>
 
 
-	<div class="form-group">
-		<label for="id-amo">Amo</label>
-		<select id="id-amo" name="amo" class="form-control">
+	<div class="row form-inline form-group">
+		<label for="id-amo" class="col-2 justify-content-end">Amo</label>
+		<select id="id-amo" name="amo" class="col-6 form-control">
 			<option value="0"> ----- </option>
 			<?php foreach ($body['mascota'] as $mascota ): ?>
-				<?php if ( $mascota->amo == null ): ?>
+				<?php if ( $mascota->amo_id == null ): ?>
 					<option value="<?= $mascota->id ?>"><?= $mascota->nombre ?></option>
 				<?php endif; ?> 
 			<?php endforeach; ?>
@@ -37,9 +41,9 @@
 	</div>
 
 
-	<div class="form-group">
-		<label for="id-ciudadanos">Ciudadanos</label>
-		<select id="id-ciudadanos" name="ciudadanos" class="form-control">
+	<div class="row form-inline form-group">
+		<label for="id-paisnacimiento" class="col-2 justify-content-end">Paisnacimiento</label>
+		<select id="id-paisnacimiento" name="paisnacimiento" class="col-6 form-control">
 			<option value="0"> ----- </option>
 			<?php foreach ($body['pais'] as $pais ): ?>
 				
@@ -49,60 +53,86 @@
 		</select>
 	</div>
 
-	<fieldset class="scheduler-border">
-		<legend class="scheduler-border">Expertoen</legend>
-		<div class="form-check form-check-inline">
+
+	<div class="row form-inline form-group">
+
+		<label class="col-2 justify-content-end">Expertoen</label>
+		<div class="col-6 form-check form-check-inline justify-content-start">
+
 			<?php foreach ($body['aficion'] as $aficion ): ?>
-				<?php if ( $aficion->expertoen == null ): ?>
-					<input class="form-check-input" type="checkbox" id="id-expertoen-<?=$aficion->id?>" name="expertoen[]" value="<?= $aficion->id ?>">
-					<label class="form-check-label" for="id-expertoen-<?=$aficion->id?>" ><?= $aficion->nombre ?></label>
+				<?php if ( $aficion->expertoen_id == null ): ?>
+					<div class="form-check form-check-inline">
+						<input class="form-check-input" type="checkbox" id="id-expertoen-<?=$aficion->id?>" name="expertoen[]" value="<?= $aficion->id ?>">
+						<label class="form-check-label" for="id-expertoen-<?=$aficion->id?>" ><?= $aficion->nombre ?></label>
+					</div>
 				<?php endif; ?> 
 			<?php endforeach; ?>
 		</div>
-	</fieldset>
+	</div>
 
-	<fieldset class="scheduler-border">
-		<legend class="scheduler-border">Inutilen</legend>
-		<div class="form-check form-check-inline">
+
+	<div class="row form-inline form-group">
+
+		<label class="col-2 justify-content-end">Inutilen</label>
+		<div class="col-6 form-check form-check-inline justify-content-start">
+
 			<?php foreach ($body['aficion'] as $aficion ): ?>
-				<?php if ( $aficion->inutilen == null ): ?>
-					<input class="form-check-input" type="checkbox" id="id-inutilen-<?=$aficion->id?>" name="inutilen[]" value="<?= $aficion->id ?>">
-					<label class="form-check-label" for="id-inutilen-<?=$aficion->id?>" ><?= $aficion->nombre ?></label>
+				<?php if ( $aficion->inutilen_id == null ): ?>
+					<div class="form-check form-check-inline">
+						<input class="form-check-input" type="checkbox" id="id-inutilen-<?=$aficion->id?>" name="inutilen[]" value="<?= $aficion->id ?>">
+						<label class="form-check-label" for="id-inutilen-<?=$aficion->id?>" ><?= $aficion->nombre ?></label>
+					</div>
 				<?php endif; ?> 
 			<?php endforeach; ?>
 		</div>
-	</fieldset>
+	</div>
 
-	<fieldset class="scheduler-border">
-		<legend class="scheduler-border">Gusta</legend>
-		<div class="form-check form-check-inline">
+
+	<div class="row form-inline form-group">
+
+		<label class="col-2 justify-content-end">Gusta</label>
+		<div class="col-6 form-check form-check-inline justify-content-start">
+
 			<?php foreach ($body['aficion'] as $aficion ): ?>
 				
-					<input class="form-check-input" type="checkbox" id="id-gusta-<?=$aficion->id?>" name="gusta[]" value="<?= $aficion->id ?>">
-					<label class="form-check-label" for="id-gusta-<?=$aficion->id?>" ><?= $aficion->nombre ?></label>
+					<div class="form-check form-check-inline">
+						<input class="form-check-input" type="checkbox" id="id-gusta-<?=$aficion->id?>" name="gusta[]" value="<?= $aficion->id ?>">
+						<label class="form-check-label" for="id-gusta-<?=$aficion->id?>" ><?= $aficion->nombre ?></label>
+					</div>
 				
 			<?php endforeach; ?>
 		</div>
-	</fieldset>
+	</div>
 
-	<fieldset class="scheduler-border">
-		<legend class="scheduler-border">Odia</legend>
-		<div class="form-check form-check-inline">
+
+	<div class="row form-inline form-group">
+
+		<label class="col-2 justify-content-end">Odia</label>
+		<div class="col-6 form-check form-check-inline justify-content-start">
+
 			<?php foreach ($body['aficion'] as $aficion ): ?>
 				
-					<input class="form-check-input" type="checkbox" id="id-odia-<?=$aficion->id?>" name="odia[]" value="<?= $aficion->id ?>">
-					<label class="form-check-label" for="id-odia-<?=$aficion->id?>" ><?= $aficion->nombre ?></label>
+					<div class="form-check form-check-inline">
+						<input class="form-check-input" type="checkbox" id="id-odia-<?=$aficion->id?>" name="odia[]" value="<?= $aficion->id ?>">
+						<label class="form-check-label" for="id-odia-<?=$aficion->id?>" ><?= $aficion->nombre ?></label>
+					</div>
 				
 			<?php endforeach; ?>
 		</div>
-	</fieldset>
+	</div>
 
 
+<div class="row offset-2 col-6">
 	<input type="submit" class="btn btn-primary" value="Crear">
 
 </form>
 
-<div id="idMessage" class="row col-sm-4">
+
+<form action="<?=base_url()?>persona/list" method="post">
+	<input type="hidden" name="filter" value="<?=$body['filter']?>" />
+	<input type="submit" class="offset-1 btn btn-primary" value="Cancelar">
+</form>
+
 </div>
 
 </div>	
