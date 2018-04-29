@@ -33,6 +33,7 @@
 	<tr>
 		<th>nombre</th>		<th>fechanacimiento</th>
 		<th>peso</th>
+		<th>foto</th>
 		<th>amo - nombre(mascota)</th>
 		<th>paisnacimiento - nombre(pais)</th>
 		<th>expertoen - nombre(aficion)</th>
@@ -47,34 +48,40 @@
 	<?php foreach ($body['persona'] as $persona): ?>
 		<tr>
 			<td class="alert alert-success"><?= str_ireplace($body['filter'], '<kbd>'.$body['filter'].'</kbd>', $persona -> nombre) ?></td>
+
 			<td><?= str_ireplace($body['filter'], '<kbd>'.$body['filter'].'</kbd>',$persona -> fechanacimiento) ?></td>
+
 			<td><?= str_ireplace($body['filter'], '<kbd>'.$body['filter'].'</kbd>',$persona -> peso) ?></td>
-		<td><?= str_ireplace($body['filter'], '<kbd>'.$body['filter'].'</kbd>',$persona ->  fetchAs('mascota') -> amo -> nombre) ?></td>
-		<td><?= str_ireplace($body['filter'], '<kbd>'.$body['filter'].'</kbd>',$persona ->  fetchAs('pais') -> paisnacimiento -> nombre) ?></td>
 
-				<td>
-				<?php foreach ($persona -> alias ('expertoen') -> ownAficionList as $data): ?>
-					<span><?= str_ireplace($body['filter'], '<kbd>'.$body['filter'].'</kbd>', $data -> nombre) ?> </span>
-				<?php endforeach; ?>
-				</td>
+			<td><img src="<?=base_url().( ( $persona -> foto == null || $persona -> foto == '' ) ? 'assets/img/icons/png/ban-4x.png' : 'assets/upload/'.$persona -> foto)?>" alt="IMG" width="<?=( $persona -> foto == null || $persona -> foto == '' ) ? 15 : 30?>" height="<?=( $persona -> foto == null || $persona -> foto == '' ) ? 15 : 30?>" /></td>
 
-				<td>
-				<?php foreach ($persona -> alias ('inutilen') -> ownAficionList as $data): ?>
-					<span><?= str_ireplace($body['filter'], '<kbd>'.$body['filter'].'</kbd>', $data -> nombre) ?> </span>
-				<?php endforeach; ?>
-				</td>
+			<td><?= str_ireplace($body['filter'], '<kbd>'.$body['filter'].'</kbd>',$persona ->  fetchAs('mascota') -> amo -> nombre) ?></td>
+
+			<td><?= str_ireplace($body['filter'], '<kbd>'.$body['filter'].'</kbd>',$persona ->  fetchAs('pais') -> paisnacimiento -> nombre) ?></td>
+
+			<td>
+			<?php foreach ($persona -> alias ('expertoen') -> ownAficionList as $data): ?>
+				<span><?= str_ireplace($body['filter'], '<kbd>'.$body['filter'].'</kbd>', $data -> nombre) ?> </span>
+			<?php endforeach; ?>
+			</td>
+
+			<td>
+			<?php foreach ($persona -> alias ('inutilen') -> ownAficionList as $data): ?>
+				<span><?= str_ireplace($body['filter'], '<kbd>'.$body['filter'].'</kbd>', $data -> nombre) ?> </span>
+			<?php endforeach; ?>
+			</td>
 					
-				<td>
-				<?php foreach ($persona -> aggr('ownGustaList', 'aficion') as $data): ?>
-					<span><?= str_ireplace($body['filter'], '<kbd>'.$body['filter'].'</kbd>', $data -> nombre ) ?> </span>
-				<?php endforeach; ?>
-				</td>
+			<td>
+			<?php foreach ($persona -> aggr('ownGustaList', 'aficion') as $data): ?>
+				<span><?= str_ireplace($body['filter'], '<kbd>'.$body['filter'].'</kbd>', $data -> nombre ) ?> </span>
+			<?php endforeach; ?>
+			</td>
 									
-				<td>
-				<?php foreach ($persona -> aggr('ownOdiaList', 'aficion') as $data): ?>
-					<span><?= str_ireplace($body['filter'], '<kbd>'.$body['filter'].'</kbd>', $data -> nombre ) ?> </span>
-				<?php endforeach; ?>
-				</td>
+			<td>
+			<?php foreach ($persona -> aggr('ownOdiaList', 'aficion') as $data): ?>
+				<span><?= str_ireplace($body['filter'], '<kbd>'.$body['filter'].'</kbd>', $data -> nombre ) ?> </span>
+			<?php endforeach; ?>
+			</td>
 				
 			<td class="form-inline text-center">
 

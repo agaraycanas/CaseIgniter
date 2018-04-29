@@ -11,6 +11,7 @@ class aficion_model extends CI_Model {
 	public function create( $nombre ) {
 
 	$bean = R::dispense( 'aficion' );
+	$id_bean = R::store( $bean );
 
 
 	// Regular attribute

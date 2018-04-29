@@ -21,7 +21,7 @@
 <div class="container">
 <h2> Editar persona </h2>
 
-<form class="form" role="form" id="idForm" action="<?= base_url() ?>persona/update_post" method="post">
+<form class="form" role="form" id="idForm" enctype="multipart/form-data" action="<?= base_url() ?>persona/update_post" method="post">
 	
 	<input type="hidden" name="filter" value="<?=$body['filter']?>" />
 	
@@ -61,6 +61,18 @@
 	<div class="row form-inline form-group">
 		<label for="id-peso" class="col-2 justify-content-end">Peso</label>
 		<input id="id-peso" type="number" name="peso" value="<?=  $body['persona']->peso ?>" class="col-6 form-control">
+	</div>
+				
+					
+	<div class="row form-inline form-group">
+		<label for="id-nombre" class="col-2 justify-content-end">Nombre</label>
+		<input id="id-nombre" type="text" name="nombre" class="col-6 form-control" autofocus="autofocus">
+	</div>
+		
+
+	<div class="row form-inline form-group">
+		<label for="id-foto" class="col-2 justify-content-end">Foto</label>
+		<input id="id-foto" type="file" name="foto" value="<?=  $body['persona']->foto ?>" class="col-6 form-control">
 	</div>
 				
 								

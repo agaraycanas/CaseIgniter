@@ -36,6 +36,7 @@ class persona extends CI_Controller {
 		$nombre = ( isset( $_POST['nombre']) ? $_POST['nombre'] : null );
 		$fechanacimiento = ( isset( $_POST['fechanacimiento']) ? $_POST['fechanacimiento'] : null );
 		$peso = ( isset( $_POST['peso']) ? $_POST['peso'] : null );
+		$foto = ( isset( $_FILES['foto']) ? $_FILES['foto'] : null );
 		$amo = ( isset( $_POST['amo']) ? $_POST['amo'] : [] );
 		$paisnacimiento = ( isset( $_POST['paisnacimiento']) ? $_POST['paisnacimiento'] : [] );
 		$expertoen = ( isset( $_POST['expertoen']) ? $_POST['expertoen'] : [] );
@@ -44,7 +45,7 @@ class persona extends CI_Controller {
 		$odia = ( isset( $_POST['odia']) ? $_POST['odia'] : [] );
 
 		try {
-			$id = $this->persona_model->create( $nombre, $fechanacimiento, $peso, $amo, $paisnacimiento, $expertoen, $inutilen, $gusta, $odia );
+			$id = $this->persona_model->create( $nombre, $fechanacimiento, $peso, $foto, $amo, $paisnacimiento, $expertoen, $inutilen, $gusta, $odia );
 			$this->list_id($id);
 		}
 		catch (Exception $e) {
@@ -137,6 +138,7 @@ class persona extends CI_Controller {
 		$nombre = ( isset( $_POST['nombre']) ? $_POST['nombre'] : null );
 		$fechanacimiento = ( isset( $_POST['fechanacimiento']) ? $_POST['fechanacimiento'] : null );
 		$peso = ( isset( $_POST['peso']) ? $_POST['peso'] : null );
+		$foto = ( isset( $_POST['foto']) ? $_POST['foto'] : null );
 		$amo = ( isset( $_POST['amo']) ? $_POST['amo'] : [] );
 		$paisnacimiento = ( isset( $_POST['paisnacimiento']) ? $_POST['paisnacimiento'] : [] );
 		$expertoen = ( isset( $_POST['expertoen']) ? $_POST['expertoen'] : [] );
@@ -145,7 +147,7 @@ class persona extends CI_Controller {
 		$odia = ( isset( $_POST['odia']) ? $_POST['odia'] : [] );
 
 		try {
-			$this->persona_model->update( $id, $nombre, $fechanacimiento, $peso, $amo, $paisnacimiento, $expertoen, $inutilen, $gusta, $odia );
+			$this->persona_model->update( $id, $nombre, $fechanacimiento, $peso, $foto, $amo, $paisnacimiento, $expertoen, $inutilen, $gusta, $odia );
 
 			$filter = isset($_POST['filter']) ? $_POST['filter'] : '' ;
 			redirect( base_url() . 'persona/list?filter='.$filter );

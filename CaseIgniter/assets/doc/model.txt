@@ -4,6 +4,7 @@ PERSONA
 
 fechanacimiento:%
 peso:# [U]
+foto:@
 
 <> amo:mascota
 

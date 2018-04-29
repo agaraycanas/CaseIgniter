@@ -43,20 +43,22 @@
 	<?php foreach ($body['aficion'] as $aficion): ?>
 		<tr>
 			<td class="alert alert-success"><?= str_ireplace($body['filter'], '<kbd>'.$body['filter'].'</kbd>', $aficion -> nombre) ?></td>
-		<td><?= str_ireplace($body['filter'], '<kbd>'.$body['filter'].'</kbd>',$aficion ->  fetchAs('persona') -> expertoen -> nombre) ?></td>
-		<td><?= str_ireplace($body['filter'], '<kbd>'.$body['filter'].'</kbd>',$aficion ->  fetchAs('persona') -> inutilen -> nombre) ?></td>
+
+			<td><?= str_ireplace($body['filter'], '<kbd>'.$body['filter'].'</kbd>',$aficion ->  fetchAs('persona') -> expertoen -> nombre) ?></td>
+
+			<td><?= str_ireplace($body['filter'], '<kbd>'.$body['filter'].'</kbd>',$aficion ->  fetchAs('persona') -> inutilen -> nombre) ?></td>
 					
-				<td>
-				<?php foreach ($aficion -> aggr('ownOdiaList', 'persona') as $data): ?>
-					<span><?= str_ireplace($body['filter'], '<kbd>'.$body['filter'].'</kbd>', $data -> nombre ) ?> </span>
-				<?php endforeach; ?>
-				</td>
+			<td>
+			<?php foreach ($aficion -> aggr('ownOdiaList', 'persona') as $data): ?>
+				<span><?= str_ireplace($body['filter'], '<kbd>'.$body['filter'].'</kbd>', $data -> nombre ) ?> </span>
+			<?php endforeach; ?>
+			</td>
 									
-				<td>
-				<?php foreach ($aficion -> aggr('ownGustaList', 'persona') as $data): ?>
-					<span><?= str_ireplace($body['filter'], '<kbd>'.$body['filter'].'</kbd>', $data -> nombre ) ?> </span>
-				<?php endforeach; ?>
-				</td>
+			<td>
+			<?php foreach ($aficion -> aggr('ownGustaList', 'persona') as $data): ?>
+				<span><?= str_ireplace($body['filter'], '<kbd>'.$body['filter'].'</kbd>', $data -> nombre ) ?> </span>
+			<?php endforeach; ?>
+			</td>
 				
 			<td class="form-inline text-center">
 

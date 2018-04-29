@@ -11,6 +11,7 @@ class pais_model extends CI_Model {
 	public function create( $nombre ) {
 
 	$bean = R::dispense( 'pais' );
+	$id_bean = R::store( $bean );
 
 
 	// Regular attribute

@@ -21,7 +21,7 @@
 <div class="container">
 <h2> Editar aficion </h2>
 
-<form class="form" role="form" id="idForm" action="<?= base_url() ?>aficion/update_post" method="post">
+<form class="form" role="form" id="idForm" enctype="multipart/form-data" action="<?= base_url() ?>aficion/update_post" method="post">
 	
 	<input type="hidden" name="filter" value="<?=$body['filter']?>" />
 	

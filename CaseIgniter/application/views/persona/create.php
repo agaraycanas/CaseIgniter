@@ -3,28 +3,53 @@
 <div class="container">
 <h2> Crear persona </h2>
 
-<!-- BOOTSTRAP3
-<form class="row col-sm-4" id="idForm" action="<?= base_url() ?>persona/create_post" method="post">
--->
-
-<form class="form" role="form" id="idForm" action="<?= base_url() ?>persona/create_post" method="post">
+<form class="form" role="form" id="idForm" enctype="multipart/form-data" action="<?= base_url() ?>persona/create_post" method="post">
 
 	
 	<div class="row form-inline form-group">
 		<label for="id-nombre" class="col-2 justify-content-end">Nombre</label>
 		<input id="id-nombre" type="text" name="nombre" class="col-6 form-control" autofocus="autofocus">
+		
 	</div>
 
 	
 	<div class="row form-inline form-group">
 		<label for="id-fechanacimiento" class="col-2 justify-content-end">Fechanacimiento</label>
 		<input id="id-fechanacimiento" type="date" name="fechanacimiento" class="col-3 form-control" >
+		
 	</div>
 
 	
 	<div class="row form-inline form-group">
 		<label for="id-peso" class="col-2 justify-content-end">Peso</label>
 		<input id="id-peso" type="number" name="peso" class="col-6 form-control" >
+		
+	</div>
+
+
+	<script>
+		 $(window).on("load",(function(){
+		 $(function() {
+		 $('#id-foto').change(function(e) {addImage(e);});
+		function addImage(e){
+			var file = e.target.files[0],
+			imageType = /image.*/;
+			if (!file.type.match(imageType)) return;
+			var reader = new FileReader();
+			reader.onload = fileOnload;
+			reader.readAsDataURL(file);
+		}
+		function fileOnload(e) {
+		var result=e.target.result;
+		$('#id-out-foto').attr("src",result);
+		}});}));
+	</script>
+
+	
+	<div class="row form-inline form-group">
+		<label for="id-foto" class="col-2 justify-content-end">Foto</label>
+		<input id="id-foto" type="file" name="foto" class="col-6 form-control" >
+		<img class="offset-1 col-2" id="id-out-foto" width="3%" height="3%" src="" alt=""/>
 	</div>
 
 

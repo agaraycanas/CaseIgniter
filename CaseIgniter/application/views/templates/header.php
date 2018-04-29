@@ -2,7 +2,7 @@
 
 	<div class="col d-flex justify-content-center">
 		<img src="<?=base_url()?>assets/img/logo.png" class="img-rounded "
-			alt="LOGO de la aplicación" height="100">
+			alt="LOGO" height="80">
 	</div>
 
 	<div class="col text-right">

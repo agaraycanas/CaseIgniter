@@ -41,11 +41,11 @@
 		<tr>
 			<td class="alert alert-success"><?= str_ireplace($body['filter'], '<kbd>'.$body['filter'].'</kbd>', $pais -> nombre) ?></td>
 
-				<td>
-				<?php foreach ($pais -> alias ('paisnacimiento') -> ownPersonaList as $data): ?>
-					<span><?= str_ireplace($body['filter'], '<kbd>'.$body['filter'].'</kbd>', $data -> nombre) ?> </span>
-				<?php endforeach; ?>
-				</td>
+			<td>
+			<?php foreach ($pais -> alias ('paisnacimiento') -> ownPersonaList as $data): ?>
+				<span><?= str_ireplace($body['filter'], '<kbd>'.$body['filter'].'</kbd>', $data -> nombre) ?> </span>
+			<?php endforeach; ?>
+			</td>
 
 			<td class="form-inline text-center">
 

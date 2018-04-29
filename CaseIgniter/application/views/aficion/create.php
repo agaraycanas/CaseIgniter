@@ -3,16 +3,13 @@
 <div class="container">
 <h2> Crear aficion </h2>
 
-<!-- BOOTSTRAP3
-<form class="row col-sm-4" id="idForm" action="<?= base_url() ?>aficion/create_post" method="post">
--->
-
-<form class="form" role="form" id="idForm" action="<?= base_url() ?>aficion/create_post" method="post">
+<form class="form" role="form" id="idForm" enctype="multipart/form-data" action="<?= base_url() ?>aficion/create_post" method="post">
 
 	
 	<div class="row form-inline form-group">
 		<label for="id-nombre" class="col-2 justify-content-end">Nombre</label>
 		<input id="id-nombre" type="text" name="nombre" class="col-6 form-control" autofocus="autofocus">
+		
 	</div>
 
 

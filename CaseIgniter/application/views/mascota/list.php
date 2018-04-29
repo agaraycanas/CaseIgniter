@@ -40,7 +40,8 @@
 	<?php foreach ($body['mascota'] as $mascota): ?>
 		<tr>
 			<td class="alert alert-success"><?= str_ireplace($body['filter'], '<kbd>'.$body['filter'].'</kbd>', $mascota -> nombre) ?></td>
-		<td><?= str_ireplace($body['filter'], '<kbd>'.$body['filter'].'</kbd>',$mascota ->  fetchAs('persona') -> amo -> nombre) ?></td>
+
+			<td><?= str_ireplace($body['filter'], '<kbd>'.$body['filter'].'</kbd>',$mascota ->  fetchAs('persona') -> amo -> nombre) ?></td>
 
 			<td class="form-inline text-center">
 

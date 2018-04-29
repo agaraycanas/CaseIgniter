@@ -11,6 +11,7 @@ class mascota_model extends CI_Model {
 	public function create( $nombre ) {
 
 	$bean = R::dispense( 'mascota' );
+	$id_bean = R::store( $bean );
 
 
 	// Regular attribute

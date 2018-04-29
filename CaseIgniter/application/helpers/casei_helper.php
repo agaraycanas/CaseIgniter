@@ -43,6 +43,13 @@ class MyClass {
 		}
 		return $answer;
 	}
+	public function has_images() {
+		$answer = false;
+		foreach ( $this->attributes as $a ) {
+			$answer |= ($a->type == 'img');
+		}
+		return $answer;
+	}
 	public function has_dependants() {
 		$answer = false;
 		foreach ( $this->attributes as $a ) {
@@ -780,7 +787,12 @@ function generate_controller_create_post_middle($class) {
 	foreach ( $class->attributes as $a ) {
 		if (! $a->hidden_create) {
 			if (! $a->collection) {
-				$code .= "\t\t\$$a->name = ( isset( \$_POST['$a->name']) ? \$_POST['$a->name'] : null );" . PHP_EOL;
+				if ($a->type == 'file') {
+					$code .= "\t\t\$$a->name = ( isset( \$_FILES['$a->name']) ? \$_FILES['$a->name'] : null );" . PHP_EOL;
+				}
+				else {
+					$code .= "\t\t\$$a->name = ( isset( \$_POST['$a->name']) ? \$_POST['$a->name'] : null );" . PHP_EOL;
+				}
 			} else {
 				$code .= "\t\t\$$a->name = ( isset( \$_POST['$a->name']) ? \$_POST['$a->name'] : [] );" . PHP_EOL;
 			}
@@ -1088,7 +1100,8 @@ CODE;
 	$code .= $parameters;
 	
 	$code .= " ) {" . PHP_EOL;
-	$code .= "\n\t\$bean = R::dispense( '{$class->name}' );" . PHP_EOL . PHP_EOL;
+	$code .= "\n\t\$bean = R::dispense( '{$class->name}' );";
+	$code .= "\n\t\$id_bean = R::store( \$bean );" . PHP_EOL . PHP_EOL;
 	
 	foreach ( $class->attributes as $a ) {
 		if (! $a->hidden_create) {
@@ -1145,12 +1158,27 @@ O2M;
 				
 M2M;
 			} else {
-				$code .= <<<REGULAR
+				if ($a->type == 'file') { // ============ REGULAR FILE ATTRIBUTE ======================
+					$code .= <<<REGULARFILE
+					
+	// Regular FILE attribute
+	if ( \${$a->name} != NULL && \${$a->name}['error'] == UPLOAD_ERR_OK) {
+		\$name_and_ext = explode ( '.', \${$a->name}['name'] );
+		\$ext = \$name_and_ext[sizeof ( \$name_and_ext ) - 1 ];
+		\$file_name = '{$class->name}' . '-' . '{$a->name}' . '-' . \$id_bean . '.' .\$ext ;
+		copy ( \${$a->name}['tmp_name'], 'assets/upload/' .  \$file_name );
+		\$bean -> {$a->name} = \$file_name;	
+	}
+
+REGULARFILE;
+				} else { // ================================ REGULAR ATTRIBUTE ===========================
+					$code .= <<<REGULAR
 
 	// Regular attribute
 	\$bean -> {$a->name} = \${$a->name};
 
 REGULAR;
+				}
 			}
 		}
 	}
@@ -1479,11 +1507,7 @@ function generate_view_create_header($class_name) {
 <div class="container">
 <h2> Crear $class_name </h2>
 
-<!-- BOOTSTRAP3
-<form class="row col-sm-4" id="idForm" action="<?= base_url() ?>$class_name/create_post" method="post">
--->
-
-<form class="form" role="form" id="idForm" action="<?= base_url() ?>$class_name/create_post" method="post">
+<form class="form" role="form" id="idForm" enctype="multipart/form-data" action="<?= base_url() ?>$class_name/create_post" method="post">
 
 
 HTML;
@@ -1511,7 +1535,7 @@ function generate_view_update_header($class_name) {
 <div class="container">
 <h2> Editar $class_name </h2>
 
-<form class="form" role="form" id="idForm" action="<?= base_url() ?>$class_name/update_post" method="post">
+<form class="form" role="form" id="idForm" enctype="multipart/form-data" action="<?= base_url() ?>$class_name/update_post" method="post">
 	
 	<input type="hidden" name="filter" value="<?=\$body['filter']?>" />
 	
@@ -1529,12 +1553,37 @@ function generate_view_create_non_dependants($class) {
 			$capitalized = ucfirst ( $a->name );
 			$type = ($a->type == 'String' ? 'text' : $a->type);
 			$autofocus = $a->main ? 'autofocus="autofocus"' : '';
-			$size = $a->type=='date'?'3':'6';
+			$size = $a->type == 'date' ? '3' : '6';
+			$jquery_file_code = <<<CODE
+
+	<script>
+		 $(window).on("load",(function(){
+		 $(function() {
+		 $('#id-{$a->name}').change(function(e) {addImage(e);});
+		function addImage(e){
+			var file = e.target.files[0],
+			imageType = /image.*/;
+			if (!file.type.match(imageType)) return;
+			var reader = new FileReader();
+			reader.onload = fileOnload;
+			reader.readAsDataURL(file);
+		}
+		function fileOnload(e) {
+		var result=e.target.result;
+		$('#id-out-{$a->name}').attr("src",result);
+		}});}));
+	</script>
+
+
+CODE;
+			$code .= ($a->type == 'file' ? $jquery_file_code : '');
+			$preview = ($a->type == 'file' ? "<img class=\"offset-1 col-2\" id=\"id-out-{$a->name}\" width=\"3%\" height=\"3%\" src=\"\" alt=\"\"/>" : '');
 			$code .= <<<HTML
 	
 	<div class="row form-inline form-group">
 		<label for="id-{$a->name}" class="col-2 justify-content-end">$capitalized</label>
 		<input id="id-{$a->name}" type="$type" name="{$a->name}" class="col-$size form-control" $autofocus>
+		$preview
 	</div>
 
 
@@ -1555,7 +1604,7 @@ CODE;
 		if (! $a->is_dependant ()) {
 			$capitalized = ucfirst ( $a->name );
 			$type = ($a->type == 'String' ? 'text' : $a->type);
-			$size = $a->type=='date'?'3':'6';
+			$size = $a->type == 'date' ? '3' : '6';
 			$code .= <<<HTML
 	
 	<div class="row form-inline form-group">
@@ -1851,35 +1900,42 @@ CODE;
 	foreach ( $class->attributes as $a ) {
 		if (! $a->hidden_recover) {
 			if (! $a->main) {
-				if (! ($a->is_dependant ())) { // ============ REGULAR ATTRIBUTE ===============
-					$td_content = "\$$cn -> {$a->name}";
-					$code .= "\t\t\t<td><?= str_ireplace(\$body['filter'], '<kbd>'.\$body['filter'].'</kbd>',$td_content) ?></td>" . PHP_EOL;
+				if (! ($a->is_dependant ())) { 
+					if ( $a->type == 'file' ) { // ============ REGULAR FILE ATTRIBUTE ===============
+						$img_path = "( ( \$$cn -> {$a->name} == null || \$$cn -> {$a->name} == '' ) ? 'assets/img/icons/png/ban-4x.png' : 'assets/upload/'.\$$cn -> {$a->name})";
+						$img_size = "<?=( \$$cn -> {$a->name} == null || \$$cn -> {$a->name} == '' ) ? 15 : 30?>";
+						$code .= "\n\t\t\t<td><img src=\"<?=base_url().$img_path?>\" alt=\"IMG\" width=\"$img_size\" height=\"$img_size\" /></td>" . PHP_EOL;
+					}
+					else { // ================================= REGULAR ATTRIBUTE ====================
+						$td_content = "\$$cn -> {$a->name}";
+						$code .= "\n\t\t\t<td><?= str_ireplace(\$body['filter'], '<kbd>'.\$body['filter'].'</kbd>',$td_content) ?></td>" . PHP_EOL;
+					}
 				} else {
 					$main_attribute_name = getMainAttributeName ( $classes, $a->type );
 					if ($a->mode == 'M2O' || $a->mode == 'O2O') { // ===== SOMETHING TO ONE RELATIONSHIPS =======
 						$td_content = "\$$cn ->  fetchAs('{$a->type}') -> {$a->name} -> {$main_attribute_name}";
-						$code .= "		<td><?= str_ireplace(\$body['filter'], '<kbd>'.\$body['filter'].'</kbd>',$td_content) ?></td>" . PHP_EOL;
-					} else if ($a->mode == 'O2M') { // ============ ONE TO MANY RELATIONSHIP ===============
+						$code .= "\n\t\t\t<td><?= str_ireplace(\$body['filter'], '<kbd>'.\$body['filter'].'</kbd>',$td_content) ?></td>" . PHP_EOL;
+					} else if ($a->mode == 'O2M') { // ============ ONE TO MANY RELATIONSHIP ====================
 						$capital_type = ucfirst ( $a->type );
 						
 						$code .= <<<CODE
 
-				<td>
-				<?php foreach (\$$cn -> alias ('{$a->name}') -> own{$capital_type}List as \$data): ?>
-					<span><?= str_ireplace(\$body['filter'], '<kbd>'.\$body['filter'].'</kbd>', \$data -> $main_attribute_name) ?> </span>
-				<?php endforeach; ?>
-				</td>
+			<td>
+			<?php foreach (\$$cn -> alias ('{$a->name}') -> own{$capital_type}List as \$data): ?>
+				<span><?= str_ireplace(\$body['filter'], '<kbd>'.\$body['filter'].'</kbd>', \$data -> $main_attribute_name) ?> </span>
+			<?php endforeach; ?>
+			</td>
 
 CODE;
 					} else if ($a->mode == 'M2M') { // ============ MANY TO MANY RELATIONSHIP ===============
 						$capital_name = ucfirst ( $a->name );
 						$code .= <<<CODE
 					
-				<td>
-				<?php foreach (\$$cn -> aggr('own{$capital_name}List', '{$a->type}') as \$data): ?>
-					<span><?= str_ireplace(\$body['filter'], '<kbd>'.\$body['filter'].'</kbd>', \$data -> $main_attribute_name ) ?> </span>
-				<?php endforeach; ?>
-				</td>
+			<td>
+			<?php foreach (\$$cn -> aggr('own{$capital_name}List', '{$a->type}') as \$data): ?>
+				<span><?= str_ireplace(\$body['filter'], '<kbd>'.\$body['filter'].'</kbd>', \$data -> $main_attribute_name ) ?> </span>
+			<?php endforeach; ?>
+			</td>
 				
 CODE;
 					}
@@ -1947,13 +2003,13 @@ function file_application_replace($path, $pattern, $replacement) {
 function db_bean_test_create($class) {
 	$cn = $class->name;
 	
-	
 	foreach ( $class->attributes as $a ) {
 		$bean = R::dispense ( $cn );
 		$name = $a->name;
 		if (! $a->collection) { // REGULAR ATTRIBUTE
 			switch ($a->type) {
-				case "String" :
+				case "String" : ;
+				case "file" :
 					$bean->$name = "TEST";
 					break;
 				case "number" :
@@ -1971,19 +2027,19 @@ function db_bean_test_create($class) {
 			if ($a->mode == 'O2O') { // ONE TO ONE
 				
 				$o2o = R::dispense ( $type );
-
-				$bean -> $name = $o2o;
+				
+				$bean->$name = $o2o;
 				R::store ( $bean );
 				
-				$o2o -> $name = $bean;
+				$o2o->$name = $bean;
 				R::store ( $o2o );
 				
 				R::trash ( $bean );
 				/*
-				$name .= '_id';
-				$o2o -> $name = NULL;
-				R::store( $o2o );
-				*/
+				 * $name .= '_id';
+				 * $o2o -> $name = NULL;
+				 * R::store( $o2o );
+				 */
 				R::trash ( $o2o );
 			}
 			
