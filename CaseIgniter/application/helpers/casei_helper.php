@@ -46,7 +46,7 @@ class MyClass {
 	public function has_images() {
 		$answer = false;
 		foreach ( $this->attributes as $a ) {
-			$answer |= ($a->type == 'img');
+			$answer |= ($a->type == 'file');
 		}
 		return $answer;
 	}
@@ -95,6 +95,41 @@ function plural($word) {
 }
 
 // ---------------------------------------------
+function classes_have_login_bean($classes) {
+	$response = false;
+	foreach ( $classes as $class ) {
+		$response |= $class->login_bean;
+	}
+	return $response;
+}
+
+// ---------------------------------------------
+function create_rol_class($login_bean_name) {
+	$rol_class = new MyClass ( 'rol' );
+	$rol_class->attributes [] = new Attribute ( 'nombre', 'String', false, 'NO_MODE', false, false, true );
+	$rol_class->attributes [] = new Attribute ( 'descripcion', 'String', false, 'NO_MODE', false, false, false );
+	$rol_class->attributes [] = new Attribute ( 'roles', $login_bean_name, true, 'M2M', false, false, false );
+	
+	return $rol_class;
+}
+
+// ---------------------------------------------
+function set_bean_class($classes) {
+	$rol_class = null;
+	if (classes_have_login_bean ( $classes )) {
+		foreach ( $classes as $c ) {
+			if ($c->login_bean) {
+				$rol_class = create_rol_class($c->name);
+				$c->attributes [] = new Attribute ( 'loginname', 'String', false, 'NO_MODE', false, false, false );
+				$c->attributes [] = new Attribute ( 'password', 'String', false, 'NO_MODE', false, false, false );
+				$c->attributes [] = new Attribute ( 'roles', 'rol', true, 'M2M', false, false, false );
+			}
+		}
+	}
+	return $rol_class;
+}
+
+// ---------------------------------------------
 function process_domain_model($modelData) {
 	
 	// ----------------------------------
@@ -127,10 +162,14 @@ function process_domain_model($modelData) {
 	}
 	
 	// ----------------------------------
-	function pdm_process_bean_name($line) {
+	function pdm_process_bean_name($line, $classes) {
 		$class = new MyClass ( strtolower ( explode ( ' ', $line ) [0] ) );
 		if (strpos ( $line, ' ' )) {
-			$class->login_bean = true;
+			if (! classes_have_login_bean ( $classes )) {
+				$class->login_bean = true;
+			} else {
+				throw (new Exception ( "ERROR while parsing model.txt: Only one LOGIN bean allowed" ));
+			}
 		}
 		return $class;
 	}
@@ -222,7 +261,7 @@ function process_domain_model($modelData) {
 					if (pdm_line_type ( $line ) != 'BEAN_NAME') {
 						throw new Exception ( "ERROR while parsing model.txt (line $line_number): Bean name expected <br/><b>$line</b>" );
 					}
-					$current_class = pdm_process_bean_name ( $line );
+					$current_class = pdm_process_bean_name ( $line, $classes );
 					$state = 'rol_line';
 					break;
 				case 'rol_line' :
@@ -789,8 +828,7 @@ function generate_controller_create_post_middle($class) {
 			if (! $a->collection) {
 				if ($a->type == 'file') {
 					$code .= "\t\t\$$a->name = ( isset( \$_FILES['$a->name']) ? \$_FILES['$a->name'] : null );" . PHP_EOL;
-				}
-				else {
+				} else {
 					$code .= "\t\t\$$a->name = ( isset( \$_POST['$a->name']) ? \$_POST['$a->name'] : null );" . PHP_EOL;
 				}
 			} else {
@@ -839,7 +877,11 @@ function generate_controller_update_post_middle($class) {
 	foreach ( $class->attributes as $a ) {
 		if (! $a->hidden_create) {
 			if (! $a->collection) {
-				$code .= "\t\t\$$a->name = ( isset( \$_POST['$a->name']) ? \$_POST['$a->name'] : null );" . PHP_EOL;
+				if ($a->type == 'file') {
+					$code .= "\t\t\$$a->name = ( isset( \$_FILES['$a->name']) ? \$_FILES['$a->name'] : null );" . PHP_EOL;
+				} else {
+					$code .= "\t\t\$$a->name = ( isset( \$_POST['$a->name']) ? \$_POST['$a->name'] : null );" . PHP_EOL;
+				}
 			} else {
 				$code .= "\t\t\$$a->name = ( isset( \$_POST['$a->name']) ? \$_POST['$a->name'] : [] );" . PHP_EOL;
 			}
@@ -1056,10 +1098,21 @@ function generate_model_delete($class) {
 	*/
 	public function delete( \$id ) {
 		\$bean = R::load('{$class -> name}', \$id );
-		R::trash( \$bean );
-	}
 
 CODE;
+	foreach ( $class->attributes as $a ) {
+		if ($a->type == 'file') {
+			$code .= <<<CODE
+		\$file_path = 'assets/upload/'.(\$bean->$a->name);
+		if (file_exists( \$file_path )) {
+			unlink( \$file_path );
+		} 
+
+CODE;
+		}
+	}
+	$code .= "\n\t\tR::trash( \$bean );";
+	$code .= "\n\t}";
 	return $code;
 }
 
@@ -1306,8 +1359,31 @@ O2M;
 
 	
 M2M;
-			} else { // =========== REGULAR ATTRIBUTE ======================
-				$code .= "\n\t// Regular attribute\n\t\$bean -> {$a->name} = \${$a->name};" . PHP_EOL;
+			} else {
+				if ($a->type == 'file') { // ============ REGULAR FILE ATTRIBUTE ======================
+					$code .= <<<REGULARFILE
+					
+	// Regular FILE attribute
+	if ( \${$a->name} != NULL && \${$a->name}['error'] == UPLOAD_ERR_OK) {
+		\$name_and_ext = explode ( '.', \${$a->name}['name'] );
+		\$ext = \$name_and_ext[sizeof ( \$name_and_ext ) - 1 ];
+		\$file_name = '{$class->name}' . '-' . '{$a->name}' . '-' . \$id . '.' .\$ext ;
+		copy ( \${$a->name}['tmp_name'], 'assets/upload/' .  \$file_name );
+		if (\$bean->{$a->name} != null && \$bean->{$a->name} != '' ) {
+			unlink( 'assets/upload/'.\$bean->{$a->name} );
+		}
+		\$bean -> {$a->name} = \$file_name;
+	}
+	
+REGULARFILE;
+				} else { // ================================ REGULAR ATTRIBUTE ===========================
+					$code .= <<<REGULAR
+					
+	// Regular attribute
+	\$bean -> {$a->name} = \${$a->name};
+	
+REGULAR;
+				}
 			}
 		}
 	}
@@ -1605,17 +1681,38 @@ CODE;
 			$capitalized = ucfirst ( $a->name );
 			$type = ($a->type == 'String' ? 'text' : $a->type);
 			$size = $a->type == 'date' ? '3' : '6';
+			$jquery_file_code = <<<CODE
+			
+	<script>
+		 $(window).on("load",(function(){
+		 $(function() {
+		 $('#id-{$a->name}').change(function(e) {addImage(e);});
+		function addImage(e){
+			var file = e.target.files[0],
+			imageType = /image.*/;
+			if (!file.type.match(imageType)) return;
+			var reader = new FileReader();
+			reader.onload = fileOnload;
+			reader.readAsDataURL(file);
+		}
+		function fileOnload(e) {
+		var result=e.target.result;
+		$('#id-out-{$a->name}').attr("src",result);
+		}});}));
+	</script>
+				
+				
+CODE;
+			$code .= ($a->type == 'file' ? $jquery_file_code : '');
+			$src = "<?=base_url().'assets/upload/'.\$body['{$class->name}']->{$a->name}?>";
+			$preview = ($a->type == 'file' ? "<img class=\"offset-1 col-2\" id=\"id-out-{$a->name}\" width=\"3%\" height=\"3%\" src=\"$src\" alt=\"\"/>" : '');
+			
 			$code .= <<<HTML
-	
-	<div class="row form-inline form-group">
-		<label for="id-nombre" class="col-2 justify-content-end">Nombre</label>
-		<input id="id-nombre" type="text" name="nombre" class="col-6 form-control" autofocus="autofocus">
-	</div>
-		
 
 	<div class="row form-inline form-group">
 		<label for="id-{$a->name}" class="col-2 justify-content-end">$capitalized</label>
 		<input id="id-{$a->name}" type="$type" name="{$a->name}" value="<?=  \$body['{$class->name}']->{$a->name} ?>" class="col-$size form-control">
+		$preview
 	</div>
 				
 				
@@ -1900,13 +1997,12 @@ CODE;
 	foreach ( $class->attributes as $a ) {
 		if (! $a->hidden_recover) {
 			if (! $a->main) {
-				if (! ($a->is_dependant ())) { 
-					if ( $a->type == 'file' ) { // ============ REGULAR FILE ATTRIBUTE ===============
+				if (! ($a->is_dependant ())) {
+					if ($a->type == 'file') { // ============ REGULAR FILE ATTRIBUTE ===============
 						$img_path = "( ( \$$cn -> {$a->name} == null || \$$cn -> {$a->name} == '' ) ? 'assets/img/icons/png/ban-4x.png' : 'assets/upload/'.\$$cn -> {$a->name})";
 						$img_size = "<?=( \$$cn -> {$a->name} == null || \$$cn -> {$a->name} == '' ) ? 15 : 30?>";
 						$code .= "\n\t\t\t<td><img src=\"<?=base_url().$img_path?>\" alt=\"IMG\" width=\"$img_size\" height=\"$img_size\" /></td>" . PHP_EOL;
-					}
-					else { // ================================= REGULAR ATTRIBUTE ====================
+					} else { // ================================= REGULAR ATTRIBUTE ====================
 						$td_content = "\$$cn -> {$a->name}";
 						$code .= "\n\t\t\t<td><?= str_ireplace(\$body['filter'], '<kbd>'.\$body['filter'].'</kbd>',$td_content) ?></td>" . PHP_EOL;
 					}
@@ -2008,7 +2104,8 @@ function db_bean_test_create($class) {
 		$name = $a->name;
 		if (! $a->collection) { // REGULAR ATTRIBUTE
 			switch ($a->type) {
-				case "String" : ;
+				case "String" :
+					;
 				case "file" :
 					$bean->$name = "TEST";
 					break;

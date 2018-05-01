@@ -27,52 +27,65 @@
 	
 		
 	<input type="hidden" name="id" value="<?= $body['persona']->id ?>">
-	
-	<div class="row form-inline form-group">
-		<label for="id-nombre" class="col-2 justify-content-end">Nombre</label>
-		<input id="id-nombre" type="text" name="nombre" class="col-6 form-control" autofocus="autofocus">
-	</div>
-		
 
 	<div class="row form-inline form-group">
 		<label for="id-nombre" class="col-2 justify-content-end">Nombre</label>
 		<input id="id-nombre" type="text" name="nombre" value="<?=  $body['persona']->nombre ?>" class="col-6 form-control">
+		
 	</div>
 				
-					
-	<div class="row form-inline form-group">
-		<label for="id-nombre" class="col-2 justify-content-end">Nombre</label>
-		<input id="id-nombre" type="text" name="nombre" class="col-6 form-control" autofocus="autofocus">
-	</div>
-		
-
+				
 	<div class="row form-inline form-group">
 		<label for="id-fechanacimiento" class="col-2 justify-content-end">Fechanacimiento</label>
 		<input id="id-fechanacimiento" type="date" name="fechanacimiento" value="<?=  $body['persona']->fechanacimiento ?>" class="col-3 form-control">
+		
 	</div>
 				
-					
-	<div class="row form-inline form-group">
-		<label for="id-nombre" class="col-2 justify-content-end">Nombre</label>
-		<input id="id-nombre" type="text" name="nombre" class="col-6 form-control" autofocus="autofocus">
-	</div>
-		
-
+				
 	<div class="row form-inline form-group">
 		<label for="id-peso" class="col-2 justify-content-end">Peso</label>
 		<input id="id-peso" type="number" name="peso" value="<?=  $body['persona']->peso ?>" class="col-6 form-control">
+		
 	</div>
 				
-					
-	<div class="row form-inline form-group">
-		<label for="id-nombre" class="col-2 justify-content-end">Nombre</label>
-		<input id="id-nombre" type="text" name="nombre" class="col-6 form-control" autofocus="autofocus">
-	</div>
-		
-
+							
+	<script>
+		 $(window).on("load",(function(){
+		 $(function() {
+		 $('#id-foto').change(function(e) {addImage(e);});
+		function addImage(e){
+			var file = e.target.files[0],
+			imageType = /image.*/;
+			if (!file.type.match(imageType)) return;
+			var reader = new FileReader();
+			reader.onload = fileOnload;
+			reader.readAsDataURL(file);
+		}
+		function fileOnload(e) {
+		var result=e.target.result;
+		$('#id-out-foto').attr("src",result);
+		}});}));
+	</script>
+				
+				
 	<div class="row form-inline form-group">
 		<label for="id-foto" class="col-2 justify-content-end">Foto</label>
 		<input id="id-foto" type="file" name="foto" value="<?=  $body['persona']->foto ?>" class="col-6 form-control">
+		<img class="offset-1 col-2" id="id-out-foto" width="3%" height="3%" src="<?=base_url().'assets/upload/'.$body['persona']->foto?>" alt=""/>
+	</div>
+				
+				
+	<div class="row form-inline form-group">
+		<label for="id-loginname" class="col-2 justify-content-end">Loginname</label>
+		<input id="id-loginname" type="text" name="loginname" value="<?=  $body['persona']->loginname ?>" class="col-6 form-control">
+		
+	</div>
+				
+				
+	<div class="row form-inline form-group">
+		<label for="id-password" class="col-2 justify-content-end">Password</label>
+		<input id="id-password" type="text" name="password" value="<?=  $body['persona']->password ?>" class="col-6 form-control">
+		
 	</div>
 				
 								
@@ -166,6 +179,24 @@
 				<div class="form-check form-check-inline">
 					<input class="form-check-input" type="checkbox" id="id-odia-<?=$aficion->id ?>" name="odia[]" value="<?= $aficion->id ?>" <?= checked($body['persona']->aggr('ownOdiaList','aficion'), $aficion->id ) ?>>
 					<label class="form-check-label" for="id-odia-<?=$aficion->id?>" ><?= $aficion->nombre ?></label>
+				</div>
+				
+			<?php endforeach; ?>
+						
+		</div>
+	</div>
+
+				
+
+	<div class="row form-inline form-group">
+		<label class="col-2 justify-content-end">Roles</label>
+		<div class="col-6 form-check form-check-inline justify-content-start">
+
+			<?php foreach ($body['rol'] as $rol ): ?>
+				
+				<div class="form-check form-check-inline">
+					<input class="form-check-input" type="checkbox" id="id-roles-<?=$rol->id ?>" name="roles[]" value="<?= $rol->id ?>" <?= checked($body['persona']->aggr('ownRolesList','rol'), $rol->id ) ?>>
+					<label class="form-check-label" for="id-roles-<?=$rol->id?>" ><?= $rol->nombre ?></label>
 				</div>
 				
 			<?php endforeach; ?>

@@ -22,6 +22,10 @@ class _casei extends CI_Controller {
 		$model_data = $_POST ['modelData'];
 		$classes = process_domain_model($model_data);
 		
+		$rol_class = set_bean_class($classes);
+		if ( $rol_class != null ) {
+			$classes[] = $rol_class;
+		}
 		generate_application_files($classes);
 		
 		change_title($app_title);

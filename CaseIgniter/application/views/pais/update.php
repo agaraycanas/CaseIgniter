@@ -27,16 +27,11 @@
 	
 		
 	<input type="hidden" name="id" value="<?= $body['pais']->id ?>">
-	
-	<div class="row form-inline form-group">
-		<label for="id-nombre" class="col-2 justify-content-end">Nombre</label>
-		<input id="id-nombre" type="text" name="nombre" class="col-6 form-control" autofocus="autofocus">
-	</div>
-		
 
 	<div class="row form-inline form-group">
 		<label for="id-nombre" class="col-2 justify-content-end">Nombre</label>
 		<input id="id-nombre" type="text" name="nombre" value="<?=  $body['pais']->nombre ?>" class="col-6 form-control">
+		
 	</div>
 				
 				<div class="row offset-2 col-6">

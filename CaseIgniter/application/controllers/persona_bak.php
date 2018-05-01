@@ -20,6 +20,9 @@ class persona extends CI_Controller {
 
 		$this->load->model('aficion_model');
 		$data['body']['aficion'] = $this->aficion_model->get_all();
+
+		$this->load->model('rol_model');
+		$data['body']['rol'] = $this->rol_model->get_all();
 		enmarcar($this, 'persona/create', $data);
 	}
 
@@ -43,9 +46,12 @@ class persona extends CI_Controller {
 		$inutilen = ( isset( $_POST['inutilen']) ? $_POST['inutilen'] : [] );
 		$gusta = ( isset( $_POST['gusta']) ? $_POST['gusta'] : [] );
 		$odia = ( isset( $_POST['odia']) ? $_POST['odia'] : [] );
+		$loginname = ( isset( $_POST['loginname']) ? $_POST['loginname'] : null );
+		$password = ( isset( $_POST['password']) ? $_POST['password'] : null );
+		$roles = ( isset( $_POST['roles']) ? $_POST['roles'] : [] );
 
 		try {
-			$id = $this->persona_model->create( $nombre, $fechanacimiento, $peso, $foto, $amo, $paisnacimiento, $expertoen, $inutilen, $gusta, $odia );
+			$id = $this->persona_model->create( $nombre, $fechanacimiento, $peso, $foto, $amo, $paisnacimiento, $expertoen, $inutilen, $gusta, $odia, $loginname, $password, $roles );
 			$this->list_id($id);
 		}
 		catch (Exception $e) {
@@ -117,7 +123,10 @@ class persona extends CI_Controller {
 		$data['body']['pais'] = $this->pais_model->get_all();	
 	
 		$this->load->model('aficion_model');
-		$data['body']['aficion'] = $this->aficion_model->get_all();
+		$data['body']['aficion'] = $this->aficion_model->get_all();	
+	
+		$this->load->model('rol_model');
+		$data['body']['rol'] = $this->rol_model->get_all();
 
 		$this -> load -> model ('persona_model');
 		$id = $_POST['id'];
@@ -138,16 +147,19 @@ class persona extends CI_Controller {
 		$nombre = ( isset( $_POST['nombre']) ? $_POST['nombre'] : null );
 		$fechanacimiento = ( isset( $_POST['fechanacimiento']) ? $_POST['fechanacimiento'] : null );
 		$peso = ( isset( $_POST['peso']) ? $_POST['peso'] : null );
-		$foto = ( isset( $_POST['foto']) ? $_POST['foto'] : null );
+		$foto = ( isset( $_FILES['foto']) ? $_FILES['foto'] : null );
 		$amo = ( isset( $_POST['amo']) ? $_POST['amo'] : [] );
 		$paisnacimiento = ( isset( $_POST['paisnacimiento']) ? $_POST['paisnacimiento'] : [] );
 		$expertoen = ( isset( $_POST['expertoen']) ? $_POST['expertoen'] : [] );
 		$inutilen = ( isset( $_POST['inutilen']) ? $_POST['inutilen'] : [] );
 		$gusta = ( isset( $_POST['gusta']) ? $_POST['gusta'] : [] );
 		$odia = ( isset( $_POST['odia']) ? $_POST['odia'] : [] );
+		$loginname = ( isset( $_POST['loginname']) ? $_POST['loginname'] : null );
+		$password = ( isset( $_POST['password']) ? $_POST['password'] : null );
+		$roles = ( isset( $_POST['roles']) ? $_POST['roles'] : [] );
 
 		try {
-			$this->persona_model->update( $id, $nombre, $fechanacimiento, $peso, $foto, $amo, $paisnacimiento, $expertoen, $inutilen, $gusta, $odia );
+			$this->persona_model->update( $id, $nombre, $fechanacimiento, $peso, $foto, $amo, $paisnacimiento, $expertoen, $inutilen, $gusta, $odia, $loginname, $password, $roles );
 
 			$filter = isset($_POST['filter']) ? $_POST['filter'] : '' ;
 			redirect( base_url() . 'persona/list?filter='.$filter );

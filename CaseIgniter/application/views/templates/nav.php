@@ -11,7 +11,7 @@
 			</a>
 
 			<div class="dropdown-menu">
-				<a class="dropdown-item" href="<?=base_url()?>persona/list">persona</a>				<a class="dropdown-item" href="<?=base_url()?>aficion/list">aficion</a>				<a class="dropdown-item" href="<?=base_url()?>mascota/list">mascota</a>				<a class="dropdown-item" href="<?=base_url()?>pais/list">pais</a>			</div>
+				<a class="dropdown-item" href="<?=base_url()?>persona/list">persona</a>				<a class="dropdown-item" href="<?=base_url()?>aficion/list">aficion</a>				<a class="dropdown-item" href="<?=base_url()?>mascota/list">mascota</a>				<a class="dropdown-item" href="<?=base_url()?>pais/list">pais</a>				<a class="dropdown-item" href="<?=base_url()?>rol/list">rol</a>			</div>
 
 		</li> 
    </ul>

@@ -40,6 +40,9 @@
 		<th>inutilen - nombre(aficion)</th>
 		<th>gusta - nombre(aficion)</th>
 		<th>odia - nombre(aficion)</th>
+		<th>loginname</th>
+		<th>password</th>
+		<th>roles - nombre(rol)</th>
 		<th>Acciones</th>
 	</tr>
 	</thead>
@@ -79,6 +82,16 @@
 									
 			<td>
 			<?php foreach ($persona -> aggr('ownOdiaList', 'aficion') as $data): ?>
+				<span><?= str_ireplace($body['filter'], '<kbd>'.$body['filter'].'</kbd>', $data -> nombre ) ?> </span>
+			<?php endforeach; ?>
+			</td>
+				
+			<td><?= str_ireplace($body['filter'], '<kbd>'.$body['filter'].'</kbd>',$persona -> loginname) ?></td>
+
+			<td><?= str_ireplace($body['filter'], '<kbd>'.$body['filter'].'</kbd>',$persona -> password) ?></td>
+					
+			<td>
+			<?php foreach ($persona -> aggr('ownRolesList', 'rol') as $data): ?>
 				<span><?= str_ireplace($body['filter'], '<kbd>'.$body['filter'].'</kbd>', $data -> nombre ) ?> </span>
 			<?php endforeach; ?>
 			</td>
