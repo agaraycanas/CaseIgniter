@@ -6,12 +6,14 @@
 	</div>
 
 	<div class="col text-right">
-		<?php if (isset ($header['empleado']['nombre'])) : ?>
-			<?= $header['empleado']['nombre'] ?> <?= $header['empleado']['ape1'] ?> <a
-			href="<?=base_url()?>empleado/logout">LOGOUT</a>
+		<?php if (isset ($header['user']) && isset ($header['rol']) ) : ?>
+			<?= $header['user']->loginname ?> (<?= $header['rol']->descripcion ?>)
+			 <a href="<?=base_url().$header['login_bean']?>/logout">LOGOUT</a>
 		<?php else: ?>
-			<a href="<?=base_url()?>empleado/login">LOGIN</a>
-		<?php endif;?>
+			<?php if (isset ($header['login_bean'])): ?>
+				<a href="<?=base_url().$header['login_bean']?>/login">ENTRAR</a>
+			<?php endif; ?>
+		<?php endif; ?>
 	</div>
 
 </header>

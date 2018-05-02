@@ -12,8 +12,8 @@ class rol extends CI_Controller {
 
 		$data['body']['filter'] = isset($_REQUEST['filter']) ? $_REQUEST['filter'] : '' ;
 
-		$this->load->model('persona_model');
-		$data['body']['persona'] = $this->persona_model->get_all();
+		$this->load->model('perrito_model');
+		$data['body']['perrito'] = $this->perrito_model->get_all();
 		enmarcar($this, 'rol/create', $data);
 	}
 
@@ -97,8 +97,8 @@ class rol extends CI_Controller {
 		$data['body']['filter'] = isset($_REQUEST['filter']) ? $_REQUEST['filter'] : '' ;
 	
 	
-		$this->load->model('persona_model');
-		$data['body']['persona'] = $this->persona_model->get_all();
+		$this->load->model('perrito_model');
+		$data['body']['perrito'] = $this->perrito_model->get_all();
 
 		$this -> load -> model ('rol_model');
 		$id = $_POST['id'];

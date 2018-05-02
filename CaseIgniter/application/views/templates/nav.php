@@ -11,8 +11,14 @@
 			</a>
 
 			<div class="dropdown-menu">
-				<a class="dropdown-item" href="<?=base_url()?>persona/list">persona</a>				<a class="dropdown-item" href="<?=base_url()?>aficion/list">aficion</a>				<a class="dropdown-item" href="<?=base_url()?>mascota/list">mascota</a>				<a class="dropdown-item" href="<?=base_url()?>pais/list">pais</a>				<a class="dropdown-item" href="<?=base_url()?>rol/list">rol</a>			</div>
+				<a class="dropdown-item" href="<?=base_url()?>perrito/list">perrito</a>				<a class="dropdown-item" href="<?=base_url()?>rol/list">rol</a>			</div>
 
-		</li> 
+		</li>
+		<li class="nav-item">
+			<a class="nav-link" href="<?=base_url()?>_casei">
+				CSI
+			</a>
+		</li>
+ 
    </ul>
 </nav>

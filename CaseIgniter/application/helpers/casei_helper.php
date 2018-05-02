@@ -114,12 +114,84 @@ function create_rol_class($login_bean_name) {
 }
 
 // ---------------------------------------------
+function generate_admin($classes) {
+	$login_bean = null;
+	foreach ( $classes as $c ) {
+		if ($c->login_bean) {
+			$login_bean = $c;
+		}
+	}
+	
+	// CREATE DEFAULT ROL IF NOT EXISTS
+	if (R::findOne ( 'rol', 'nombre=?', [ 
+			'default' 
+	] ) == null) {
+		$rol = R::dispense ( 'rol' );
+		$rol->nombre = 'default';
+		$rol->descripcion = 'Default user - SET YOURS';
+		R::store ( $rol );
+	}
+	
+	// CREATE ADMIN ROL IF NOT EXISTS
+	$rol = null;
+	$rol_id = 0;
+	if (R::findOne ( 'rol', 'nombre=?', [ 
+			'admin' 
+	] ) == null) {
+		$rol = R::dispense ( 'rol' );
+		$rol->nombre = 'admin';
+		$rol->descripcion = 'Administrador';
+		$rol_id = R::store ( $rol );
+	} else {
+		$rol = R::findOne ( 'rol', 'nombre = ?', [ 
+				'admin' 
+		] );
+		$rol_id = $rol->id;
+	}
+	
+	// CREATE ADMIN USER IF NOT EXISTS
+	$ma = $login_bean->getMainAttribute ();
+	$cn = $login_bean->name;
+	$admin = null;
+	$admin_id = 0;
+	if (R::findOne ( $cn, 'loginname = ?', [ 
+			'admin' 
+	] ) == null) {
+		$admin = R::dispense ( $cn );
+		$admin->loginname = 'admin';
+		$admin->password = password_hash ( 'admin', PASSWORD_DEFAULT );
+		$admin->$ma = 'Administrador';
+		$admin_id = R::store ( $admin );
+	} else {
+		$admin = R::findOne ( $cn, 'loginname = ?', [ 
+				'admin' 
+		] );
+		$admin_id = $admin->id;
+	}
+	
+	// ASSIGN ADMIN ROL TO ADMIN USER IF NOT ASSIGNED YET
+	try {
+		if (R::findOne ( 'roles', $cn . '_id = ? AND rol_id = ?', [ 
+				$admin_id,
+				$rol_id 
+		] ) == null) {
+			$roles = R::dispense ( 'roles' );
+			$roles->rol = $rol;
+			$roles->$cn = $admin;
+			$roles->rol = $rol;
+			R::store ( $roles );
+		}
+	} catch ( Exception $e ) {
+	}
+}
+
+// ---------------------------------------------
 function set_bean_class($classes) {
 	$rol_class = null;
 	if (classes_have_login_bean ( $classes )) {
 		foreach ( $classes as $c ) {
 			if ($c->login_bean) {
-				$rol_class = create_rol_class($c->name);
+				$rol_class = create_rol_class ( $c->name );
 				$c->attributes [] = new Attribute ( 'loginname', 'String', false, 'NO_MODE', false, false, false );
 				$c->attributes [] = new Attribute ( 'password', 'String', false, 'NO_MODE', false, false, false );
 				$c->attributes [] = new Attribute ( 'roles', 'rol', true, 'M2M', false, false, false );
@@ -421,11 +493,52 @@ function generate_yuml($classes) {
 	return $html . '">';
 }
 
+
+// ------------------------------
+
+function get_login_bean($classes) {
+	$login_bean = null;
+	foreach ($classes as $c) {
+		if ($c->login_bean) {
+			$login_bean = $c;
+		}
+	}
+	return $login_bean;
+}
+
+// ------------------------------
+
+function generate_home_controller($login_bean) {
+	$lb = ($login_bean==null?'':"\t\t\$_SESSION['login_bean'] = '{$login_bean->name}';");
+/*
+	$lb = '';
+	if  ( $login_bean != null ) {
+		$ma = $login_bean->getMainAttribute();
+	}
+	*/
+	$code = <<<CODE
+<?php
+class _home extends CI_Controller {
+	public function index() {
+		if (session_status () == PHP_SESSION_NONE) {session_start ();}
+		$lb
+		enmarcar(\$this, '_home/index');
+	}
+}
+?>
+CODE;
+
+	file_put_contents ( APPPATH . 'controllers' . DIRECTORY_SEPARATOR . '_home.php', $code );
+	
+}
+
 // ------------------------------
 function delete_directories($classes) {
 	$ignore_files = [ 
 			'_casei.php',
 			'_casei',
+			'_home.php',
+			'_home',
 			'errors',
 			'templates',
 			'index.html' 
@@ -455,12 +568,6 @@ function change_title($title) {
 
 // ------------------------------
 function generate_menus($menuData, $appTitle, $classes) {
-	// return generate_menus_bs3($menuData, $appTitle, $clases);
-	return generate_menus_bs4 ( $menuData, $appTitle, $classes );
-}
-
-// ------------------------------
-function generate_menus_bs4($menuData, $appTitle, $classes) {
 	$nav = <<<NAV
 <nav class="container navbar navbar-expand-sm bg-dark navbar-dark rounded">
 
@@ -471,10 +578,10 @@ function generate_menus_bs4($menuData, $appTitle, $classes) {
 	<ul class="navbar-nav">
 NAV;
 	
+	$nav .= generate_menus_CRUD ( $classes );
+	$nav .= generate_menus_CSI();
 	foreach ( explode ( "\n", $menuData ) as $menu ) {
-		if (trim ( $menu ) == 'CRUD') {
-			$nav .= generate_menus_bs4_CRUD ( $classes );
-		} else if (trim ( $menu ) != '') {
+		if (trim ( $menu ) != '') {
 			$menuTitle = explode ( ":", $menu ) [0];
 			$nav .= <<<NAV
       <li class="dropdown">
@@ -512,58 +619,23 @@ NAV;
 }
 
 // ------------------------------
-function generate_menus_bs3($menuData, $appTitle, $classes) {
-	$nav = <<<NAV
-<nav class="container navbar navbar-inverse">
-  <div class="navbar-header">
-    <a class="navbar-brand" href="<?=base_url()?>">INICIO</a>
-  </div>
-  <div class="collapse navbar-collapse" id="myNavbar">
-    <ul class="nav navbar-nav">
+
+function generate_menus_CSI() {
+	$crud = <<<NAV
+
+		<li class="nav-item">
+			<a class="nav-link" href="<?=base_url()?>_casei">
+				CSI
+			</a>
+		</li>
+
 NAV;
-	
-	foreach ( explode ( "\n", $menuData ) as $menu ) {
-		if (trim ( $menu ) == 'CRUD') {
-			$nav .= generate_menus_bs3_CRUD ( $classes );
-		} else {
-			$menuTitle = explode ( ":", $menu ) [0];
-			$nav .= <<<NAV
-      <li class="dropdown">
-        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-           $menuTitle<span class="caret"></span>
-        </a>
-NAV;
-			$subMenus = strpos ( $menu, ':' ) !== FALSE ? explode ( ":", $menu ) [1] : [ ];
-			if (sizeof ( $subMenus ) > 0) {
-				$nav .= <<<NAV
-		<ul class="dropdown-menu">
-NAV;
-				foreach ( explode ( ",", $subMenus ) as $subMenu ) {
-					$subMenuTitle = explode ( "(", $subMenu ) [0];
-					$subMenuAction = explode ( "(", $subMenu ) [1];
-					$subMenuAction = explode ( ")", $subMenuAction ) [0];
-					$nav .= <<<NAV
-		  <li><a href="<?=base_url()?>$subMenuAction">$subMenuTitle</a></li>
-NAV;
-				}
-				$nav .= <<<NAV
-		</ul>
-	</li>
-NAV;
-			} else { // NO SUBMENUS
-			}
-		}
-	}
-	$nav .= <<<NAV
-    </ul>
-  </div>
-</nav>
-NAV;
-	return $nav;
+	return $crud;
 }
 
 // ------------------------------
-function generate_menus_bs4_CRUD($classes) {
+
+function generate_menus_CRUD($classes) {
 	$crud = <<<NAV
 
 		<li class="nav-item dropdown">
@@ -589,28 +661,7 @@ NAV;
 }
 
 // ------------------------------
-function generate_menus_bs3_CRUD($classes) {
-	$crud = <<<NAV
-      <li class="dropdown">
-        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-           BEANS<span class="caret"></span>
-        </a>
-		<ul class="dropdown-menu">
-NAV;
-	foreach ( $classes as $class ) {
-		$n = $class->name;
-		$crud .= <<<NAV
-		<li><a href="<?=base_url()?>$n/list">$n</a></li>
-NAV;
-	}
-	$crud .= <<<NAV
-	    </ul>
-      </li>
-NAV;
-	return $crud;
-}
 
-// ------------------------------
 function is_dependant($attribute) {
 	$t = $attribute->mode;
 	return $t == "M2M" || $t == "M2Mi" || $t == "M2O" || $t == "O2M" || $t == "O2O";
@@ -664,12 +715,126 @@ function generate_controller($class) {
 	$code .= generate_controller_delete ( $class );
 	$code .= generate_controller_update ( $class );
 	$code .= generate_controller_update_post ( $class );
+	if ($class->login_bean) {
+		$code .= generate_controller_login ( $class );
+		$code .= generate_controller_login_post ( $class );
+		$code .= generate_controller_logout ( $class );
+	}
 	$code .= generate_controller_end ();
 	$filename = APPPATH . 'controllers' . DIRECTORY_SEPARATOR . $class->name . '.php';
 	backup_and_save ( $filename, $code );
 }
 
 // ------------------------------
+
+function generate_controller_login ( $class ) {
+
+	$code = <<<CODE
+	
+	
+	/**
+	* Controller action LOGIN for controller {$class->name}
+	* autogenerated by CASE IGNITER
+	*/
+	public function login() {
+		\$this->load->model('rol_model');
+		\$data['body']['rol'] = \$this->rol_model->get_all();
+		
+		enmarcar(\$this,'{$class->name}/login',\$data);
+	}
+
+CODE;
+	
+	return $code;
+
+}
+
+// ------------------------------
+
+function generate_controller_logout ( $class ) {
+	
+	$code = <<<CODE
+	
+	
+	/**
+	* Controller action LOGOUT for controller {$class->name}
+	* autogenerated by CASE IGNITER
+	*/
+	public function logout() {
+		if (session_status () == PHP_SESSION_NONE) {
+			session_start ();
+		}
+		session_destroy();
+		redirect(base_url());
+	}
+	
+CODE;
+	
+	return $code;
+	
+}
+
+
+// ------------------------------
+
+function generate_controller_login_post ( $class ) {
+	
+	//TODO Cambiar excepciones por mensajes de error
+	$code = <<<CODE
+	
+	/**
+	* Controller action LOGIN POST for controller {$class->name}
+	* autogenerated by CASE IGNITER
+	*/
+	public function loginPost() {
+		\$loginname = isset(\$_POST['loginname'])?\$_POST['loginname']:null;
+		\$password = isset(\$_POST['password'])?\$_POST['password']:null;
+		\$rol = isset(\$_POST['rol'])?\$_POST['rol']:null;
+
+		\$this->load->model('{$class->name}_model');
+		\$user = \$this->{$class->name}_model->get_by_loginname(\$loginname);
+		
+		if (\$user != null) {
+			if ( password_verify(\$password, \$user->password) ) {
+				\$rol_ok = false;
+				\$rol_id = 0;
+				foreach (\$user->aggr('ownRolesList', 'rol' )  as \$r ) {
+					if (\$r->id == \$rol) {
+						\$rol_ok = true;
+						\$rol_id = \$r->id;
+					}
+				}
+				if (\$rol_ok ) {
+					if (session_status () == PHP_SESSION_NONE) {session_start ();}
+					\$_SESSION['user'] = \$user;
+					\$this->load->model('rol_model');
+					\$rol_used = \$this->rol_model->get_by_id(\$rol_id);
+
+					\$_SESSION['rol'] = \$rol_used;
+					enmarcar(\$this,'_home/index');
+				}
+				else {
+					throw new Exception("Rol incorrecta");
+				}
+			} 
+			else {
+				throw new Exception("Password incorrecta");
+			}
+		}
+		else {
+			throw new Exception("Usuario inexistente");
+		}
+		
+	}
+	
+CODE;
+	return $code;
+	
+	
+}
+
+// ------------------------------
+
 function generate_controller_list_id($class) {
 	$code = <<<CODE
 
@@ -1061,7 +1226,24 @@ function generate_controller_list($class) {
 CODE;
 	return $code;
 }
+
 // --------------------------------
+
+function generate_model_get_by_loginname ( $class ) {
+	$code = <<<CODE
+	/**
+	 * create MODEL action autogenerated by CASE IGNITER
+	 */
+	public function get_by_loginname( \$loginname ) {
+		return R::findOne( '{$class->name}', ' loginname = ? ', [ \$loginname ] );
+	}
+			
+CODE;
+	return $code;
+}
+
+// --------------------------------
+
 function generate_model($class, $classes) {
 	$code = '';
 	$code .= generate_model_header ( $class->name );
@@ -1071,6 +1253,9 @@ function generate_model($class, $classes) {
 	$code .= generate_model_get_filtered ( $class, $classes );
 	$code .= generate_model_delete ( $class );
 	$code .= generate_model_get_by_id ( $class );
+	if ($class->login_bean) {
+		$code .= generate_model_get_by_loginname ( $class );
+	}
 	$code .= generate_model_end ();
 	
 	$filename = APPPATH . DIRECTORY_SEPARATOR . 'models' . DIRECTORY_SEPARATOR . $class->name . '_model.php';
@@ -1482,9 +1667,60 @@ function generate_view($class, $classes) {
 	generate_view_create_message ( $class );
 	generate_view_update ( $class, $classes );
 	generate_view_list ( $class, $classes );
+	generate_view_login ($class, $classes );
 }
 
 // ------------------------------
+
+function generate_view_login ($class, $classes ) {
+	$code = <<<CODE
+
+
+<div class="container">
+
+<h2> Bienvenido </h2>
+<h5> Introduce tus credenciales</h5>
+
+<form class="form" role="form" id="idForm" action="<?= base_url() ?>{$class->name}/loginPost" method="post">
+
+	<div class="row form-inline form-group">
+		<label for="id-loginname" class="col-2 justify-content-end">Usuario</label>
+		<input id="id-loginname" type="text" name="loginname" class="col-6 form-control" autofocus="autofocus">
+	</div>
+
+	<div class="row form-inline form-group">
+		<label for="id-password" class="col-2 justify-content-end">Contraseña</label>
+		<input id="id-password" type="password" name="password" class="col-6 form-control" >
+	</div>
+
+	<div class="row form-inline form-group">
+		<label for="id-rol" class="col-2 justify-content-end">Rol</label>
+		<select id="id-rol" name="rol" class="col-6 form-control">
+		<?php foreach (\$body['rol'] as \$rol):?>
+			<option value="<?=\$rol->id?>"><?=\$rol->descripcion?></option>
+		<?php endforeach; ?>				
+		</select>
+	</div>
+
+	<div class="row offset-2 col-6">
+		<input type="submit" class="btn btn-primary" value="Crear">
+		<a href="<?=base_url()?>">
+			<input type="button" class="offset-1 btn btn-primary" value="Cancelar">
+		</a>
+	</div>
+	
+</form>
+
+</div>
+
+CODE;
+	file_put_contents ( APPPATH . 'views' . DIRECTORY_SEPARATOR . $class->name . DIRECTORY_SEPARATOR . 'login.php', $code );
+	
+}
+
+
+// ------------------------------
+
 function generate_view_create($class, $classes) {
 	$code = '';
 	// $code .= generate_view_create_ajax ( $class->name );

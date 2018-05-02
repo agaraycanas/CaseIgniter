@@ -1,11 +1,17 @@
 <?php
 function enmarcar($controlador, $rutaVista, $datos = []) {
-	if (session_status () == PHP_SESSION_NONE) {session_start ();}
-	if (isset ( $_SESSION ['empleado']['id'] )) {
-		$datos ['header'] ['empleado'] ['nombre'] = $_SESSION ['empleado']['nombre'];
-		$datos ['header'] ['empleado'] ['ape1'] = $_SESSION ['empleado']['ape1'];
+	if (session_status () == PHP_SESSION_NONE) {
+		session_start ();
 	}
-	$controlador->load->view ( 'templates/head',$datos );
+	if (isset ( $_SESSION ['user'] ) && isset ( $_SESSION ['rol'] )) {
+		$datos ['header'] ['user'] = $_SESSION ['user'];
+		$datos ['header'] ['rol'] = $_SESSION ['rol'];
+	}
+	if (isset ( $_SESSION ['login_bean'] )) {
+		$datos ['header'] ['login_bean'] = $_SESSION ['login_bean'];
+	}
+	
+	$controlador->load->view ( 'templates/head', $datos );
 	$controlador->load->view ( 'templates/header', $datos );
 	$controlador->load->view ( 'templates/nav', $datos );
 	$controlador->load->view ( $rutaVista, $datos );

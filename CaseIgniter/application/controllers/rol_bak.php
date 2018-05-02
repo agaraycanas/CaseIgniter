@@ -12,8 +12,8 @@ class rol extends CI_Controller {
 
 		$data['body']['filter'] = isset($_REQUEST['filter']) ? $_REQUEST['filter'] : '' ;
 
-		$this->load->model('persona_model');
-		$data['body']['persona'] = $this->persona_model->get_all();
+		$this->load->model('perrito_model');
+		$data['body']['perrito'] = $this->perrito_model->get_all();
 		enmarcar($this, 'rol/create', $data);
 	}
 
@@ -27,11 +27,12 @@ class rol extends CI_Controller {
 		
 		$this->load->model('rol_model');
 
+		$nombre = ( isset( $_POST['nombre']) ? $_POST['nombre'] : null );
 		$descripcion = ( isset( $_POST['descripcion']) ? $_POST['descripcion'] : null );
 		$roles = ( isset( $_POST['roles']) ? $_POST['roles'] : [] );
 
 		try {
-			$id = $this->rol_model->create( $descripcion, $roles );
+			$id = $this->rol_model->create( $nombre, $descripcion, $roles );
 			$this->list_id($id);
 		}
 		catch (Exception $e) {
@@ -96,8 +97,8 @@ class rol extends CI_Controller {
 		$data['body']['filter'] = isset($_REQUEST['filter']) ? $_REQUEST['filter'] : '' ;
 	
 	
-		$this->load->model('persona_model');
-		$data['body']['persona'] = $this->persona_model->get_all();
+		$this->load->model('perrito_model');
+		$data['body']['perrito'] = $this->perrito_model->get_all();
 
 		$this -> load -> model ('rol_model');
 		$id = $_POST['id'];
@@ -115,11 +116,12 @@ class rol extends CI_Controller {
 		$this->load->model('rol_model');
 			
 		$id = ( isset( $_POST['id']) ? $_POST['id'] : null );
+		$nombre = ( isset( $_POST['nombre']) ? $_POST['nombre'] : null );
 		$descripcion = ( isset( $_POST['descripcion']) ? $_POST['descripcion'] : null );
 		$roles = ( isset( $_POST['roles']) ? $_POST['roles'] : [] );
 
 		try {
-			$this->rol_model->update( $id, $descripcion, $roles );
+			$this->rol_model->update( $id, $nombre, $descripcion, $roles );
 
 			$filter = isset($_POST['filter']) ? $_POST['filter'] : '' ;
 			redirect( base_url() . 'rol/list?filter='.$filter );

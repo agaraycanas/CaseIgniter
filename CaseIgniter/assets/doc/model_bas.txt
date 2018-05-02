@@ -1,9 +1,10 @@
 =========================
-PERSONA
+PERSONA [login]
 .........................
 
 fechanacimiento:%
 peso:# [U]
+foto:@
 
 <> amo:mascota
 

@@ -1,9 +1,9 @@
 
 
 <div class="container">
-<h2> Crear rol </h2>
+<h2> Crear perrito </h2>
 
-<form class="form" role="form" id="idForm" enctype="multipart/form-data" action="<?= base_url() ?>rol/create_post" method="post">
+<form class="form" role="form" id="idForm" enctype="multipart/form-data" action="<?= base_url() ?>perrito/create_post" method="post">
 
 	
 	<div class="row form-inline form-group">
@@ -14,8 +14,15 @@
 
 	
 	<div class="row form-inline form-group">
-		<label for="id-descripcion" class="col-2 justify-content-end">Descripcion</label>
-		<input id="id-descripcion" type="text" name="descripcion" class="col-6 form-control" >
+		<label for="id-loginname" class="col-2 justify-content-end">Loginname</label>
+		<input id="id-loginname" type="text" name="loginname" class="col-6 form-control" >
+		
+	</div>
+
+	
+	<div class="row form-inline form-group">
+		<label for="id-password" class="col-2 justify-content-end">Password</label>
+		<input id="id-password" type="text" name="password" class="col-6 form-control" >
 		
 	</div>
 
@@ -25,11 +32,11 @@
 		<label class="col-2 justify-content-end">Roles</label>
 		<div class="col-6 form-check form-check-inline justify-content-start">
 
-			<?php foreach ($body['perrito'] as $perrito ): ?>
+			<?php foreach ($body['rol'] as $rol ): ?>
 				
 					<div class="form-check form-check-inline">
-						<input class="form-check-input" type="checkbox" id="id-roles-<?=$perrito->id?>" name="roles[]" value="<?= $perrito->id ?>">
-						<label class="form-check-label" for="id-roles-<?=$perrito->id?>" ><?= $perrito->nombre ?></label>
+						<input class="form-check-input" type="checkbox" id="id-roles-<?=$rol->id?>" name="roles[]" value="<?= $rol->id ?>">
+						<label class="form-check-label" for="id-roles-<?=$rol->id?>" ><?= $rol->nombre ?></label>
 					</div>
 				
 			<?php endforeach; ?>
@@ -43,7 +50,7 @@
 </form>
 
 
-<form action="<?=base_url()?>rol/list" method="post">
+<form action="<?=base_url()?>perrito/list" method="post">
 	<input type="hidden" name="filter" value="<?=$body['filter']?>" />
 	<input type="submit" class="offset-1 btn btn-primary" value="Cancelar">
 </form>
