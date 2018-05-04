@@ -6,6 +6,8 @@
 <form class="form" role="form" id="idForm" enctype="multipart/form-data" action="<?= base_url() ?>rol/create_post" method="post">
 
 	
+	
+
 	<div class="row form-inline form-group">
 		<label for="id-nombre" class="col-2 justify-content-end">Nombre</label>
 		<input id="id-nombre" type="text" name="nombre" class="col-6 form-control" autofocus="autofocus">
@@ -13,6 +15,8 @@
 	</div>
 
 	
+	
+
 	<div class="row form-inline form-group">
 		<label for="id-descripcion" class="col-2 justify-content-end">Descripcion</label>
 		<input id="id-descripcion" type="text" name="descripcion" class="col-6 form-control" >
@@ -25,11 +29,11 @@
 		<label class="col-2 justify-content-end">Roles</label>
 		<div class="col-6 form-check form-check-inline justify-content-start">
 
-			<?php foreach ($body['perrito'] as $perrito ): ?>
+			<?php foreach ($body['gatito'] as $gatito ): ?>
 				
 					<div class="form-check form-check-inline">
-						<input class="form-check-input" type="checkbox" id="id-roles-<?=$perrito->id?>" name="roles[]" value="<?= $perrito->id ?>">
-						<label class="form-check-label" for="id-roles-<?=$perrito->id?>" ><?= $perrito->nombre ?></label>
+						<input class="form-check-input" type="checkbox" id="id-roles-<?=$gatito->id?>" name="roles[]" value="<?= $gatito->id ?>">
+						<label class="form-check-label" for="id-roles-<?=$gatito->id?>" ><?= $gatito->nombre ?></label>
 					</div>
 				
 			<?php endforeach; ?>

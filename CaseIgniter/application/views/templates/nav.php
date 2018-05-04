@@ -11,7 +11,7 @@
 			</a>
 
 			<div class="dropdown-menu">
-				<a class="dropdown-item" href="<?=base_url()?>perrito/list">perrito</a>				<a class="dropdown-item" href="<?=base_url()?>rol/list">rol</a>			</div>
+				<a class="dropdown-item" href="<?=base_url()?>gatito/list">gatito</a>				<a class="dropdown-item" href="<?=base_url()?>rol/list">rol</a>			</div>
 
 		</li>
 		<li class="nav-item">

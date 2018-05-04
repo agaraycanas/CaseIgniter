@@ -19,9 +19,9 @@ class _casei extends CI_Controller {
 		$model_data = $_POST ['modelData'];
 		$classes = process_domain_model ( $model_data );
 		
-		$rol_class = set_bean_class ( $classes );
-		if ($rol_class != null) {
-			$classes [] = $rol_class;
+		$login_bean = set_login_bean_class ( $classes );
+		if ($login_bean != null) {
+			$classes [] = $login_bean;
 		}
 		
 		generate_application_files ( $classes );
@@ -30,7 +30,7 @@ class _casei extends CI_Controller {
 		change_title ( $app_title );
 		db_create_and_freeze ( $classes );
 
-		if ($rol_class != null) {
+		if ($login_bean != null) {
 			generate_admin ( $classes );
 		}
 		

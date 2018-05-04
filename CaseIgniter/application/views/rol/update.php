@@ -42,22 +42,23 @@
 	</div>
 				
 								
-
+	<?php if ($body['is_admin']): ?>
 	<div class="row form-inline form-group">
 		<label class="col-2 justify-content-end">Roles</label>
 		<div class="col-6 form-check form-check-inline justify-content-start">
 
-			<?php foreach ($body['perrito'] as $perrito ): ?>
+			<?php foreach ($body['gatito'] as $gatito ): ?>
 				
 				<div class="form-check form-check-inline">
-					<input class="form-check-input" type="checkbox" id="id-roles-<?=$perrito->id ?>" name="roles[]" value="<?= $perrito->id ?>" <?= checked($body['rol']->aggr('ownRolesList','perrito'), $perrito->id ) ?>>
-					<label class="form-check-label" for="id-roles-<?=$perrito->id?>" ><?= $perrito->nombre ?></label>
+					<input class="form-check-input" type="checkbox" id="id-roles-<?=$gatito->id ?>" name="roles[]" value="<?= $gatito->id ?>" <?= checked($body['rol']->aggr('ownRolesList','gatito'), $gatito->id ) ?>>
+					<label class="form-check-label" for="id-roles-<?=$gatito->id?>" ><?= $gatito->nombre ?></label>
 				</div>
 				
 			<?php endforeach; ?>
 						
 		</div>
 	</div>
+	<?php endif; ?>
 
 <div class="row offset-2 col-6">
 	<input type="submit" class="btn btn-primary" value="Actualizar">

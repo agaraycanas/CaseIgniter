@@ -17,13 +17,9 @@
 			<div class="form-group col-lg-6">
 				<label for="idMenu">MENÚS</label>
 				<textarea name="menuData" class="form-control" cols="10" rows="10" id="idMenu"
-					placeholder="
-Menu1>submenu1-1(action_1-1),submenu1-2(action_1-2)
-Menu2>submenu2-1(action_2-1),submenu2-2(action_1-2),submenu2-3(action2-3)
-Menu3>submenu3-1(action_3-1)
-[rol1]Menu_rol1>submenu_rol1(..),[rol2,rol3]submenu_rol1_rol2_rol3(..)
-CI_to_keep_Case_Igniter_Menu
-CRUD_to_generate_a_menu_for_all_the_beans
+					placeholder="m1>sub-1.1(uri-1.1),sub1-2(uri-1.2)
+[rol1]m2>sub-2.1(uri-2.1)
+[rol2,rol3]m3>[rol3]sub3.1(uri-3.1),[rol2]sub3.2(uri-3.2)
 			" 
 			><?php if (isset($menuData)):?><?= $menuData ?><?php endif;?></textarea>
 			</div>
@@ -32,44 +28,37 @@ CRUD_to_generate_a_menu_for_all_the_beans
 			<div class="form-group col-lg-6">
 				<label for="idModel">MODELO</label>
 				<textarea name="modelData" class="form-control" cols="15" rows="30" id="idModel" style="overflow:scroll;"
-					placeholder="
-================================================
+					placeholder="============================
 BEANNAME [login]
-	c (all)
-	r (auth,anon)
-	u (auth)
-	d (auth)
-................................................
+	c [rol1]
+	r [auth,anon]
+	u [auth]
+	d [auth]
+............................
+textattribute
+numberattribute:#
+dateattribute:%
+imageattribute:@
 
-regularstringattribute
-regularnumberattribute:#
-regulardateattribute:%
-regularimageattribute:@
+atwithmodifiers [M,U]
 
 <> onetooneattribute:beanrelated
 <* onetomanyattribute:beanrelated
 *> manytooneattribute:beanrelated
 ** manytomanyattribute:beanrelated
 
-regularattributewithmodifiers [M,U]
-** manytomanyattributewithmodifiers:beanrelated [c-,r-]
+** m2matwithmodifiers [c-,r-]
 
-================================================
-
-
-
-
-
-================================================
-ANOTHERBEAN
-.......
-moreattributes
-================================================
-
-================================================
-ABEANWITHNAMEATTRIBUTEONLY
-.......
-================================================			"
+		MODIFIERS
+		M   main reg.attribute
+		U	unique reg.attribute
+		c-	hidden in create/update forms
+		r-	hidden in list view
+............................
+[rol1] use_case_just_for_rol1()
+[rol2,rol3] use_case_just_for_rol2_rol3()
+===========================
+"
 			><?php if (isset($modelData)):?><?= $modelData ?><?php endif;?></textarea>
 			</div>
 		</div>
