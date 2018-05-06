@@ -31,7 +31,7 @@
 <table id="myTable" class="table table-hover table-striped tablesorter">
 	<thead>
 	<tr>
-		<th>nombre</th>		<th>foto</th>
+		<th>nombre</th>		<th>piba</th>
 		<th>loginname</th>
 		<th>roles - nombre(rol)</th>
 		<th>Acciones</th>
@@ -43,7 +43,7 @@
 		<tr>
 			<td class="alert alert-success"><?= str_ireplace($body['filter'], '<kbd>'.$body['filter'].'</kbd>', $gatito -> nombre) ?></td>
 
-			<td><img src="<?=base_url().( ( $gatito -> foto == null || $gatito -> foto == '' ) ? 'assets/img/icons/png/ban-4x.png' : 'assets/upload/'.$gatito -> foto)?>" alt="IMG" width="<?=( $gatito -> foto == null || $gatito -> foto == '' ) ? 15 : 30?>" height="<?=( $gatito -> foto == null || $gatito -> foto == '' ) ? 15 : 30?>" /></td>
+			<td><?= str_ireplace($body['filter'], '<kbd>'.$body['filter'].'</kbd>',$gatito -> piba) ?></td>
 
 			<td><?= str_ireplace($body['filter'], '<kbd>'.$body['filter'].'</kbd>',$gatito -> loginname) ?></td>
 					

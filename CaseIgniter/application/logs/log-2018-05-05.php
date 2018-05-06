@@ -81,3 +81,5 @@ ERROR - 2018-05-05 00:50:59 --> 404 Page Not Found: Gatito/assets
 ERROR - 2018-05-05 00:50:59 --> 404 Page Not Found: Assets/css
 ERROR - 2018-05-05 00:51:03 --> 404 Page Not Found: Gatito/assets
 ERROR - 2018-05-05 00:51:03 --> 404 Page Not Found: Assets/css
+ERROR - 2018-05-05 00:53:59 --> 404 Page Not Found: Rol/assets
+ERROR - 2018-05-05 00:54:28 --> 404 Page Not Found: Rol/assets

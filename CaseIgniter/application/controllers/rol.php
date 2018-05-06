@@ -38,7 +38,7 @@ class rol extends CI_Controller {
 		catch (Exception $e) {
 			$data['status'] = 'error';
 			$data['message'] = "Error al crear el/la rol $nombre";
-			$this->load->view('rol/create_message',$data);
+			enmarcar($this,'rol/create_message',$data);
 		}	
 	
 	}
@@ -122,7 +122,6 @@ class rol extends CI_Controller {
 		$nombre = ( isset( $_POST['nombre']) ? $_POST['nombre'] : null );
 		$descripcion = ( isset( $_POST['descripcion']) ? $_POST['descripcion'] : null );
 		$roles = ( isset( $_POST['roles']) ? $_POST['roles'] : [] );
-
 		try {
 			$this->rol_model->update( $id, $nombre, $descripcion, $roles );
 
@@ -132,7 +131,7 @@ class rol extends CI_Controller {
 		catch (Exception $e) {
 			$data['status'] = 'error';
 			$data['message'] = "Error al crear el/la rol $nombre";
-			$this->load->view('rol/create_message',$data);
+			enmarcar($this,'rol/create_message',$data);
 		}	
 	
 	}

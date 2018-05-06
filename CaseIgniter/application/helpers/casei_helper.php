@@ -7,7 +7,9 @@ class Attribute {
 	public $hidden_create;
 	public $hidden_recover;
 	public $main;
-	public function __construct($name, $type, $collection, $mode, $hidden_create = false, $hidden_recover = false, $main = false) {
+	public $unique;
+	
+	public function __construct($name, $type, $collection, $mode, $hidden_create = false, $hidden_recover = false, $main = false, $unique=false) {
 		$this->name = $name;
 		$this->type = $type;
 		$this->collection = $collection;
@@ -15,6 +17,7 @@ class Attribute {
 		$this->hidden_create = $hidden_create;
 		$this->hidden_recover = $hidden_recover;
 		$this->main = $main;
+		$this->unique = $unique;
 	}
 	public function is_dependant() {
 		$m = $this->mode;
@@ -192,7 +195,7 @@ function set_login_bean_class($classes) {
 		foreach ( $classes as $c ) {
 			if ($c->login_bean) {
 				$rol_class = create_rol_class ( $c->name );
-				$c->attributes [] = new Attribute ( 'loginname', 'String', false, 'NO_MODE', false, false, false );
+				$c->attributes [] = new Attribute ( 'loginname', 'String', false, 'NO_MODE', false, false, false, true );
 				$c->attributes [] = new Attribute ( 'password', 'String', false, 'NO_MODE', false, true, false );
 				$c->attributes [] = new Attribute ( 'roles', 'rol', true, 'M2M', true, false, false );
 			}
@@ -296,7 +299,7 @@ function process_domain_model($modelData) {
 		$hidden_create = (strpos ( $modifiers, 'c-' ) !== false);
 		$hidden_recover = (strpos ( $modifiers, 'r-' ) !== false);
 		$main = (strpos ( $modifiers, 'M' ) !== false);
-		$mode = (strpos ( $modifiers, 'U' ) !== false) ? 'UNIQUE' : $mode;
+		$unique = (strpos ( $modifiers, 'U' ) !== false) ;
 		if ($multiplicity != 'REGULAR' && $mode == 'UNIQUE') {
 			throw new Exception ( "ERROR while parsing model.txt: Only REGULAR attributes can be UNIQUE <br/><b>$line</b>" );
 		}
@@ -306,7 +309,7 @@ function process_domain_model($modelData) {
 		
 		error_reporting ( E_ALL );
 		
-		return new Attribute ( $name, $type, $collection, $mode, $hidden_create, $hidden_recover, $main );
+		return new Attribute ( $name, $type, $collection, $mode, $hidden_create, $hidden_recover, $main, $unique);
 	}
 	
 	// =============================================================
@@ -1057,7 +1060,7 @@ CODE;
 		catch (Exception \$e) {
 			\$data['status'] = 'error';
 			\$data['message'] = "Error al crear el/la {$class->name} \$$main_attribute";
-			\$this->load->view('{$class->name}/create_message',\$data);
+			enmarcar(\$this,'{$class->name}/create_message',\$data);
 		}
 CATCH;
 	
@@ -1071,7 +1074,7 @@ function generate_controller_update_post_middle($class) {
 	$code .= "\t\t\$id = ( isset( \$_POST['id']) ? \$_POST['id'] : null );" . PHP_EOL;
 	
 	foreach ( $class->attributes as $a ) {
-		if (! $a->hidden_create) {
+		if (! $a->hidden_create || ($a->hidden_create && $class->login_bean && $a->name == 'roles')) {
 			if (! $a->collection) {
 				if ($a->type == 'file') {
 					$code .= "\t\t\$$a->name = ( isset( \$_FILES['$a->name']) ? \$_FILES['$a->name'] : null );" . PHP_EOL;
@@ -1084,14 +1087,25 @@ function generate_controller_update_post_middle($class) {
 		}
 	}
 	
-	$code .= (PHP_EOL . "\t\ttry {" . PHP_EOL);
-	$code .= "\t\t\t\$this->{$class->name}_model->update( \$id, ";
+	if ($class->login_bean) {
+		$code.=<<<CODE
+		if (session_status () == PHP_SESSION_NONE) {session_start ();}
+		\$is_admin = ( isset(\$_SESSION['rol']) && \$_SESSION['rol']->nombre == 'admin' );
+CODE;
+	}
+	$code .= <<<CODE
+		try {
+			\$this->{$class->name}_model->update( \$id, 
+CODE;
 	
 	$parameters = '';
 	foreach ( $class->attributes as $a ) {
-		if (! $a->hidden_create) {
+		if (! $a->hidden_create || ($a->hidden_create && $class->login_bean && $a->name == 'roles')) {
 			$parameters .= "$$a->name, ";
 		}
+	}
+	if ($class->login_bean) {
+		$parameters .= '$is_admin';
 	}
 	$parameters = rtrim ( $parameters, ', ' );
 	$code .= $parameters;
@@ -1110,7 +1124,7 @@ function generate_controller_update_post_middle($class) {
 		catch (Exception \$e) {
 			\$data['status'] = 'error';
 			\$data['message'] = "Error al crear el/la {$class->name} \$$main_attribute";
-			\$this->load->view('{$class->name}/create_message',\$data);
+			enmarcar(\$this,'{$class->name}/create_message',\$data);
 		}
 CATCH;
 	
@@ -1341,10 +1355,16 @@ CODE;
 	$parameters = rtrim ( $parameters, ', ' );
 	$code .= $parameters;
 	
-	$code .= " ) {" . PHP_EOL;
-	$code .= "\n\t\$bean = R::dispense( '{$class->name}' );";
-	$code .= "\n\t\$id_bean = R::store( \$bean );" . PHP_EOL . PHP_EOL;
+	$code .= <<<CODE
+) {
+
+	R::begin();
+	try {
+
+	\$bean = R::dispense( '{$class->name}' );
+	\$id_bean = R::store( \$bean );
 	
+CODE;
 	foreach ( $class->attributes as $a ) {
 		if (! $a->hidden_create || ($class->login_bean && $a->name == 'roles') ) {
 			$type_capitalized = ucfirst ( $a->type );
@@ -1424,10 +1444,22 @@ REGULAR;
 			}
 		}
 	}
-	$code .= (PHP_EOL . "\tR::store(\$bean);" . PHP_EOL);
-	$code .= (PHP_EOL . "\treturn \$bean->id;" . PHP_EOL);
-	$code .= '}' . PHP_EOL . PHP_EOL;
 	
+	$code .= <<<CODE
+
+	R::store(\$bean);
+	R::commit();
+	return \$bean->id;
+
+	}
+	catch (Exception \$e) {
+		R::rollback();
+		throw \$e;
+	}
+
+	}
+
+CODE;
 	return $code;
 }
 
@@ -1443,18 +1475,27 @@ CODE;
 	
 	$parameters = '';
 	foreach ( $class->attributes as $a ) {
-		if (! $a->hidden_create) {
+		if (! $a->hidden_create || ($a->hidden_create && $class->login_bean && $a->name == 'roles')) {
 			$parameters .= "$$a->name, ";
 		}
+	}
+	if ($class->login_bean) {
+		$parameters .= '$is_admin';
 	}
 	$parameters = rtrim ( $parameters, ', ' );
 	$code .= $parameters;
 	
-	$code .= " ) {" . PHP_EOL;
-	$code .= "\n\t\$bean = R::load( '{$class->name}', \$id );" . PHP_EOL . PHP_EOL;
-	
+	$code .= <<<CODE
+) {
+
+	R::begin();
+
+	try {
+	\$bean = R::load( '{$class->name}', \$id );
+
+CODE;
 	foreach ( $class->attributes as $a ) {
-		if (! $a->hidden_create) {
+		if (! $a->hidden_create || ($a->hidden_create && $class->login_bean && $a->name == 'roles')) {
 			$type_capitalized = ucfirst ( $a->type );
 			$name_capitalized = ucfirst ( $a->name );
 			
@@ -1521,10 +1562,17 @@ M2O;
 
 O2M;
 			} else if ($a->mode == "M2M") { // =========== MANY TO MANY RELATIONSHIP ======================
+				$if_for_roles_begin = '';
+				$if_for_roles_end ='';
+				if ($class->login_bean && $a->name=='roles') {
+					$if_for_roles_begin = "if (\$roles != [] && \$is_admin ) {\n";
+					$if_for_roles_end = '}';
+				}
 				$code .= <<<M2M
 				
 	// "many to many" attribute (M2M)
 	
+	$if_for_roles_begin
 	foreach (\$bean->own{$name_capitalized}List as \${$a->name}_bean ) {
 		\$key = array_search( \${$a->name}_bean->{$a->type}->id, \${$a->name} );
 		
@@ -1545,6 +1593,7 @@ O2M;
 		\$m2m -> {$a->type} = \$another_bean;
 		R::store(\$m2m);
 	}
+	$if_for_roles_end
 
 	
 M2M;
@@ -1576,9 +1625,21 @@ REGULAR;
 			}
 		}
 	}
-	$code .= (PHP_EOL . "\tR::store(\$bean);" . PHP_EOL);
-	$code .= '}' . PHP_EOL . PHP_EOL;
 	
+	
+	$code .= <<<CODE
+
+	R::store(\$bean);
+	R::commit();
+	}
+	catch (Exception \$e) {
+		R::rollback();
+		throw \$e;
+	}
+
+	}
+
+CODE;
 	return $code;
 }
 
@@ -2310,10 +2371,18 @@ CODE;
 }
 
 // ------------------------------
-function db_create_and_freeze($classes) {
+function db_create_set_uniques_and_freeze($classes, $controller) {
 	R::freeze ( false );
 	foreach ( $classes as $class ) {
 		db_bean_test_create ( $class );
+	}
+	foreach ($classes as $c) {
+		foreach ($c->attributes as $a) {
+			if ($a->unique) {
+				$db = $controller->load->database();
+				$sql = "ALTER TABLE `{$c->name}` ADD UNIQUE(`{$a->name}`)";
+				$controller->db->simple_query($sql);}
+		}
 	}
 	
 	R::freeze ( true );
@@ -2369,11 +2438,7 @@ function db_bean_test_create($class) {
 				R::store ( $o2o );
 				
 				R::trash ( $bean );
-				/*
-				 * $name .= '_id';
-				 * $o2o -> $name = NULL;
-				 * R::store( $o2o );
-				 */
+			
 				R::trash ( $o2o );
 			}
 			

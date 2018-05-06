@@ -38,7 +38,7 @@ class rol extends CI_Controller {
 		catch (Exception $e) {
 			$data['status'] = 'error';
 			$data['message'] = "Error al crear el/la rol $nombre";
-			$this->load->view('rol/create_message',$data);
+			enmarcar($this,'rol/create_message',$data);
 		}	
 	
 	}
@@ -94,6 +94,7 @@ class rol extends CI_Controller {
 	*/
 	public function update() {
 		
+		if (session_status () == PHP_SESSION_NONE) { session_start (); }
 		$is_admin = ( isset($_SESSION['rol']) && $_SESSION['rol']->nombre == 'admin' );
 		$data['body']['is_admin'] = $is_admin;
 		$data['body']['filter'] = isset($_REQUEST['filter']) ? $_REQUEST['filter'] : '' ;
@@ -121,7 +122,6 @@ class rol extends CI_Controller {
 		$nombre = ( isset( $_POST['nombre']) ? $_POST['nombre'] : null );
 		$descripcion = ( isset( $_POST['descripcion']) ? $_POST['descripcion'] : null );
 		$roles = ( isset( $_POST['roles']) ? $_POST['roles'] : [] );
-
 		try {
 			$this->rol_model->update( $id, $nombre, $descripcion, $roles );
 
@@ -131,7 +131,7 @@ class rol extends CI_Controller {
 		catch (Exception $e) {
 			$data['status'] = 'error';
 			$data['message'] = "Error al crear el/la rol $nombre";
-			$this->load->view('rol/create_message',$data);
+			enmarcar($this,'rol/create_message',$data);
 		}	
 	
 	}

@@ -25,7 +25,7 @@ class gatito extends CI_Controller {
 		$this->load->model('gatito_model');
 
 		$nombre = ( isset( $_POST['nombre']) ? $_POST['nombre'] : null );
-		$foto = ( isset( $_FILES['foto']) ? $_FILES['foto'] : null );
+		$piba = ( isset( $_POST['piba']) ? $_POST['piba'] : null );
 		$loginname = ( isset( $_POST['loginname']) ? $_POST['loginname'] : null );
 		$password = ( isset( $_POST['password']) ? password_hash($_POST['password'], PASSWORD_DEFAULT) : password_hash('',PASSWORD_DEFAULT ) );
 		
@@ -37,13 +37,13 @@ class gatito extends CI_Controller {
 		$roles = [ $default_rol->id ];
 		
 		try {
-			$id = $this->gatito_model->create( $nombre, $foto, $loginname, $password, $roles );
+			$id = $this->gatito_model->create( $nombre, $piba, $loginname, $password, $roles );
 			$this->list_id($id);
 		}
 		catch (Exception $e) {
 			$data['status'] = 'error';
 			$data['message'] = "Error al crear el/la gatito $nombre";
-			$this->load->view('gatito/create_message',$data);
+			enmarcar($this,'gatito/create_message',$data);
 		}	
 	
 	}
@@ -125,12 +125,13 @@ class gatito extends CI_Controller {
 			
 		$id = ( isset( $_POST['id']) ? $_POST['id'] : null );
 		$nombre = ( isset( $_POST['nombre']) ? $_POST['nombre'] : null );
-		$foto = ( isset( $_FILES['foto']) ? $_FILES['foto'] : null );
+		$piba = ( isset( $_POST['piba']) ? $_POST['piba'] : null );
 		$loginname = ( isset( $_POST['loginname']) ? $_POST['loginname'] : null );
 		$password = ( isset( $_POST['password']) ? $_POST['password'] : null );
-
-		try {
-			$this->gatito_model->update( $id, $nombre, $foto, $loginname, $password );
+		$roles = ( isset( $_POST['roles']) ? $_POST['roles'] : [] );
+		if (session_status () == PHP_SESSION_NONE) {session_start ();}
+		$is_admin = ( isset($_SESSION['rol']) && $_SESSION['rol']->nombre == 'admin' );		try {
+			$this->gatito_model->update( $id, $nombre, $piba, $loginname, $password, $roles, $is_admin );
 
 			$filter = isset($_POST['filter']) ? $_POST['filter'] : '' ;
 			redirect( base_url() . 'gatito/list?filter='.$filter );
@@ -138,7 +139,7 @@ class gatito extends CI_Controller {
 		catch (Exception $e) {
 			$data['status'] = 'error';
 			$data['message'] = "Error al crear el/la gatito $nombre";
-			$this->load->view('gatito/create_message',$data);
+			enmarcar($this,'gatito/create_message',$data);
 		}	
 	
 	}

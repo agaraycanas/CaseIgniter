@@ -28,7 +28,7 @@ class _casei extends CI_Controller {
 		
 		generate_home_controller(get_login_bean($classes));	
 		change_title ( $app_title );
-		db_create_and_freeze ( $classes );
+		db_create_set_uniques_and_freeze ( $classes , $this);
 
 		if ($login_bean != null) {
 			generate_admin ( $classes );
