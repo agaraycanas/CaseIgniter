@@ -21,7 +21,7 @@
 <div class="container">
 <h2> Editar gatito </h2>
 
-<form class="form" role="form" id="idForm" enctype="multipart/form-data" action="<?= base_url() ?>gatito/update_post" method="post">
+<form class="form" role="form" id="idForm" enctype="multipart/form-data" action="<?= base_url() ?>gatito/updatePost" method="post">
 	
 	<input type="hidden" name="filter" value="<?=$body['filter']?>" />
 	
@@ -36,8 +36,8 @@
 				
 				
 	<div class="row form-inline form-group">
-		<label for="id-piba" class="col-2 justify-content-end">Piba</label>
-		<input id="id-piba" type="text" name="piba" value="<?=  $body['gatito']->piba ?>" class="col-6 form-control">
+		<label for="id-fecha" class="col-2 justify-content-end">Fecha</label>
+		<input id="id-fecha" type="date" name="fecha" value="<?=  $body['gatito']->fecha ?>" class="col-3 form-control">
 		
 	</div>
 				

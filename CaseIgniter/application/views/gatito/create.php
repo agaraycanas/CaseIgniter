@@ -18,8 +18,8 @@
 	
 
 	<div class="row form-inline form-group">
-		<label for="id-piba" class="col-2 justify-content-end">Piba</label>
-		<input id="id-piba" type="text" name="piba" class="col-6 form-control" >
+		<label for="id-fecha" class="col-2 justify-content-end">Fecha</label>
+		<input id="id-fecha" type="date" name="fecha" class="col-3 form-control" >
 		
 	</div>
 

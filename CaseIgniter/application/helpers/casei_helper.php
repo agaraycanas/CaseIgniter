@@ -8,8 +8,7 @@ class Attribute {
 	public $hidden_recover;
 	public $main;
 	public $unique;
-	
-	public function __construct($name, $type, $collection, $mode, $hidden_create = false, $hidden_recover = false, $main = false, $unique=false) {
+	public function __construct($name, $type, $collection, $mode, $hidden_create = false, $hidden_recover = false, $main = false, $unique = false) {
 		$this->name = $name;
 		$this->type = $type;
 		$this->collection = $collection;
@@ -299,7 +298,7 @@ function process_domain_model($modelData) {
 		$hidden_create = (strpos ( $modifiers, 'c-' ) !== false);
 		$hidden_recover = (strpos ( $modifiers, 'r-' ) !== false);
 		$main = (strpos ( $modifiers, 'M' ) !== false);
-		$unique = (strpos ( $modifiers, 'U' ) !== false) ;
+		$unique = (strpos ( $modifiers, 'U' ) !== false);
 		if ($multiplicity != 'REGULAR' && $mode == 'UNIQUE') {
 			throw new Exception ( "ERROR while parsing model.txt: Only REGULAR attributes can be UNIQUE <br/><b>$line</b>" );
 		}
@@ -309,7 +308,7 @@ function process_domain_model($modelData) {
 		
 		error_reporting ( E_ALL );
 		
-		return new Attribute ( $name, $type, $collection, $mode, $hidden_create, $hidden_recover, $main, $unique);
+		return new Attribute ( $name, $type, $collection, $mode, $hidden_create, $hidden_recover, $main, $unique );
 	}
 	
 	// =============================================================
@@ -496,12 +495,10 @@ function generate_yuml($classes) {
 	return $html . '">';
 }
 
-
 // ------------------------------
-
 function get_login_bean($classes) {
 	$login_bean = null;
-	foreach ($classes as $c) {
+	foreach ( $classes as $c ) {
 		if ($c->login_bean) {
 			$login_bean = $c;
 		}
@@ -510,29 +507,27 @@ function get_login_bean($classes) {
 }
 
 // ------------------------------
-
 function generate_home_controller($login_bean) {
-	$lb = ($login_bean==null?'':"\t\t\$_SESSION['login_bean'] = '{$login_bean->name}';");
-/*
-	$lb = '';
-	if  ( $login_bean != null ) {
-		$ma = $login_bean->getMainAttribute();
-	}
-	*/
+	$lb = ($login_bean == null ? '' : "\t\t\$_SESSION['login_bean'] = '{$login_bean->name}';");
+	/*
+	 * $lb = '';
+	 * if ( $login_bean != null ) {
+	 * $ma = $login_bean->getMainAttribute();
+	 * }
+	 */
 	$code = <<<CODE
 <?php
 class _home extends CI_Controller {
 	public function index() {
 		if (session_status () == PHP_SESSION_NONE) {session_start ();}
 		$lb
-		enmarcar(\$this, '_home/index');
+		frame(\$this, '_home/index');
 	}
 }
 ?>
 CODE;
-
-	file_put_contents ( APPPATH . 'controllers' . DIRECTORY_SEPARATOR . '_home.php', $code );
 	
+	file_put_contents ( APPPATH . 'controllers' . DIRECTORY_SEPARATOR . '_home.php', $code );
 }
 
 // ------------------------------
@@ -582,7 +577,7 @@ function generate_menus($menuData, $appTitle, $classes) {
 NAV;
 	
 	$nav .= generate_menus_CRUD ( $classes );
-	$nav .= generate_menus_CSI();
+	$nav .= generate_menus_CSI ();
 	foreach ( explode ( "\n", $menuData ) as $menu ) {
 		if (trim ( $menu ) != '') {
 			$menuTitle = explode ( ":", $menu ) [0];
@@ -622,7 +617,6 @@ NAV;
 }
 
 // ------------------------------
-
 function generate_menus_CSI() {
 	$crud = <<<NAV
 
@@ -637,7 +631,6 @@ NAV;
 }
 
 // ------------------------------
-
 function generate_menus_CRUD($classes) {
 	$crud = <<<NAV
 
@@ -664,7 +657,6 @@ NAV;
 }
 
 // ------------------------------
-
 function is_dependant($attribute) {
 	$t = $attribute->mode;
 	return $t == "M2M" || $t == "M2Mi" || $t == "M2O" || $t == "O2M" || $t == "O2O";
@@ -700,6 +692,32 @@ function generate_views($classes) {
 }
 
 // ------------------------------
+function generate_frame_helper($login_bean) {
+	$login_bean_assign = ($login_bean != null ? "\$data ['header'] ['login_bean'] = '$login_bean';" : '');
+	$code = <<<CODE
+<?php
+function frame(\$controller, \$path_to_view, \$data = []) {
+	if (session_status () == PHP_SESSION_NONE) {
+		session_start ();
+	}
+	if (isset ( \$_SESSION ['user'] ) && isset ( \$_SESSION ['rol'] )) {
+		\$data ['header'] ['user'] = \$_SESSION ['user'];
+		\$data ['header'] ['rol'] = \$_SESSION ['rol'];
+	}
+	$login_bean_assign
+	\$controller->load->view ( 'templates/head', \$data );
+	\$controller->load->view ( 'templates/header', \$data );
+	\$controller->load->view ( 'templates/nav', \$data );
+	\$controller->load->view ( \$path_to_view, \$data );
+	\$controller->load->view ( 'templates/footer', \$data );
+	\$controller->load->view ( 'templates/end' );
+}
+?>
+CODE;
+	file_put_contents ( APPPATH . 'helpers' . DIRECTORY_SEPARATOR . 'frame_helper.php', $code );
+}
+
+// ------------------------------
 function backup_and_save($filename, $code) {
 	if (file_exists ( $filename )) {
 		file_put_contents ( substr ( $filename, 0, - 4 ) . '_bak.php', file_get_contents ( $filename ) );
@@ -722,6 +740,8 @@ function generate_controller($class) {
 		$code .= generate_controller_login ( $class );
 		$code .= generate_controller_login_post ( $class );
 		$code .= generate_controller_logout ( $class );
+		$code .= generate_controller_change_password ( $class );
+		$code .= generate_controller_change_password_post ( $class );
 	}
 	$code .= generate_controller_end ();
 	$filename = APPPATH . 'controllers' . DIRECTORY_SEPARATOR . $class->name . '.php';
@@ -729,9 +749,76 @@ function generate_controller($class) {
 }
 
 // ------------------------------
+function generate_controller_change_password($class) {
+	$code = <<<CODE
+	
+	
+	/**
+	* Controller action CHANGE PASSWORD for controller {$class->name}
+	* autogenerated by CASE IGNITER
+	*/
+	public function changepwd() {
+		if (session_status () == PHP_SESSION_NONE) {session_start ();}
 
-function generate_controller_login ( $class ) {
+		if (!isset(\$_SESSION['user'])) {
+			show_404();
+		}
+		\$data['body']['id'] = \$_SESSION['user']->id;
+		frame(\$this,'{$class->name}/changepwd',\$data);
+	}
+	
+CODE;
+	
+	return $code;
+}
 
+// ------------------------------
+function generate_controller_change_password_post($class) {
+	$code = <<<CODE
+	
+	
+	/**
+	* Controller action CHANGE PASSWORD POST for controller {$class->name}
+	* autogenerated by CASE IGNITER
+	*/
+	public function changepwdPost() {
+		if (session_status () == PHP_SESSION_NONE) {session_start ();}
+		
+		if (!isset(\$_SESSION['user'])) {
+			show_404();
+		}
+
+		\$id = isset (\$_POST['id']) ? \$_POST['id'] : null ;
+		\$old_password = isset (\$_POST['oldPwd']) ? \$_POST['oldPwd'] : null ;
+		\$new_password = isset (\$_POST['newPwd']) ? \$_POST['newPwd'] : null ;
+
+		if (\$_SESSION['user']->id != \$id) {
+			show_404();
+		}
+
+		try {
+			\$this->load->model('{$class->name}_model');
+			\$this->{$class->name}_model->change_password(\$id,\$old_password,\$new_password);
+			\$this->load->library('session');
+			\$this->session->set_flashdata('id', \$id);
+			redirect(base_url().'gatito/update');
+
+			redirect(base_url().'{$class->name}/update');
+		}
+		catch (Exception \$e) {
+			\$data['status'] = 'error';
+			\$data['message'] = "Error al cambiar la contraseña";
+			frame(\$this,'{$class->name}/create_message',\$data);
+		}
+	}
+				
+CODE;
+	
+	return $code;
+}
+
+// ------------------------------
+function generate_controller_login($class) {
 	$code = <<<CODE
 	
 	
@@ -740,19 +827,16 @@ function generate_controller_login ( $class ) {
 	* autogenerated by CASE IGNITER
 	*/
 	public function login() {
-		enmarcar(\$this,'{$class->name}/login');
+		frame(\$this,'{$class->name}/login');
 	}
 
 CODE;
 	
 	return $code;
-
 }
 
 // ------------------------------
-
-function generate_controller_logout ( $class ) {
-	
+function generate_controller_logout($class) {
 	$code = <<<CODE
 	
 	
@@ -764,27 +848,19 @@ function generate_controller_logout ( $class ) {
 		if (session_status () == PHP_SESSION_NONE) {
 			session_start ();
 		}
-		if (isset(\$_SESSION['user']) ) {
-			unset (\$_SESSION['user'] );
-		}
-		if (isset(\$_SESSION['rol']) ) {
-			unset (\$_SESSION['rol'] );
-		}
+		session_destroy();
 		redirect(base_url());
 	}
 	
 CODE;
 	
 	return $code;
-	
 }
 
-
 // ------------------------------
-
-function generate_controller_login_post ( $class ) {
+function generate_controller_login_post($class) {
 	
-	//TODO Cambiar excepciones por mensajes de error
+	// TODO Cambiar excepciones por mensajes de error
 	$code = <<<CODE
 	
 	/**
@@ -810,7 +886,7 @@ function generate_controller_login_post ( $class ) {
 					\$_SESSION['user'] = \$user;
 					\$_SESSION['rol'] = \$rol;
 
-					enmarcar(\$this,'_home/index');
+					frame(\$this,'_home/index');
 			} 
 			else {
 				throw new Exception("Password incorrecta");
@@ -824,12 +900,9 @@ function generate_controller_login_post ( $class ) {
 	
 CODE;
 	return $code;
-	
-	
 }
 
 // ------------------------------
-
 function generate_controller_list_id($class) {
 	$code = <<<CODE
 
@@ -841,7 +914,7 @@ function generate_controller_list_id($class) {
 	private function list_id(\$id) {
 		\$this->load->model('{$class->name}_model');
 		\$data['body']['{$class->name}'] = [ \$this->{$class->name}_model->get_by_id(\$id) ];
-		enmarcar(\$this, '{$class->name}/list', \$data);
+		frame(\$this, '{$class->name}/list', \$data);
 	}
 
 CODE;
@@ -851,6 +924,7 @@ CODE;
 
 // ------------------------------
 function generate_controller_delete($class) {
+	$rol_check_code = get_role_checking_code ();
 	$code = <<<CODE
 
 
@@ -860,6 +934,9 @@ function generate_controller_delete($class) {
 	* autogenerated by CASE IGNITER
 	*/
 	public function delete() {
+
+		$rol_check_code
+
 		\$this -> load -> model ('{$class->name}_model');
 		try {
 			\$id = \$_POST['id'];
@@ -869,7 +946,7 @@ function generate_controller_delete($class) {
 			redirect(base_url().'{$class->name}/list?filter='.\$filter);
 		}
 		catch (Exception \$e ) {
-			enmarcar(\$this, '{$class->name}/deleteERROR');
+			frame(\$this, '{$class->name}/deleteERROR');
 		}
 	}
 CODE;
@@ -879,6 +956,7 @@ CODE;
 
 // ------------------------------
 function generate_controller_update($class) {
+	$rol_check_code = get_role_checking_code ();
 	$code = <<<CODE
 	
 	
@@ -888,6 +966,8 @@ function generate_controller_update($class) {
 	* autogenerated by CASE IGNITER
 	*/
 	public function update() {
+
+		$rol_check_code
 		
 		if (session_status () == PHP_SESSION_NONE) { session_start (); }
 		\$is_admin = ( isset(\$_SESSION['rol']) && \$_SESSION['rol']->nombre == 'admin' );
@@ -899,7 +979,7 @@ CODE;
 	if ($class->has_dependants ()) {
 		$types_loaded = [ ];
 		foreach ( $class->attributes as $a ) {
-			if ( $a->is_dependant () && ( !($a->hidden_create) || ($a->hidden_create && $class->login_bean && $a->name == 'roles') )  && ! in_array ( $a->type, $types_loaded ) ) {
+			if ($a->is_dependant () && (! ($a->hidden_create) || ($a->hidden_create && $class->login_bean && $a->name == 'roles')) && ! in_array ( $a->type, $types_loaded )) {
 				$types_loaded [] = $a->type;
 				$code .= generate_controller_update_dependants ( $a );
 			}
@@ -910,10 +990,12 @@ CODE;
 
 
 		\$this -> load -> model ('{$class->name}_model');
-		\$id = \$_POST['id'];
+		\$id = (isset (\$_POST['id']) ? \$_POST['id'] : \$_SESSION['id']);
+		
+
 		\$data['body']['{$class->name}'] = \$this -> {$class->name}_model -> get_by_id(\$id);
 		
-		enmarcar(\$this, '{$class->name}/update', \$data);
+		frame(\$this, '{$class->name}/update', \$data);
 	}
 CODE;
 	
@@ -949,6 +1031,7 @@ CODE;
 }
 // ------------------------------
 function generate_controller_create($class) {
+	$rol_check_code = get_role_checking_code ();
 	$code = <<<CODE
 	
 	
@@ -957,17 +1040,17 @@ function generate_controller_create($class) {
 	* autogenerated by CASE IGNITER
 	*/
 	public function create() {
-			
+	
+		$rol_check_code		
 		\$data['body']['filter'] = isset(\$_REQUEST['filter']) ? \$_REQUEST['filter'] : '' ;
 CODE;
-	
 	
 	$has_dependants = false;
 	
 	if ($class->has_dependants ()) {
 		$models_loaded = [ ];
 		foreach ( $class->attributes as $a ) {
-			if ($a->is_dependant () && ! ($a->hidden_create) && ! in_array ( $a->type, $models_loaded ) ) {
+			if ($a->is_dependant () && ! ($a->hidden_create) && ! in_array ( $a->type, $models_loaded )) {
 				$models_loaded [] = $a->type;
 				$has_dependants = true;
 				$code .= <<<CODE
@@ -980,10 +1063,9 @@ CODE;
 		}
 	}
 	
-	
 	$code .= <<<CODE
 	
-		enmarcar(\$this, '{$class->name}/create', \$data);
+		frame(\$this, '{$class->name}/create', \$data);
 	}
 				
 				
@@ -1003,13 +1085,12 @@ function generate_controller_create_post($class) {
 // ------------------------------
 function generate_controller_create_post_middle($class) {
 	$code = '';
-	foreach ( $class->attributes as $a  ) {
-		if (! $a->hidden_create ) {
+	foreach ( $class->attributes as $a ) {
+		if (! $a->hidden_create) {
 			if (! $a->collection) {
 				if ($a->type == 'file') {
 					$code .= "\t\t\$$a->name = ( isset( \$_FILES['$a->name']) ? \$_FILES['$a->name'] : null );" . PHP_EOL;
-				}
-				else if ($class->login_bean && $a->name == 'password') {
+				} else if ($class->login_bean && $a->name == 'password') {
 					$code .= "\t\t\$$a->name = ( isset( \$_POST['$a->name']) ? password_hash(\$_POST['$a->name'], PASSWORD_DEFAULT) : password_hash('',PASSWORD_DEFAULT ) );" . PHP_EOL;
 				} else {
 					$code .= "\t\t\$$a->name = ( isset( \$_POST['$a->name']) ? \$_POST['$a->name'] : null );" . PHP_EOL;
@@ -1033,7 +1114,6 @@ function generate_controller_create_post_middle($class) {
 CODE;
 	}
 	
-	
 	$code .= (PHP_EOL . "\t\ttry {" . PHP_EOL);
 	$code .= "\t\t\t\$id = \$this->{$class->name}_model->create( ";
 	
@@ -1043,7 +1123,6 @@ CODE;
 			$parameters .= "$$a->name, ";
 		}
 	}
-	
 	
 	$parameters = rtrim ( $parameters, ', ' );
 	$code .= $parameters;
@@ -1060,7 +1139,7 @@ CODE;
 		catch (Exception \$e) {
 			\$data['status'] = 'error';
 			\$data['message'] = "Error al crear el/la {$class->name} \$$main_attribute";
-			enmarcar(\$this,'{$class->name}/create_message',\$data);
+			frame(\$this,'{$class->name}/create_message',\$data);
 		}
 CATCH;
 	
@@ -1088,7 +1167,7 @@ function generate_controller_update_post_middle($class) {
 	}
 	
 	if ($class->login_bean) {
-		$code.=<<<CODE
+		$code .= <<<CODE
 		if (session_status () == PHP_SESSION_NONE) {session_start ();}
 		\$is_admin = ( isset(\$_SESSION['rol']) && \$_SESSION['rol']->nombre == 'admin' );
 CODE;
@@ -1124,7 +1203,7 @@ CODE;
 		catch (Exception \$e) {
 			\$data['status'] = 'error';
 			\$data['message'] = "Error al crear el/la {$class->name} \$$main_attribute";
-			enmarcar(\$this,'{$class->name}/create_message',\$data);
+			frame(\$this,'{$class->name}/create_message',\$data);
 		}
 CATCH;
 	
@@ -1133,6 +1212,7 @@ CATCH;
 
 // ------------------------------
 function generate_controller_create_post_header($class_name) {
+	$rol_check_code = get_role_checking_code ();
 	$code = <<<CODE
 	
 	
@@ -1142,6 +1222,7 @@ function generate_controller_create_post_header($class_name) {
 	*/
 	public function create_post() {
 		
+		$rol_check_code
 		\$this->load->model('{$class_name}_model');
 
 
@@ -1151,6 +1232,8 @@ CODE;
 
 // ------------------------------
 function generate_controller_update_post_header($class_name) {
+	$rol_check_code = get_role_checking_code ();
+	
 	$code = <<<CODE
 	
 	
@@ -1158,8 +1241,10 @@ function generate_controller_update_post_header($class_name) {
 	* Controller action UPDATE POST for controller $class_name
 	* autogenerated by CASE IGNITER
 	*/
-	public function update_post() {
+	public function updatePost() {
 	
+		$rol_check_code
+
 		\$this->load->model('{$class_name}_model');
 			
 
@@ -1179,7 +1264,6 @@ CODE;
 }
 
 // ------------------------------
-
 function generate_controller_create_post_end($class_name) {
 	$code = <<<CODE
 	
@@ -1192,7 +1276,6 @@ CODE;
 }
 
 // ------------------------------
-
 function generate_controller_update_post_end($class_name) {
 	$code = <<<CODE
 	
@@ -1206,6 +1289,7 @@ CODE;
 
 // ------------------------------
 function generate_controller_list($class) {
+	$rol_check_code = get_role_checking_code ();
 	$cn = $class->name;
 	$code = <<<CODE
 
@@ -1215,19 +1299,21 @@ function generate_controller_list($class) {
 	* autogenerated by CASE IGNITER
 	*/
 	public function list() {
+
+		$rol_check_code
+
 		\$this->load->model('{$cn}_model');
 		\$filter = isset(\$_REQUEST['filter'])?\$_REQUEST['filter']:'';
 		\$data['body']['$cn'] = (\$filter == '' ? \$this->{$cn}_model->get_all() : \$this->{$cn}_model->get_filtered( \$filter ) );
 		\$data['body']['filter'] = \$filter ;
-		enmarcar(\$this, '{$cn}/list', \$data);
+		frame(\$this, '{$cn}/list', \$data);
 	}
 CODE;
 	return $code;
 }
 
 // --------------------------------
-
-function generate_model_get_by_loginname ( $class ) {
+function generate_model_get_by_loginname($class) {
 	$code = <<<CODE
 	/**
 	 * create MODEL action autogenerated by CASE IGNITER
@@ -1241,7 +1327,6 @@ CODE;
 }
 
 // --------------------------------
-
 function generate_model($class, $classes) {
 	$code = '';
 	$code .= generate_model_header ( $class->name );
@@ -1253,9 +1338,10 @@ function generate_model($class, $classes) {
 	$code .= generate_model_get_by_id ( $class );
 	if ($class->login_bean) {
 		$code .= generate_model_get_by_loginname ( $class );
+		$code .= generate_model_change_password ( $class );
 	}
 	if ($class->name == 'rol') {
-		$code .= generate_model_get_default_rol();
+		$code .= generate_model_get_default_rol ();
 	}
 	$code .= generate_model_end ();
 	
@@ -1264,7 +1350,27 @@ function generate_model($class, $classes) {
 }
 
 // --------------------------------
+function generate_model_change_password($class) {
+	return <<<CODE
+	/**
+	* change_password MODEL action autogenerated by CASEIGNITER
+	*/
+	public function change_password(\$id,\$old_password,\$new_password) {
 
+		\$bean = R::load('{$class->name}',\$id);
+		if ( ! password_verify ( \$old_password, \$bean->password ) ) {
+			throw new Exception("ERROR: Contraseña incorrecta");
+		}
+		else {
+			\$bean->password = password_hash ( \$new_password, PASSWORD_DEFAULT );
+			R::store(\$bean);
+		}
+		
+	}
+CODE;
+}
+
+// --------------------------------
 function generate_model_get_default_rol() {
 	return <<<CODE
 	
@@ -1276,11 +1382,9 @@ function generate_model_get_default_rol() {
 	}
 
 CODE;
-
 }
-	
-// --------------------------------
 
+// --------------------------------
 function generate_model_header($class_name) {
 	return <<<CODE
 <?php
@@ -1348,7 +1452,7 @@ CODE;
 	$parameters = '';
 	
 	foreach ( $class->attributes as $a ) {
-		if (! $a->hidden_create || ($class->login_bean && $a->name == 'roles') ) {
+		if (! $a->hidden_create || ($class->login_bean && $a->name == 'roles')) {
 			$parameters .= "$$a->name, ";
 		}
 	}
@@ -1366,7 +1470,7 @@ CODE;
 	
 CODE;
 	foreach ( $class->attributes as $a ) {
-		if (! $a->hidden_create || ($class->login_bean && $a->name == 'roles') ) {
+		if (! $a->hidden_create || ($class->login_bean && $a->name == 'roles')) {
 			$type_capitalized = ucfirst ( $a->type );
 			if ($a->mode == "O2O") { // =========== ONE TO ONE RELATIONSHIP ======================
 				$code .= <<<O2O
@@ -1563,8 +1667,8 @@ M2O;
 O2M;
 			} else if ($a->mode == "M2M") { // =========== MANY TO MANY RELATIONSHIP ======================
 				$if_for_roles_begin = '';
-				$if_for_roles_end ='';
-				if ($class->login_bean && $a->name=='roles') {
+				$if_for_roles_end = '';
+				if ($class->login_bean && $a->name == 'roles') {
 					$if_for_roles_begin = "if (\$roles != [] && \$is_admin ) {\n";
 					$if_for_roles_end = '}';
 				}
@@ -1625,7 +1729,6 @@ REGULAR;
 			}
 		}
 	}
-	
 	
 	$code .= <<<CODE
 
@@ -1732,12 +1835,52 @@ function generate_view($class, $classes) {
 	generate_view_create_message ( $class );
 	generate_view_update ( $class, $classes );
 	generate_view_list ( $class, $classes );
-	generate_view_login ($class, $classes );
+	if ($class->login_bean) {
+		generate_view_login ( $class, $classes );
+		generate_view_change_password ( $class, $classes );
+	}
 }
 
 // ------------------------------
+function generate_view_change_password($class, $classes) {
+	$code = <<<CODE
+	
+	
+<div class="container">
 
-function generate_view_login ($class, $classes ) {
+<h2> Cambio de contraseña </h2>
+
+<form class="form" role="form" id="idForm" action="<?= base_url() ?>{$class->name}/changepwdPost" method="post">
+		
+	<input type="hidden" name="id" value="<?=\$body['id']?>"/>
+
+	<div class="row form-inline form-group">
+		<label for="id-loginname" class="col-2 justify-content-end">Antigua contraseña</label>
+		<input id="id-loginname" type="password" name="oldPwd" class="col-6 form-control" autofocus="autofocus">
+	</div>
+		
+	<div class="row form-inline form-group">
+		<label for="id-password" class="col-2 justify-content-end">Nueva contraseña</label>
+		<input id="id-password" type="password" name="newPwd" class="col-6 form-control" >
+	</div>
+		
+	<div class="row offset-2 col-6">
+		<input type="submit" class="btn btn-primary" value="Entrar">
+		<a href="<?=base_url()?>">
+			<input type="button" class="offset-1 btn btn-primary" value="Cancelar">
+		</a>
+	</div>
+		
+</form>
+		
+</div>
+
+CODE;
+	file_put_contents ( APPPATH . 'views' . DIRECTORY_SEPARATOR . $class->name . DIRECTORY_SEPARATOR . 'changepwd.php', $code );
+}
+
+// ------------------------------
+function generate_view_login($class, $classes) {
 	$code = <<<CODE
 
 
@@ -1771,12 +1914,9 @@ function generate_view_login ($class, $classes ) {
 
 CODE;
 	file_put_contents ( APPPATH . 'views' . DIRECTORY_SEPARATOR . $class->name . DIRECTORY_SEPARATOR . 'login.php', $code );
-	
 }
 
-
 // ------------------------------
-
 function generate_view_create($class, $classes) {
 	$code = '';
 	// $code .= generate_view_create_ajax ( $class->name );
@@ -1801,22 +1941,56 @@ function generate_view_update($class, $classes) {
 
 // ------------------------------
 function generate_view_create_message($class) {
-	$code = '';
-	$code .= generate_view_create_message_all ( $class );
+	$code = <<<CODE
+<div class="container">
+	<?php if (\$status == 'ok' ): ?>
+	<div class="alert alert-success"><?= \$message ?></div>
+	<?php else: ?>
+	<div class="alert alert-danger"><?= \$message ?></div>
+	<?php endif; ?>
+</div>
+CODE;
 	
 	file_put_contents ( APPPATH . 'views' . DIRECTORY_SEPARATOR . $class->name . DIRECTORY_SEPARATOR . 'create_message.php', $code );
 }
 
 // ------------------------------
-function generate_view_create_message_all($class) {
+function get_role_checking_code($roles = []) {
+	$roles [] = 'admin';
 	$code = <<<CODE
-<?php if (\$status == 'ok' ): ?>
-<div class="alert alert-success"><?= \$message ?></div>
-<?php else: ?>
-<div class="alert alert-danger"><?= \$message ?></div>
-<?php endif; ?>
+
+		if (session_status () == PHP_SESSION_NONE) {session_start ();}
+		\$rol_ok = false;
+		\$login_rol = (isset(\$_SESSION['rol']) ? \$_SESSION['rol']->nombre : null );
 CODE;
-	
+	foreach ( $roles as $rol ) {
+		if ($rol == 'auth') {
+			$code .= <<<CODE
+
+		if (\$login_rol != null ) {\$rol_ok = true;}
+
+CODE;
+		} else if ($rol == 'anon') {
+			$code .= <<<CODE
+
+		if (\$login_rol == null) {\$rol_ok = true;}
+			
+CODE;
+		} else {
+			$code .= <<<CODE
+
+		if (\$login_rol == '$rol') {\$rol_ok = true;}
+
+CODE;
+		}
+	}
+	$code .= <<<CODE
+
+		if ( !\$rol_ok ) {
+			show_404();
+		} 
+
+CODE;
 	return $code;
 }
 
@@ -1903,7 +2077,7 @@ function generate_view_update_header($class_name) {
 <div class="container">
 <h2> Editar $class_name </h2>
 
-<form class="form" role="form" id="idForm" enctype="multipart/form-data" action="<?= base_url() ?>$class_name/update_post" method="post">
+<form class="form" role="form" id="idForm" enctype="multipart/form-data" action="<?= base_url() ?>$class_name/updatePost" method="post">
 	
 	<input type="hidden" name="filter" value="<?=\$body['filter']?>" />
 	
@@ -1920,7 +2094,7 @@ function generate_view_create_non_dependants($class) {
 		if (! $a->is_dependant ()) {
 			$capitalized = ucfirst ( $a->name );
 			$type = ($a->type == 'String' ? 'text' : $a->type);
-			$type = (($class->login_bean && $a->name=='password') ? 'password' : $type);
+			$type = (($class->login_bean && $a->name == 'password') ? 'password' : $type);
 			$autofocus = $a->main ? 'autofocus="autofocus"' : '';
 			$size = $a->type == 'date' ? '3' : '6';
 			$preview = ($a->type == 'file' ? "<img class=\"offset-1 col-2\" id=\"id-out-{$a->name}\" width=\"3%\" height=\"3%\" src=\"\" alt=\"\"/>" : '');
@@ -1947,7 +2121,8 @@ function generate_view_create_non_dependants($class) {
 
 CODE;
 			// $code .= ($a->type == 'file' ? $jquery_file_code : '');
-			;$code .= <<<HTML
+			;
+			$code .= <<<HTML
 	
 	$jquery_file_code
 
@@ -2103,7 +2278,7 @@ function generate_view_update_dependants($class, $classes) {
 	
 	foreach ( $class->attributes as $a ) {
 		
-		if ($a->is_dependant () && (!($a->hidden_create) || ($a->hidden_create && $class->login_bean && $a->name='roles') ) ) {
+		if ($a->is_dependant () && (! ($a->hidden_create) || ($a->hidden_create && $class->login_bean && $a->name = 'roles'))) {
 			$name_capitalized = ucfirst ( explode ( '_', $a->name ) [0] );
 			$type_capitalized = ucfirst ( $a->type );
 			$type_plural_capitalized = ucfirst ( plural ( $a->type ) );
@@ -2376,12 +2551,13 @@ function db_create_set_uniques_and_freeze($classes, $controller) {
 	foreach ( $classes as $class ) {
 		db_bean_test_create ( $class );
 	}
-	foreach ($classes as $c) {
-		foreach ($c->attributes as $a) {
+	foreach ( $classes as $c ) {
+		foreach ( $c->attributes as $a ) {
 			if ($a->unique) {
-				$db = $controller->load->database();
+				$db = $controller->load->database ();
 				$sql = "ALTER TABLE `{$c->name}` ADD UNIQUE(`{$a->name}`)";
-				$controller->db->simple_query($sql);}
+				$controller->db->simple_query ( $sql );
+			}
 		}
 	}
 	
@@ -2438,7 +2614,7 @@ function db_bean_test_create($class) {
 				R::store ( $o2o );
 				
 				R::trash ( $bean );
-			
+				
 				R::trash ( $o2o );
 			}
 			
@@ -2470,6 +2646,5 @@ function db_bean_test_create($class) {
 }
 
 // ------------------------------
-
 
 ?>

@@ -174,3 +174,106 @@ ERROR - 2018-05-06 11:55:35 --> 404 Page Not Found: Gatito/assets
 ERROR - 2018-05-06 11:55:39 --> 404 Page Not Found: Gatito/assets
 ERROR - 2018-05-06 11:55:57 --> 404 Page Not Found: Gatito/assets
 ERROR - 2018-05-06 11:56:21 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 20:21:00 --> 404 Page Not Found: _casei/assets
+ERROR - 2018-05-06 20:21:03 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 20:21:05 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 20:21:08 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 20:21:13 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 20:21:16 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 20:21:24 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 20:21:41 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 20:21:56 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 20:22:00 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 20:22:17 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 20:22:28 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 20:22:34 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 20:22:43 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 20:22:47 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 20:22:51 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 20:22:55 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 20:23:03 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 20:23:07 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 20:23:24 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 20:23:27 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 20:23:30 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 20:30:25 --> Severity: error --> Exception: Call to undefined function enmarcar() C:\Users\garay\git\CaseIgniter\CaseIgniter\application\controllers\_casei.php 12
+ERROR - 2018-05-06 20:31:41 --> Severity: error --> Exception: Call to undefined function enmarcar() C:\Users\garay\git\CaseIgniter\CaseIgniter\application\controllers\gatito.php 62
+ERROR - 2018-05-06 20:31:47 --> Severity: error --> Exception: Call to undefined function enmarcar() C:\Users\garay\git\CaseIgniter\CaseIgniter\application\controllers\_home.php 6
+ERROR - 2018-05-06 20:32:16 --> 404 Page Not Found: _casei/assets
+ERROR - 2018-05-06 20:32:19 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 20:32:21 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 20:32:27 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 20:32:36 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 20:32:40 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 20:32:45 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 20:32:51 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 20:32:55 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 20:32:59 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 20:33:01 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 20:47:27 --> 404 Page Not Found: _casei/assets
+ERROR - 2018-05-06 20:47:52 --> 404 Page Not Found: _casei/assets
+ERROR - 2018-05-06 20:48:16 --> 404 Page Not Found: _casei/assets
+ERROR - 2018-05-06 20:48:28 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 20:48:55 --> 404 Page Not Found: _casei/assets
+ERROR - 2018-05-06 20:49:00 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 20:49:05 --> 404 Page Not Found: Rol/login
+ERROR - 2018-05-06 20:58:39 --> 404 Page Not Found: _casei/assets
+ERROR - 2018-05-06 21:14:10 --> 404 Page Not Found: _casei/assets
+ERROR - 2018-05-06 21:14:14 --> Severity: error --> Exception: syntax error, unexpected ';' C:\Users\garay\git\CaseIgniter\CaseIgniter\application\controllers\gatito.php 16
+ERROR - 2018-05-06 21:16:02 --> 404 Page Not Found: _casei/assets
+ERROR - 2018-05-06 21:16:06 --> Severity: Notice --> Undefined variable: rol C:\Users\garay\git\CaseIgniter\CaseIgniter\application\controllers\gatito.php 77
+ERROR - 2018-05-06 21:16:06 --> Severity: Notice --> Use of undefined constant rol_ok - assumed 'rol_ok' C:\Users\garay\git\CaseIgniter\CaseIgniter\application\controllers\gatito.php 78
+ERROR - 2018-05-06 21:16:06 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 21:16:52 --> 404 Page Not Found: _casei/assets
+ERROR - 2018-05-06 21:16:54 --> Severity: Notice --> Undefined variable: rol C:\Users\garay\git\CaseIgniter\CaseIgniter\application\controllers\gatito.php 77
+ERROR - 2018-05-06 21:16:55 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 21:18:08 --> 404 Page Not Found: _casei/assets
+ERROR - 2018-05-06 21:18:11 --> 404 Page Not Found: 
+ERROR - 2018-05-06 21:18:22 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 21:18:26 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 21:18:30 --> 404 Page Not Found: 
+ERROR - 2018-05-06 21:20:44 --> 404 Page Not Found: _casei/assets
+ERROR - 2018-05-06 21:20:47 --> 404 Page Not Found: 
+ERROR - 2018-05-06 21:20:53 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 21:20:57 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 21:21:01 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 21:21:06 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 21:21:09 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 21:21:12 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 21:21:15 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 21:21:23 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 21:21:38 --> 404 Page Not Found: 
+ERROR - 2018-05-06 21:21:42 --> 404 Page Not Found: 
+ERROR - 2018-05-06 21:21:47 --> 404 Page Not Found: 
+ERROR - 2018-05-06 21:21:57 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 21:22:01 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 21:22:14 --> 404 Page Not Found: Rol/assets
+ERROR - 2018-05-06 21:23:40 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 21:23:45 --> Severity: error --> Exception: Usuario inexistente C:\Users\garay\git\CaseIgniter\CaseIgniter\application\controllers\gatito.php 251
+ERROR - 2018-05-06 21:24:03 --> 404 Page Not Found: 
+ERROR - 2018-05-06 21:24:09 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 21:24:13 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 21:38:03 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 21:38:10 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 21:38:14 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 22:05:47 --> Severity: error --> Exception: ERROR while parsing model.txt (line 3): Rol line or attribute separator expected <br/><b>fecha:#</b> C:\Users\garay\git\CaseIgniter\CaseIgniter\application\helpers\casei_helper.php 343
+ERROR - 2018-05-06 22:07:33 --> Severity: error --> Exception: ERROR while parsing model.txt (line 3): Rol line or attribute separator expected <br/><b>fecha:%</b> C:\Users\garay\git\CaseIgniter\CaseIgniter\application\helpers\casei_helper.php 343
+ERROR - 2018-05-06 22:08:09 --> 404 Page Not Found: _casei/assets
+ERROR - 2018-05-06 22:08:15 --> 404 Page Not Found: 
+ERROR - 2018-05-06 22:08:21 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 22:08:25 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 22:08:28 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 22:08:32 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 22:08:38 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 22:11:04 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 22:11:08 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 22:11:27 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 22:11:31 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 22:11:42 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 22:11:47 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 22:11:57 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 22:12:12 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 22:12:14 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 22:12:29 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 22:12:33 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-06 22:13:58 --> 404 Page Not Found: Gatito/assets

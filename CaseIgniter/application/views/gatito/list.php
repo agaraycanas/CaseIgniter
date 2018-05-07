@@ -31,7 +31,7 @@
 <table id="myTable" class="table table-hover table-striped tablesorter">
 	<thead>
 	<tr>
-		<th>nombre</th>		<th>piba</th>
+		<th>nombre</th>		<th>fecha</th>
 		<th>loginname</th>
 		<th>roles - nombre(rol)</th>
 		<th>Acciones</th>
@@ -43,7 +43,7 @@
 		<tr>
 			<td class="alert alert-success"><?= str_ireplace($body['filter'], '<kbd>'.$body['filter'].'</kbd>', $gatito -> nombre) ?></td>
 
-			<td><?= str_ireplace($body['filter'], '<kbd>'.$body['filter'].'</kbd>',$gatito -> piba) ?></td>
+			<td><?= str_ireplace($body['filter'], '<kbd>'.$body['filter'].'</kbd>',$gatito -> fecha) ?></td>
 
 			<td><?= str_ireplace($body['filter'], '<kbd>'.$body['filter'].'</kbd>',$gatito -> loginname) ?></td>
 					

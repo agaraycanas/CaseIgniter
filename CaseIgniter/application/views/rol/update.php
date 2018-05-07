@@ -21,7 +21,7 @@
 <div class="container">
 <h2> Editar rol </h2>
 
-<form class="form" role="form" id="idForm" enctype="multipart/form-data" action="<?= base_url() ?>rol/update_post" method="post">
+<form class="form" role="form" id="idForm" enctype="multipart/form-data" action="<?= base_url() ?>rol/updatePost" method="post">
 	
 	<input type="hidden" name="filter" value="<?=$body['filter']?>" />
 	

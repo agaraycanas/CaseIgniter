@@ -9,7 +9,7 @@ class _casei extends CI_Controller {
 	public function home() {
 		$data ['menuData'] = file_exists ( $this->menu_file ) ? file_get_contents ( $this->menu_file ) : null;
 		$data ['modelData'] = file_exists ( $this->model_file ) ? file_get_contents ( $this->model_file ) : null;
-		enmarcar ( $this, '_casei/home', $data );
+		frame ( $this, '_casei/home', $data );
 	}
 	public function homePOST() {
 		if (session_status () == PHP_SESSION_NONE) {session_start ();}
@@ -19,18 +19,20 @@ class _casei extends CI_Controller {
 		$model_data = $_POST ['modelData'];
 		$classes = process_domain_model ( $model_data );
 		
-		$login_bean = set_login_bean_class ( $classes );
-		if ($login_bean != null) {
-			$classes [] = $login_bean;
+		$rol_class = set_login_bean_class ( $classes );
+		if ($rol_class != null) {
+			$classes [] = $rol_class;
 		}
 		
 		generate_application_files ( $classes );
 		
-		generate_home_controller(get_login_bean($classes));	
+		$login_bean = get_login_bean($classes);
+		generate_frame_helper($login_bean!=null ? $login_bean->name : null);
+		generate_home_controller($login_bean);	
 		change_title ( $app_title );
 		db_create_set_uniques_and_freeze ( $classes , $this);
 
-		if ($login_bean != null) {
+		if ($rol_class != null) {
 			generate_admin ( $classes );
 		}
 		
@@ -42,6 +44,6 @@ class _casei extends CI_Controller {
 		$data ['menus'] = $menu_data;
 		$data ['model'] = $model_data;
 		
-		enmarcar ( $this, '_casei/homePOST', $data );
+		frame ( $this, '_casei/homePOST', $data );
 	}
 }
