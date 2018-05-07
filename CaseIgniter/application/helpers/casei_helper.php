@@ -801,8 +801,6 @@ function generate_controller_change_password_post($class) {
 			\$this->{$class->name}_model->change_password(\$id,\$old_password,\$new_password);
 			\$this->load->library('session');
 			\$this->session->set_flashdata('id', \$id);
-			redirect(base_url().'gatito/update');
-
 			redirect(base_url().'{$class->name}/update');
 		}
 		catch (Exception \$e) {
