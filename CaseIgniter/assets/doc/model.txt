@@ -1,5 +1,6 @@
 ==
 GATITO [login]
 ..
-fecha:%
+expuesto
+oculto [c-]
 ==

@@ -159,7 +159,9 @@ class rol extends CI_Controller {
 		$data['body']['gatito'] = $this->gatito_model->get_all();
 
 		$this -> load -> model ('rol_model');
-		$id = $_POST['id'];
+		$id = (isset ($_POST['id']) ? $_POST['id'] : $_SESSION['id']);
+		
+
 		$data['body']['rol'] = $this -> rol_model -> get_by_id($id);
 		
 		frame($this, 'rol/update', $data);

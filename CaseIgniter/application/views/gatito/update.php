@@ -20,7 +20,12 @@
 	
 <div class="container">
 <h2> Editar gatito </h2>
-
+		
+<form action="<?=base_url()?>gatito/changepwd" method="post">
+	<input type="hidden" name="id" value="<?= $body['gatito']->id ?>">
+	<input type="submit" class="offset-1 btn btn-primary" value="Cambiar contraseña">
+</form>
+				
 <form class="form" role="form" id="idForm" enctype="multipart/form-data" action="<?= base_url() ?>gatito/updatePost" method="post">
 	
 	<input type="hidden" name="filter" value="<?=$body['filter']?>" />
@@ -36,8 +41,15 @@
 				
 				
 	<div class="row form-inline form-group">
-		<label for="id-fecha" class="col-2 justify-content-end">Fecha</label>
-		<input id="id-fecha" type="date" name="fecha" value="<?=  $body['gatito']->fecha ?>" class="col-3 form-control">
+		<label for="id-expuesto" class="col-2 justify-content-end">Expuesto</label>
+		<input id="id-expuesto" type="text" name="expuesto" value="<?=  $body['gatito']->expuesto ?>" class="col-6 form-control">
+		
+	</div>
+				
+				
+	<div class="row form-inline form-group">
+		<label for="id-oculto" class="col-2 justify-content-end">Oculto</label>
+		<input id="id-oculto" type="text" name="oculto" value="<?=  $body['gatito']->oculto ?>" class="col-6 form-control">
 		
 	</div>
 				
@@ -45,13 +57,6 @@
 	<div class="row form-inline form-group">
 		<label for="id-loginname" class="col-2 justify-content-end">Loginname</label>
 		<input id="id-loginname" type="text" name="loginname" value="<?=  $body['gatito']->loginname ?>" class="col-6 form-control">
-		
-	</div>
-				
-				
-	<div class="row form-inline form-group">
-		<label for="id-password" class="col-2 justify-content-end">Password</label>
-		<input id="id-password" type="text" name="password" value="<?=  $body['gatito']->password ?>" class="col-6 form-control">
 		
 	</div>
 				

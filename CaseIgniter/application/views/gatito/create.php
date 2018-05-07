@@ -18,8 +18,17 @@
 	
 
 	<div class="row form-inline form-group">
-		<label for="id-fecha" class="col-2 justify-content-end">Fecha</label>
-		<input id="id-fecha" type="date" name="fecha" class="col-3 form-control" >
+		<label for="id-expuesto" class="col-2 justify-content-end">Expuesto</label>
+		<input id="id-expuesto" type="text" name="expuesto" class="col-6 form-control" >
+		
+	</div>
+
+	
+	
+
+	<div class="row form-inline form-group">
+		<label for="id-oculto" class="col-2 justify-content-end">Oculto</label>
+		<input id="id-oculto" type="text" name="oculto" class="col-6 form-control" >
 		
 	</div>
 

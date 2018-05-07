@@ -126,3 +126,52 @@ ERROR - 2018-05-07 02:46:03 --> Severity: Warning --> ini_set(): A session is ac
 ERROR - 2018-05-07 02:46:03 --> Severity: Notice --> A session had already been started - ignoring session_start() C:\Users\garay\git\CaseIgniter\CaseIgniter\system\libraries\Session\Session.php 143
 ERROR - 2018-05-07 02:46:03 --> 404 Page Not Found: Gatito/assets
 ERROR - 2018-05-07 02:46:07 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 09:41:08 --> Severity: Notice --> Undefined variable: class C:\Users\garay\git\CaseIgniter\CaseIgniter\application\helpers\casei_helper.php 2077
+ERROR - 2018-05-07 09:41:08 --> Severity: Notice --> Trying to get property of non-object C:\Users\garay\git\CaseIgniter\CaseIgniter\application\helpers\casei_helper.php 2077
+ERROR - 2018-05-07 09:41:08 --> Severity: Notice --> Undefined variable: class C:\Users\garay\git\CaseIgniter\CaseIgniter\application\helpers\casei_helper.php 2077
+ERROR - 2018-05-07 09:41:08 --> Severity: Notice --> Trying to get property of non-object C:\Users\garay\git\CaseIgniter\CaseIgniter\application\helpers\casei_helper.php 2077
+ERROR - 2018-05-07 09:41:08 --> Severity: Warning --> session_start(): Cannot send session cache limiter - headers already sent (output started at C:\Users\garay\git\CaseIgniter\CaseIgniter\system\core\Exceptions.php:271) C:\Users\garay\git\CaseIgniter\CaseIgniter\application\helpers\frame_helper.php 4
+ERROR - 2018-05-07 09:41:08 --> 404 Page Not Found: _casei/assets
+ERROR - 2018-05-07 09:41:58 --> Severity: Notice --> Undefined variable: class_name C:\Users\garay\git\CaseIgniter\CaseIgniter\application\helpers\casei_helper.php 2074
+ERROR - 2018-05-07 09:41:58 --> Severity: Notice --> Undefined variable: class_name C:\Users\garay\git\CaseIgniter\CaseIgniter\application\helpers\casei_helper.php 2080
+ERROR - 2018-05-07 09:41:58 --> Severity: Notice --> Undefined variable: class_name C:\Users\garay\git\CaseIgniter\CaseIgniter\application\helpers\casei_helper.php 2090
+ERROR - 2018-05-07 09:41:58 --> Severity: Notice --> Undefined variable: class_name C:\Users\garay\git\CaseIgniter\CaseIgniter\application\helpers\casei_helper.php 2074
+ERROR - 2018-05-07 09:41:58 --> Severity: Notice --> Undefined variable: class_name C:\Users\garay\git\CaseIgniter\CaseIgniter\application\helpers\casei_helper.php 2090
+ERROR - 2018-05-07 09:41:58 --> Severity: Warning --> session_start(): Cannot send session cache limiter - headers already sent (output started at C:\Users\garay\git\CaseIgniter\CaseIgniter\system\core\Exceptions.php:271) C:\Users\garay\git\CaseIgniter\CaseIgniter\application\helpers\frame_helper.php 4
+ERROR - 2018-05-07 09:41:58 --> 404 Page Not Found: _casei/assets
+ERROR - 2018-05-07 09:43:26 --> 404 Page Not Found: _casei/assets
+ERROR - 2018-05-07 09:43:35 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 09:43:39 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 09:43:43 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 09:43:47 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 09:43:57 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 09:44:04 --> Severity: Warning --> ini_set(): A session is active. You cannot change the session module's ini settings at this time C:\Users\garay\git\CaseIgniter\CaseIgniter\system\libraries\Session\Session.php 316
+ERROR - 2018-05-07 09:44:04 --> Severity: Notice --> A session had already been started - ignoring session_start() C:\Users\garay\git\CaseIgniter\CaseIgniter\system\libraries\Session\Session.php 143
+ERROR - 2018-05-07 09:44:04 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 09:44:15 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 09:44:55 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 09:44:59 --> Severity: error --> Exception: Password incorrecta C:\Users\garay\git\CaseIgniter\CaseIgniter\application\controllers\gatito.php 251
+ERROR - 2018-05-07 09:55:06 --> 404 Page Not Found: _casei/assets
+ERROR - 2018-05-07 09:55:15 --> 404 Page Not Found: 
+ERROR - 2018-05-07 09:55:24 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 09:55:28 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 09:55:32 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 09:55:41 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 10:00:17 --> 404 Page Not Found: _casei/assets
+ERROR - 2018-05-07 10:00:57 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 10:01:01 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 10:01:07 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 10:01:10 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 10:01:14 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 10:01:19 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 10:02:06 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 10:02:09 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 10:02:44 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 10:02:47 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 10:02:49 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 10:02:55 --> Severity: Warning --> ini_set(): A session is active. You cannot change the session module's ini settings at this time C:\Users\garay\git\CaseIgniter\CaseIgniter\system\libraries\Session\Session.php 316
+ERROR - 2018-05-07 10:02:55 --> Severity: Notice --> A session had already been started - ignoring session_start() C:\Users\garay\git\CaseIgniter\CaseIgniter\system\libraries\Session\Session.php 143
+ERROR - 2018-05-07 10:02:55 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 10:03:01 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 10:03:07 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 10:03:10 --> 404 Page Not Found: Gatito/assets
