@@ -1,0 +1,15 @@
+application/logs*
+application/controllers/*
+!application/controllers/_*
+!application/controllers/index*
+
+application/models/*
+!application/models/index*
+
+application/views/*
+!application/views/_*
+!application/views/_*/*
+!application/views/templates*
+!application/views/templates/*
+!application/views/index*
+

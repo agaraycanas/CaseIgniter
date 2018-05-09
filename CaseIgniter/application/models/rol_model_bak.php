@@ -24,11 +24,11 @@ class rol_model extends CI_Model {
 					
 	// "many to many" attribute
 	foreach ($roles as $id) {
-		$another_bean = R::load('gatito', $id);
+		$another_bean = R::load('usuario', $id);
 		$m2m = R::dispense('roles');
 		R::store($bean);
 		$m2m -> rol = $bean;
-		$m2m -> gatito = $another_bean;
+		$m2m -> usuario = $another_bean;
 		R::store($m2m);
 	}
 				
@@ -65,7 +65,7 @@ class rol_model extends CI_Model {
 	
 	
 	foreach ($bean->ownRolesList as $roles_bean ) {
-		$key = array_search( $roles_bean->gatito->id, $roles );
+		$key = array_search( $roles_bean->usuario->id, $roles );
 		
 		if ($key !== false) { // M2M we keep only the keys to add
 			unset($roles[$key]);
@@ -78,10 +78,10 @@ class rol_model extends CI_Model {
 
 	// M2M Elements to be added
 	foreach ($roles as $idf) {
-		$another_bean = R::load('gatito', $idf);
+		$another_bean = R::load('usuario', $idf);
 		$m2m = R::dispense('roles');
 		$m2m -> rol = $bean;
-		$m2m -> gatito = $another_bean;
+		$m2m -> usuario = $another_bean;
 		R::store($m2m);
 	}
 	
@@ -113,7 +113,7 @@ class rol_model extends CI_Model {
 
 		$where_clause[] = 'nombre LIKE ?';
 		$where_clause[] = 'descripcion LIKE ?';
-		$where_clause[] = '(SELECT count(*) FROM gatito WHERE nombre LIKE ? AND gatito.id IN (SELECT gatito_id FROM roles WHERE rol_id = rol.id)) > 0';
+		$where_clause[] = '(SELECT count(*) FROM usuario WHERE nombre LIKE ? AND usuario.id IN (SELECT usuario_id FROM roles WHERE rol_id = rol.id)) > 0';
 		$f = "%$filter%";
 		
 		return R::findAll('rol', implode(' OR ', $where_clause) , [ $f,$f,$f ] );

@@ -175,3 +175,50 @@ ERROR - 2018-05-07 10:02:55 --> 404 Page Not Found: Gatito/assets
 ERROR - 2018-05-07 10:03:01 --> 404 Page Not Found: Gatito/assets
 ERROR - 2018-05-07 10:03:07 --> 404 Page Not Found: Gatito/assets
 ERROR - 2018-05-07 10:03:10 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 17:37:39 --> 404 Page Not Found: _casei/assets
+ERROR - 2018-05-07 17:37:47 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 17:37:50 --> Severity: error --> Exception: Password incorrecta C:\Users\garay\git\CaseIgniter\CaseIgniter\application\controllers\gatito.php 251
+ERROR - 2018-05-07 17:38:03 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 17:38:08 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 17:38:10 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 17:43:10 --> 404 Page Not Found: _casei/assets
+ERROR - 2018-05-07 17:44:04 --> 404 Page Not Found: _casei/assets
+ERROR - 2018-05-07 17:44:09 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 17:44:13 --> Severity: error --> Exception: Password incorrecta C:\Users\garay\git\CaseIgniter\CaseIgniter\application\controllers\gatito.php 251
+ERROR - 2018-05-07 17:44:17 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 17:44:25 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 17:44:30 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 17:44:35 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 17:44:39 --> Severity: Warning --> ini_set(): A session is active. You cannot change the session module's ini settings at this time C:\Users\garay\git\CaseIgniter\CaseIgniter\system\libraries\Session\Session.php 316
+ERROR - 2018-05-07 17:44:39 --> Severity: Notice --> A session had already been started - ignoring session_start() C:\Users\garay\git\CaseIgniter\CaseIgniter\system\libraries\Session\Session.php 143
+ERROR - 2018-05-07 17:44:40 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 17:44:48 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 17:45:23 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 17:45:44 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 17:45:48 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 17:46:08 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 17:46:15 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 17:46:18 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 17:46:20 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 17:46:39 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 17:46:46 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 17:46:49 --> 404 Page Not Found: 
+ERROR - 2018-05-07 17:46:55 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 17:51:32 --> Severity: error --> Exception: Call to undefined method Attribute::hidden_create() C:\Users\garay\git\CaseIgniter\CaseIgniter\application\helpers\casei_helper.php 2108
+ERROR - 2018-05-07 17:51:52 --> 404 Page Not Found: _casei/assets
+ERROR - 2018-05-07 17:52:00 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 17:52:03 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 17:53:26 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 17:53:31 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 17:53:55 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 17:53:58 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 17:55:57 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 17:56:04 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 17:56:13 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 17:56:16 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 17:56:20 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 17:56:24 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 17:56:27 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 17:56:32 --> 404 Page Not Found: Gatito/assets
+ERROR - 2018-05-07 17:58:16 --> Severity: Notice --> Undefined index: id C:\Users\garay\git\CaseIgniter\CaseIgniter\application\controllers\gatito.php 168
+ERROR - 2018-05-07 17:58:16 --> 404 Page Not Found: Gatito/assets

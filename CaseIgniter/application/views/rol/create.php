@@ -29,11 +29,11 @@
 		<label class="col-2 justify-content-end">Roles</label>
 		<div class="col-6 form-check form-check-inline justify-content-start">
 
-			<?php foreach ($body['gatito'] as $gatito ): ?>
+			<?php foreach ($body['usuario'] as $usuario ): ?>
 				
 					<div class="form-check form-check-inline">
-						<input class="form-check-input" type="checkbox" id="id-roles-<?=$gatito->id?>" name="roles[]" value="<?= $gatito->id ?>">
-						<label class="form-check-label" for="id-roles-<?=$gatito->id?>" ><?= $gatito->nombre ?></label>
+						<input class="form-check-input" type="checkbox" id="id-roles-<?=$usuario->id?>" name="roles[]" value="<?= $usuario->id ?>">
+						<label class="form-check-label" for="id-roles-<?=$usuario->id?>" ><?= $usuario->nombre ?></label>
 					</div>
 				
 			<?php endforeach; ?>

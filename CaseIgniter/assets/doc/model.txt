@@ -22,8 +22,8 @@ anyoini:# [M]
 =========================
 USUARIO [login]
 .........................
-apuno
-apdos
+ape1
+ape2
 foto:@
 
 *> participa:cursoacademico

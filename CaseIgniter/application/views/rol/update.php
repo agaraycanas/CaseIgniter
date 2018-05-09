@@ -28,14 +28,14 @@
 		
 	<input type="hidden" name="id" value="<?= $body['rol']->id ?>">
 
-	<div class="row form-inline form-group">
+	<div class="row form-inline form-group" >
 		<label for="id-nombre" class="col-2 justify-content-end">Nombre</label>
 		<input id="id-nombre" type="text" name="nombre" value="<?=  $body['rol']->nombre ?>" class="col-6 form-control">
 		
 	</div>
 				
 				
-	<div class="row form-inline form-group">
+	<div class="row form-inline form-group" >
 		<label for="id-descripcion" class="col-2 justify-content-end">Descripcion</label>
 		<input id="id-descripcion" type="text" name="descripcion" value="<?=  $body['rol']->descripcion ?>" class="col-6 form-control">
 		
@@ -47,11 +47,11 @@
 		<label class="col-2 justify-content-end">Roles</label>
 		<div class="col-6 form-check form-check-inline justify-content-start">
 
-			<?php foreach ($body['gatito'] as $gatito ): ?>
+			<?php foreach ($body['usuario'] as $usuario ): ?>
 				
 				<div class="form-check form-check-inline">
-					<input class="form-check-input" type="checkbox" id="id-roles-<?=$gatito->id ?>" name="roles[]" value="<?= $gatito->id ?>" <?= checked($body['rol']->aggr('ownRolesList','gatito'), $gatito->id ) ?>>
-					<label class="form-check-label" for="id-roles-<?=$gatito->id?>" ><?= $gatito->nombre ?></label>
+					<input class="form-check-input" type="checkbox" id="id-roles-<?=$usuario->id ?>" name="roles[]" value="<?= $usuario->id ?>" <?= checked($body['rol']->aggr('ownRolesList','usuario'), $usuario->id ) ?>>
+					<label class="form-check-label" for="id-roles-<?=$usuario->id?>" ><?= $usuario->nombre ?></label>
 				</div>
 				
 			<?php endforeach; ?>
