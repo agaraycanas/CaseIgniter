@@ -22,6 +22,7 @@
 [rol2,rol3]m3>[rol3]sub3.1(uri-3.1),[rol2]sub3.2(uri-3.2)
 			" 
 			><?php if (isset($menuData)):?><?= $menuData ?><?php endif;?></textarea>
+			DEBUG<input type="checkbox" name="debug"/>
 			</div>
 		
 		

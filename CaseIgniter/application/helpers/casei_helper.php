@@ -28,6 +28,7 @@ class Attribute {
 class MyClass {
 	public $name;
 	public $attributes = [ ];
+	public $usecases = [ ];
 	public $login_bean = false;
 	public function __construct($name) {
 		$this->name = $name;
@@ -222,14 +223,17 @@ function process_domain_model($modelData) {
 		if (preg_match ( "/[\.]+$/", $line )) {
 			$type = 'ATTRIBUTE_SEPARATOR';
 		}
-		if (preg_match ( "/^[A-Z]+(\s\[login\])?$/", $line )) {
+		if (preg_match ( "/^[A-Z0-9]+(\s\[login\])?$/", $line )) {
 			$type = 'BEAN_NAME';
 		}
 		if (preg_match ( "/^(\s)*[crud]\s\([a-z]+(,[a-z]+)*\)$/", $line )) {
 			$type = 'ROL_LINE';
 		}
-		if (preg_match ( "/^((\*\*|\*>|<>|<\*)\s)?[a-z_]+(:([a-z]+|\@|\%|\#))?(\s\[[a-zA-Z\-]+(,[a-zA-Z\-]+)*\])?$/", $line )) {
+		if (preg_match ( "/^((\*\*|\*>|<>|<\*)\s)?[a-z0-9]+(:([a-z]+|\@|\%|\#))?(\s\[[a-zA-Z\-]+(,[a-zA-Z\-]+)*\])?$/", $line )) {
 			$type = 'ATTRIBUTE';
+		}
+		if (preg_match ( "/^\[([a-z]+[\,a-z]*)\]\s([a-z]+)\(\)$/", $line )) {
+			$type = 'USE_CASE';
 		}
 		
 		return $type;
@@ -238,7 +242,7 @@ function process_domain_model($modelData) {
 	// ----------------------------------
 	function pdm_process_bean_name($line, $classes) {
 		$class = new MyClass ( strtolower ( explode ( ' ', $line ) [0] ) );
-		if (strpos ( $line, ' ' )) {
+		if (strpos ( $line, '[login]' )) {
 			if (! classes_have_login_bean ( $classes )) {
 				$class->login_bean = true;
 			} else {
@@ -259,7 +263,7 @@ function process_domain_model($modelData) {
 		$hidden_recover = false;
 		$main = false;
 		
-		$pattern = "/^([\*\<\>]+\s)?([a-z_]+)(\:[a-z\%\@\#]+)?(\s\[[a-zA-Z,\-]+\])?$/";
+		$pattern = "/^([\*\<\>]+\s)?([a-z0-9]+)(\:[a-z\%\@\#]+)?(\s\[[a-zA-Z,\-]+\])?$/";
 		preg_match ( $pattern, $line, $matches );
 		$multiplicity = $matches [1] != '' ? rtrim ( $matches [1] ) : 'REGULAR';
 		$name = $matches [2];
@@ -312,6 +316,17 @@ function process_domain_model($modelData) {
 	}
 	
 	// =============================================================
+	function pdm_process_usecase($line) {
+		$pattern = "/^\[([a-z]+[\,a-z]*)\]\s([a-z]+)\(\)$/";
+		preg_match ( $pattern, $line, $matches );
+		$roles = $matches [1];
+		$usecase = $matches [2];
+		return [ 
+				$usecase => explode ( ',', $roles ) 
+		];
+	}
+	
+	// =============================================================
 	
 	$lines = $modelData;
 	$line_number = 0;
@@ -341,13 +356,12 @@ function process_domain_model($modelData) {
 				case 'rol_line' :
 					if (! (pdm_line_type ( $line ) == 'ROL_LINE' || pdm_line_type ( $line ) == 'ATTRIBUTE_SEPARATOR')) {
 						throw new Exception ( "ERROR while parsing model.txt (line $line_number): Rol line or attribute separator expected <br/><b>$line</b>" );
-					}
-					if (pdm_line_type ( $line ) == 'ATTRIBUTE_SEPARATOR') {
+					} else { // ATTRIBUTE_SEPARATOR
 						$state = 'attribute';
 					}
 					break;
 				case 'attribute' :
-					if (! (pdm_line_type ( $line ) == 'ATTRIBUTE' || pdm_line_type ( $line ) == 'BEAN_SEPARATOR')) {
+					if (! (pdm_line_type ( $line ) == 'ATTRIBUTE' || pdm_line_type ( $line ) == 'BEAN_SEPARATOR' || pdm_line_type ( $line ) == 'ATTRIBUTE_SEPARATOR')) {
 						throw new Exception ( "ERROR while parsing model.txt (line $line_number): Attribute or bean separator expected <br/><b>$line</b>" );
 					}
 					if (pdm_line_type ( $line ) == 'BEAN_SEPARATOR') {
@@ -355,8 +369,24 @@ function process_domain_model($modelData) {
 						$classes [] = $current_class;
 						$current_class = null;
 						$state = 'idle';
-					} else {
+					} else if (pdm_line_type ( $line ) == 'ATTRIBUTE_SEPARATOR') {
+						$current_class->setMainAttribute ();
+						$current_class->usecases = [ ];
+						$state = 'usecases';
+					} else { // ATTRIBUTE
 						$current_class->add_attribute ( pdm_process_attribute ( $line ) );
+					}
+					break;
+				case 'usecases' :
+					if (! (pdm_line_type ( $line ) == 'USE_CASE' || pdm_line_type ( $line ) == 'BEAN_SEPARATOR')) {
+						throw new Exception ( "ERROR while parsing model.txt (line $line_number): Use case or bean separator expected <br/><b>$line</b>" );
+					}
+					if (pdm_line_type ( $line ) == 'BEAN_SEPARATOR') {
+						$classes [] = $current_class;
+						$current_class = null;
+						$state = 'idle';
+					} else { // USECASE
+						$current_class->usecases [] = pdm_process_usecase ( $line );
 					}
 					break;
 			}
@@ -369,6 +399,7 @@ function process_domain_model($modelData) {
 	
 	return $classes;
 }
+
 // ------------------------------
 function delete_directory($path, $ignore_files, $first_level) {
 	if (! file_exists ( $path )) { // Name not correct
@@ -399,7 +430,7 @@ function delete_directory($path, $ignore_files, $first_level) {
 		} else {
 			return true;
 		}
-	} else { // IT's the first level. We're done
+	} else { // It's the first level. We're done
 		return true;
 	}
 }
@@ -452,7 +483,8 @@ function generate_yuml($classes) {
 	$c = 0;
 	$html = '<img src="http://yuml.me/diagram/dir:td;scale:150/class/';
 	foreach ( $classes as $class ) {
-		$html .= '[' . ucfirst ( $class->name );
+		$class_name = $class->login_bean ? strtoupper($class->name) : ucfirst ( $class->name );
+		$html .= '[' . $class_name;
 		$html .= '|';
 		$i = 0;
 		foreach ( $class->attributes as $a ) {
@@ -464,6 +496,14 @@ function generate_yuml($classes) {
 			}
 			$i ++;
 		}
+		if ($class->usecases != [] ) {
+			$html .= '|';
+			foreach ($class->usecases as $u) {
+				foreach ($u as $f => $r) {
+					$html .= "{$f}();";
+				}
+			}
+		}
 		$html .= ('{bg:' . $colors [($c ++)] . '}');
 		$html .= '],';
 	}
@@ -472,7 +512,6 @@ function generate_yuml($classes) {
 		$alt = true;
 		foreach ( $class->attributes as $i => $a ) {
 			$rel_name = ($alt ? ' ' : '') . $a->name . ($alt ? '' : ' ');
-			// $rel_name = $a->name;
 			$alt = ! $alt;
 			switch ($a->mode) {
 				case 'M2O' :
@@ -673,7 +712,7 @@ function generate_application_files($classes) {
 // ------------------------------
 function generate_controllers($classes) {
 	foreach ( $classes as $class ) {
-		generate_controller ( $class );
+		generate_controller ( $class, $classes );
 	}
 }
 
@@ -726,16 +765,16 @@ function backup_and_save($filename, $code) {
 }
 
 // ------------------------------
-function generate_controller($class) {
+function generate_controller($class, $classes) {
 	$code = '';
 	$code .= generate_controller_header ( $class->name );
-	$code .= generate_controller_create ( $class );
-	$code .= generate_controller_create_post ( $class );
-	$code .= generate_controller_list ( $class );
+	$code .= generate_controller_create ( $class, $classes );
+	$code .= generate_controller_create_post ( $class, $classes );
+	$code .= generate_controller_list ( $class, $classes );
 	$code .= generate_controller_list_id ( $class );
-	$code .= generate_controller_delete ( $class );
-	$code .= generate_controller_update ( $class );
-	$code .= generate_controller_update_post ( $class );
+	$code .= generate_controller_delete ( $class, $classes );
+	$code .= generate_controller_update ( $class, $classes );
+	$code .= generate_controller_update_post ( $class, $classes );
 	if ($class->login_bean) {
 		$code .= generate_controller_login ( $class );
 		$code .= generate_controller_login_post ( $class );
@@ -743,9 +782,35 @@ function generate_controller($class) {
 		$code .= generate_controller_change_password ( $class );
 		$code .= generate_controller_change_password_post ( $class );
 	}
+	if ($class->usecases != [ ]) {
+		foreach ( $class->usecases as $usecase ) {
+			foreach ( $usecase as $usecase_name => $roles ) {
+				$code .= generate_controller_additional_usecase ( $class, $usecase_name, $roles , $classes);
+			}
+		}
+	}
 	$code .= generate_controller_end ();
 	$filename = APPPATH . 'controllers' . DIRECTORY_SEPARATOR . $class->name . '.php';
 	backup_and_save ( $filename, $code );
+}
+
+// ------------------------------
+function generate_controller_additional_usecase($class, $usecase_name, $roles, $classes) {
+	$role_code = get_role_checking_code ( classes_have_login_bean ( $classes ), $roles );
+	$code = <<<CODE
+
+	/**
+	* Code shell for {$usecase_name} autogenerated by CASE IGNITER
+	*/
+	public function {$usecase_name}() {
+	
+		$role_code
+		
+		frame(\$this,'{$class->name}/$usecase_name');
+	}
+
+CODE;
+	return $code;
 }
 
 // ------------------------------
@@ -758,14 +823,14 @@ function generate_controller_change_password($class) {
 	* autogenerated by CASE IGNITER
 	*/
 	public function changepwd() {
-		\$data['body']['id'] = \$_POST['id'];
 
 		if (session_status () == PHP_SESSION_NONE) {session_start ();}
 
 		if (!isset(\$_SESSION['user']) || !isset(\$_SESSION['rol']) || (\$_SESSION['rol']->nombre != 'admin' && \$_SESSION['user']->id != \$_POST['id']) ) {
 			show_404();
 		}
-		\$data['body']['id'] = \$_SESSION['user']->id;
+
+		\$data['body']['id'] = \$_POST['id'];
 		frame(\$this,'{$class->name}/changepwd',\$data);
 	}
 	
@@ -919,8 +984,8 @@ CODE;
 }
 
 // ------------------------------
-function generate_controller_delete($class) {
-	$rol_check_code = get_role_checking_code ();
+function generate_controller_delete($class, $classes) {
+	$rol_check_code = get_role_checking_code ( classes_have_login_bean ( $classes ) );
 	$code = <<<CODE
 
 
@@ -951,8 +1016,8 @@ CODE;
 }
 
 // ------------------------------
-function generate_controller_update($class) {
-	$rol_check_code = get_role_checking_code ();
+function generate_controller_update($class, $classes) {
+	$rol_check_code = get_role_checking_code ( classes_have_login_bean ( $classes ) );
 	$code = <<<CODE
 	
 	
@@ -999,9 +1064,9 @@ CODE;
 }
 
 // ------------------------------
-function generate_controller_update_post($class) {
+function generate_controller_update_post($class, $classes) {
 	$code = '';
-	$code .= generate_controller_update_post_header ( $class->name );
+	$code .= generate_controller_update_post_header ( $class->name , $classes);
 	$code .= generate_controller_update_post_middle ( $class );
 	$code .= generate_controller_update_post_end ( $class->name );
 	return $code;
@@ -1026,8 +1091,8 @@ class $class_name extends CI_Controller {
 CODE;
 }
 // ------------------------------
-function generate_controller_create($class) {
-	$rol_check_code = get_role_checking_code ();
+function generate_controller_create($class, $classes) {
+	$rol_check_code = get_role_checking_code ( classes_have_login_bean ( $classes ) );
 	$code = <<<CODE
 	
 	
@@ -1070,9 +1135,9 @@ CODE;
 }
 
 // ------------------------------
-function generate_controller_create_post($class) {
+function generate_controller_create_post($class, $classes) {
 	$code = '';
-	$code .= generate_controller_create_post_header ( $class->name );
+	$code .= generate_controller_create_post_header ( $class->name, $classes );
 	$code .= generate_controller_create_post_middle ( $class );
 	$code .= generate_controller_create_post_end ( $class->name );
 	return $code;
@@ -1175,7 +1240,7 @@ CODE;
 	
 	$parameters = '';
 	foreach ( $class->attributes as $a ) {
-		if ( (! $a->hidden_create && !($class->login_bean && $a->name == 'password')) || ($a->hidden_create && $class->login_bean && $a->name == 'roles') ) {
+		if ((! $a->hidden_create && ! ($class->login_bean && $a->name == 'password')) || ($a->hidden_create && $class->login_bean && $a->name == 'roles')) {
 			$parameters .= "$$a->name, ";
 		}
 	}
@@ -1207,8 +1272,8 @@ CATCH;
 }
 
 // ------------------------------
-function generate_controller_create_post_header($class_name) {
-	$rol_check_code = get_role_checking_code ();
+function generate_controller_create_post_header($class_name, $classes) {
+	$rol_check_code = get_role_checking_code ( classes_have_login_bean ( $classes ) );
 	$code = <<<CODE
 	
 	
@@ -1227,8 +1292,8 @@ CODE;
 }
 
 // ------------------------------
-function generate_controller_update_post_header($class_name) {
-	$rol_check_code = get_role_checking_code ();
+function generate_controller_update_post_header($class_name, $classes) {
+	$rol_check_code = get_role_checking_code ( classes_have_login_bean ( $classes ) );
 	
 	$code = <<<CODE
 	
@@ -1284,8 +1349,8 @@ CODE;
 }
 
 // ------------------------------
-function generate_controller_list($class) {
-	$rol_check_code = get_role_checking_code ();
+function generate_controller_list($class, $classes) {
+	$rol_check_code = get_role_checking_code ( classes_have_login_bean ( $classes ) );
 	$cn = $class->name;
 	$code = <<<CODE
 
@@ -1575,9 +1640,9 @@ CODE;
 	
 	$parameters = '';
 	foreach ( $class->attributes as $a ) {
-		if ( (! $a->hidden_create && !($class->login_bean && $a->name == 'password')) || ($a->hidden_create && $class->login_bean && $a->name == 'roles') ) {
+		if ((! $a->hidden_create && ! ($class->login_bean && $a->name == 'password')) || ($a->hidden_create && $class->login_bean && $a->name == 'roles')) {
 			
-//		if (! $a->hidden_create || ($a->hidden_create && $class->login_bean && $a->name == 'roles')) {
+			// if (! $a->hidden_create || ($a->hidden_create && $class->login_bean && $a->name == 'roles')) {
 			$parameters .= "$$a->name, ";
 		}
 	}
@@ -1597,9 +1662,9 @@ CODE;
 
 CODE;
 	foreach ( $class->attributes as $a ) {
-		if ( (! $a->hidden_create && !($class->login_bean && $a->name == 'password')) || ($a->hidden_create && $class->login_bean && $a->name == 'roles') ) {
+		if ((! $a->hidden_create && ! ($class->login_bean && $a->name == 'password')) || ($a->hidden_create && $class->login_bean && $a->name == 'roles')) {
 			
-		//if (! $a->hidden_create || ($a->hidden_create && $class->login_bean && $a->name == 'roles')) {
+			// if (! $a->hidden_create || ($a->hidden_create && $class->login_bean && $a->name == 'roles')) {
 			$type_capitalized = ucfirst ( $a->type );
 			$name_capitalized = ucfirst ( $a->name );
 			
@@ -1839,6 +1904,28 @@ function generate_view($class, $classes) {
 		generate_view_login ( $class, $classes );
 		generate_view_change_password ( $class, $classes );
 	}
+	if ($class->usecases != [ ]) {
+		foreach ( $class->usecases as $usecase ) {
+			foreach ( $usecase as $usecase_name => $roles ) {
+				generate_view_additional_usecase ( $class, $usecase_name, $roles );
+			}
+		}
+	}
+}
+
+// ------------------------------
+function generate_view_additional_usecase($class, $usecase_name, $roles) {
+	$code = <<<CODE
+		
+		
+<div class="container">
+
+<h2> Vista para $usecase_name </h2>
+
+</div>
+
+CODE;
+	file_put_contents ( APPPATH . 'views' . DIRECTORY_SEPARATOR . $class->name . DIRECTORY_SEPARATOR . $usecase_name . '.php', $code );
 }
 
 // ------------------------------
@@ -1955,42 +2042,53 @@ CODE;
 }
 
 // ------------------------------
-function get_role_checking_code($roles = []) {
-	$roles [] = 'admin';
-	$code = <<<CODE
+function get_role_checking_code($has_login_bean, $roles = []) {
+	$code = '';
+	if ($has_login_bean) {
+		$roles [] = 'admin';
+		$code .= <<<CODE
+
+		// =============================================
+		// ROLE CHECKING START
+		// =============================================
 
 		if (session_status () == PHP_SESSION_NONE) {session_start ();}
 		\$rol_ok = false;
 		\$login_rol = (isset(\$_SESSION['rol']) ? \$_SESSION['rol']->nombre : null );
 CODE;
-	foreach ( $roles as $rol ) {
-		if ($rol == 'auth') {
-			$code .= <<<CODE
+		foreach ( $roles as $rol ) {
+			if ($rol == 'auth') {
+				$code .= <<<CODE
 
 		if (\$login_rol != null ) {\$rol_ok = true;}
 
 CODE;
-		} else if ($rol == 'anon') {
-			$code .= <<<CODE
+			} else if ($rol == 'anon') {
+				$code .= <<<CODE
 
 		if (\$login_rol == null) {\$rol_ok = true;}
 			
 CODE;
-		} else {
-			$code .= <<<CODE
+			} else {
+				$code .= <<<CODE
 
 		if (\$login_rol == '$rol') {\$rol_ok = true;}
 
 CODE;
+			}
 		}
-	}
-	$code .= <<<CODE
+		$code .= <<<CODE
 
 		if ( !\$rol_ok ) {
 			show_404();
 		} 
 
+		// =============================================
+		// ROLE CHECKING END
+		// =============================================
+
 CODE;
+	}
 	return $code;
 }
 
@@ -2105,7 +2203,7 @@ HTML;
 function generate_view_create_non_dependants($class) {
 	$code = '';
 	foreach ( $class->attributes as $a ) {
-		if (! $a->is_dependant ()) {
+		if (! $a->is_dependant () && ! $a->hidden_create) {
 			$capitalized = ucfirst ( $a->name );
 			$type = ($a->type == 'String' ? 'text' : $a->type);
 			$type = (($class->login_bean && $a->name == 'password') ? 'password' : $type);
@@ -2134,8 +2232,6 @@ function generate_view_create_non_dependants($class) {
 
 
 CODE;
-			// $code .= ($a->type == 'file' ? $jquery_file_code : '');
-			;
 			$code .= <<<HTML
 	
 	$jquery_file_code
@@ -2160,9 +2256,9 @@ function generate_view_update_non_dependants($class, $classes) {
 	<input type="hidden" name="id" value="<?= \$body['{$class->name}']->id ?>">
 
 CODE;
-
+	
 	foreach ( $class->attributes as $a ) {
-		if (! $a->is_dependant () && !($class->login_bean && $a->name == 'password')) {
+		if (! $a->is_dependant () && ! ($class->login_bean && $a->name == 'password') && ! $a->hidden_create) {
 			$capitalized = ucfirst ( $a->name );
 			$type = ($a->type == 'String' ? 'text' : $a->type);
 			$size = $a->type == 'date' ? '3' : '6';
@@ -2194,7 +2290,7 @@ CODE;
 			
 			$code .= <<<HTML
 
-	<div class="row form-inline form-group">
+	<div class="row form-inline form-group" >
 		<label for="id-{$a->name}" class="col-2 justify-content-end">$capitalized</label>
 		<input id="id-{$a->name}" type="$type" name="{$a->name}" value="<?=  \$body['{$class->name}']->{$a->name} ?>" class="col-$size form-control">
 		$preview

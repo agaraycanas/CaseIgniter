@@ -7,7 +7,7 @@ function frame($controller, $path_to_view, $data = []) {
 		$data ['header'] ['user'] = $_SESSION ['user'];
 		$data ['header'] ['rol'] = $_SESSION ['rol'];
 	}
-	$data ['header'] ['login_bean'] = 'gatito';
+	$data ['header'] ['login_bean'] = 'usuario';
 	$controller->load->view ( 'templates/head', $data );
 	$controller->load->view ( 'templates/header', $data );
 	$controller->load->view ( 'templates/nav', $data );

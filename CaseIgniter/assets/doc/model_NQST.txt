@@ -2,6 +2,7 @@
 IES
 .........................
 <* ocurre:cursoacademico
+<* tienepe:plantillaencuesta
 =========================
 
 
@@ -18,28 +19,20 @@ anyoini:# [M]
 <* participa:usuario
 =========================
 
-
 =========================
-ROL
+USUARIO [login]
 .........................
-** roles:usuario
-=========================
+apuno
+apdos
+foto:@
 
-
-=========================
-USUARIO
-.........................
-pwd [r-]
-
-
+*> participa:cursoacademico
 *> grreferencia:grupo
 
 <* realiza:encuesta
-<* desarrolla:imparticion
+<* profesor:imparticion
 
-** roles:rol
-*> participa:cursoacademico
-** pertenece:departamento
+** profesores:departamento
 =========================
 
 
@@ -60,8 +53,8 @@ DEPARTAMENTO
 .........................
 <* imparte:asignatura
 
-** pertenece:usuario
-** gestiona:titulacion
+** profesores:usuario
+
 =========================
 
 
@@ -80,14 +73,13 @@ ASIGNATURA
 =========================
 IMPARTICION
 .........................
-*> desarrolla:usuario
+
+*> profesor:usuario
 *> impartida:grupo
 *> refierea:asignatura
 *> tieneim:cursoacademico
 
-<* realizada:encuesta
-
-** asociaa:plantillaencuesta
+<* asociaa:encuestapublicada
 =========================
 
 
@@ -101,6 +93,14 @@ nivel:# [M]
 <* pertenecec:asignatura
 
 *> tienetit:titulacion
+
+=========================
+
+
+=========================
+TITULACION
+.........................
+<* tienetit:curso
 =========================
 
 
@@ -108,11 +108,25 @@ nivel:# [M]
 =========================
 PLANTILLAENCUESTA
 .........................
-** asociaa:imparticion
+
+*> tienepe:ies
 
 <* componepc:preguntacerrada
 <* componepa:preguntaabierta
+<* tieneepub:encuestapublicada
+=========================
+
+=========================
+ENCUESTAPUBLICADA
+.........................
+nivel
+
+*> tieneepub:plantillaencuesta
+*> asociaa:imparticion
+
 <* acercade:encuesta
+
+
 =========================
 
 
@@ -123,8 +137,7 @@ ENCUESTA
 fecha:% [M]
 
 *> realiza:usuario
-*> realizada:imparticion
-*> acercade:plantillaencuesta
+*> acercade:encuestapublicada
 
 <* responderc:respuestacerrada
 <* respondera:respuestaabierta
@@ -135,7 +148,8 @@ fecha:% [M]
 =========================
 PREGUNTACERRADA
 .........................
-enunciado
+orden
+enunciado [M]
 enunciadofacil
 min:#
 max:#
@@ -152,6 +166,7 @@ peso:#
 =========================
 PREGUNTAABIERTA
 .........................
+orden
 enunciado [M]
 enunciadofacil
 
@@ -194,9 +209,5 @@ CATEGORIA
 
 
 
-=========================
-TITULACION
-.........................
-<* tienetit:curso
-=========================
+
 
