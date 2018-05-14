@@ -11,7 +11,7 @@
 
 	<div class="row">
 		<div class="form-group col-lg-12">
-			<?= generate_yuml($classes)?>
+			<?= $modelImg ?>
 		</div>
 	</div>
 </div>

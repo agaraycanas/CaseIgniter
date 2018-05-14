@@ -7,19 +7,19 @@
 
 	
 	
-
+	
 	<div class="row form-inline form-group">
 		<label for="id-nombre" class="col-2 justify-content-end">Nombre</label>
-		<input id="id-nombre" type="text" name="nombre" class="col-6 form-control" autofocus="autofocus">
+		<input id="id-nombre" type="text" name="nombre" class="col-6 form-control" autofocus="autofocus" >
 		
 	</div>
 
 	
 	
-
+	
 	<div class="row form-inline form-group">
 		<label for="id-descripcion" class="col-2 justify-content-end">Descripcion</label>
-		<input id="id-descripcion" type="text" name="descripcion" class="col-6 form-control" >
+		<input id="id-descripcion" type="text" name="descripcion" class="col-6 form-control"  >
 		
 	</div>
 
@@ -29,11 +29,11 @@
 		<label class="col-2 justify-content-end">Roles</label>
 		<div class="col-6 form-check form-check-inline justify-content-start">
 
-			<?php foreach ($body['usuario'] as $usuario ): ?>
+			<?php foreach ($body['persona'] as $persona ): ?>
 				
 					<div class="form-check form-check-inline">
-						<input class="form-check-input" type="checkbox" id="id-roles-<?=$usuario->id?>" name="roles[]" value="<?= $usuario->id ?>">
-						<label class="form-check-label" for="id-roles-<?=$usuario->id?>" ><?= $usuario->nombre ?></label>
+						<input class="form-check-input" type="checkbox" id="id-roles-<?=$persona->id?>" name="roles[]" value="<?= $persona->id ?>">
+						<label class="form-check-label" for="id-roles-<?=$persona->id?>" ><?= $persona->nombre ?></label>
 					</div>
 				
 			<?php endforeach; ?>

@@ -16,9 +16,10 @@
 	<script src="<?=base_url()?>assets/js/jquery.tablesorter.js"></script>
 	<script src="<?=base_url()?>assets/js/jquery.tablesorter.widgets.js"></script>
 	<script src="<?=base_url()?>assets/js/jquery.tablesorter.pager.js"></script>
+	
 
 	<!-- ADDITIONAL STYLES -->
-	<link rel="stylesheet" href="assets/css/jquery.tablesorter.pager.css">
+	<link rel="stylesheet" href="<?=base_url()?>assets/css/jquery.tablesorter.pager.css">
 	<style>.tablesorter-pager .btn-group-sm .btn {font-size: 1.2em;}</style>
 	
 	<title><?=$title?></title>

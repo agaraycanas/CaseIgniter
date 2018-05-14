@@ -29,6 +29,10 @@ class MyClass {
 	public $name;
 	public $attributes = [ ];
 	public $usecases = [ ];
+	public $c = [ ];
+	public $r = [ ];
+	public $u = [ ];
+	public $d = [ ];
 	public $login_bean = false;
 	public function __construct($name) {
 		$this->name = $name;
@@ -226,7 +230,7 @@ function process_domain_model($modelData) {
 		if (preg_match ( "/^[A-Z0-9]+(\s\[login\])?$/", $line )) {
 			$type = 'BEAN_NAME';
 		}
-		if (preg_match ( "/^(\s)*[crud]\s\([a-z]+(,[a-z]+)*\)$/", $line )) {
+		if (preg_match ( "/^[\s]*([crud])[\s]*\(([a-z0-9]+[,[a-z0-9]+]*)\)[\s]*$/", $line )) {
 			$type = 'ROL_LINE';
 		}
 		if (preg_match ( "/^((\*\*|\*>|<>|<\*)\s)?[a-z0-9]+(:([a-z]+|\@|\%|\#))?(\s\[[a-zA-Z\-]+(,[a-zA-Z\-]+)*\])?$/", $line )) {
@@ -327,6 +331,15 @@ function process_domain_model($modelData) {
 	}
 	
 	// =============================================================
+	function pdm_process_rol_line($line, $current_class) {
+		$pattern = "/^[\s]*([crud])[\s]*\(([a-z0-9]+[,[a-z0-9]+]*)\)[\s]*$/";
+		preg_match ( $pattern, $line, $matches );
+		$crud = $matches [1];
+		$roles = $matches [2];
+		$current_class->$crud = explode ( ',', $roles );
+	}
+	
+	// =============================================================
 	
 	$lines = $modelData;
 	$line_number = 0;
@@ -356,6 +369,9 @@ function process_domain_model($modelData) {
 				case 'rol_line' :
 					if (! (pdm_line_type ( $line ) == 'ROL_LINE' || pdm_line_type ( $line ) == 'ATTRIBUTE_SEPARATOR')) {
 						throw new Exception ( "ERROR while parsing model.txt (line $line_number): Rol line or attribute separator expected <br/><b>$line</b>" );
+					}
+					if (pdm_line_type ( $line ) == 'ROL_LINE') {
+						pdm_process_rol_line ( $line, $current_class );
 					} else { // ATTRIBUTE_SEPARATOR
 						$state = 'attribute';
 					}
@@ -483,7 +499,7 @@ function generate_yuml($classes) {
 	$c = 0;
 	$html = '<img src="http://yuml.me/diagram/dir:td;scale:150/class/';
 	foreach ( $classes as $class ) {
-		$class_name = $class->login_bean ? strtoupper($class->name) : ucfirst ( $class->name );
+		$class_name = $class->login_bean ? strtoupper ( $class->name ) : ucfirst ( $class->name );
 		$html .= '[' . $class_name;
 		$html .= '|';
 		$i = 0;
@@ -496,10 +512,10 @@ function generate_yuml($classes) {
 			}
 			$i ++;
 		}
-		if ($class->usecases != [] ) {
+		if ($class->usecases != [ ]) {
 			$html .= '|';
-			foreach ($class->usecases as $u) {
-				foreach ($u as $f => $r) {
+			foreach ( $class->usecases as $u ) {
+				foreach ( $u as $f => $r ) {
 					$html .= "{$f}();";
 				}
 			}
@@ -577,7 +593,7 @@ function delete_directories($classes) {
 			'_home.php',
 			'_home',
 			'errors',
-			'templates',
+			'_templates',
 			'index.html' 
 	];
 	
@@ -595,7 +611,7 @@ function delete_directories($classes) {
 // ------------------------------
 function change_title($title) {
 	$d = DIRECTORY_SEPARATOR;
-	$head_file = APPPATH . "views{$d}templates{$d}head.php";
+	$head_file = APPPATH . "views{$d}_templates{$d}head.php";
 	$html = file_get_contents ( $head_file );
 	$pattern = '/<\?php \$title="(.)*"; \?>/';
 	$replacement = '<?php \$title="' . $title . '"; ?>';
@@ -605,6 +621,73 @@ function change_title($title) {
 
 // ------------------------------
 function generate_menus($menuData, $appTitle, $classes) {
+	function generate_menus_process_line($line) {
+		$roles = '\[[a-z0-9,]+\]';
+		$menu = '[A-Za-z0-9]+';
+		$uri = '[A-Za-z0-9\-\/]+';
+		$submenu = $menu . '\(' . $uri . '\)';
+		$submenus = '(' . $submenu . '(\,' . $submenu . ')*)';
+		$pattern = "/^[\s]*" . '(' . $roles . ')?' . "[\s]*" . '(' . $menu . ')' . '>' . $submenus . "[\s]*$/";
+		
+		$nav = '';
+		if (preg_match ( $pattern, $line, $m )) {
+			if (isset ( $m [1] )) { // Process ROL
+				$if_cond = [ ];
+				foreach ( explode ( ',', trim($m [1] , '[]') ) as $rol ) {
+					$if_cond [] = "\$nav['rol']->nombre == '$rol'";
+				}
+				$if_cond = implode ( ' || ', $if_cond );
+				$if_cond = '( ' . $if_cond . ' )';
+				$nav .= <<<NAV
+
+			<?php if (isset (\$nav['rol']) && $if_cond ): ?> 
+
+NAV;
+			}
+			if (isset ( $m [2] )) { // Process MENU
+				$nav .= <<<NAV
+
+			<li class="nav-item dropdown">
+				<a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">
+					$m[2]
+				</a>
+
+				<div class="dropdown-menu">
+
+NAV;
+			}
+			if (isset ( $m [3] )) { // Process SUBMENUS
+				foreach ( explode ( ',', $m [3] ) as $submenu ) {
+					preg_match ( '/([0-9a-zA-Z]+)\(([0-9a-zA-Z\/\-\_]+)\)/', $submenu, $match );
+					$nav .= <<<NAV
+
+					<a class="dropdown-item" href="<?=base_url()?>$match[2]">$match[1]</a>
+
+NAV;
+				}
+			}
+			$nav .= <<<NAV
+
+				</div>
+			</li>		
+
+NAV;
+			
+			if (isset ( $m [1] )) { // Process ROL
+				$nav .= <<<NAV
+				
+			<?php endif; ?>
+			
+NAV;
+			}
+		}
+		return $nav;
+	}
+	
+	// -----------------------------------------------------------------------------
+	// ------------------- generate_menus() BEGGINING ------------------------------
+	// -----------------------------------------------------------------------------
+	
 	$nav = <<<NAV
 <nav class="container navbar navbar-expand-sm bg-dark navbar-dark rounded">
 
@@ -613,38 +696,15 @@ function generate_menus($menuData, $appTitle, $classes) {
 	</a>
 
 	<ul class="navbar-nav">
+
 NAV;
 	
 	$nav .= generate_menus_CRUD ( $classes );
-	$nav .= generate_menus_CSI ();
-	foreach ( explode ( "\n", $menuData ) as $menu ) {
-		if (trim ( $menu ) != '') {
-			$menuTitle = explode ( ":", $menu ) [0];
-			$nav .= <<<NAV
-      <li class="dropdown">
-        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-           $menuTitle<span class="caret"></span>
-        </a>
-NAV;
-			$subMenus = strpos ( $menu, ':' ) !== FALSE ? explode ( ":", $menu ) [1] : [ ];
-			if (sizeof ( $subMenus ) > 0) {
-				$nav .= <<<NAV
-		<ul class="dropdown-menu">
-NAV;
-				foreach ( explode ( ",", $subMenus ) as $subMenu ) {
-					$subMenuTitle = explode ( "(", $subMenu ) [0];
-					$subMenuAction = explode ( "(", $subMenu ) [1];
-					$subMenuAction = explode ( ")", $subMenuAction ) [0];
-					$nav .= <<<NAV
-		  <li><a href="<?=base_url()?>$subMenuAction">$subMenuTitle</a></li>
-NAV;
-				}
-				$nav .= <<<NAV
-		</ul>
-	</li>
-NAV;
-			} else { // NO SUBMENUS
-			}
+	$nav .= generate_menus_CSI ( $classes );
+	
+	foreach ( explode ( "\n", $menuData ) as $line ) {
+		if (trim ( $line ) != '') {
+			$nav .= generate_menus_process_line ( $line );
 		}
 	}
 	$nav .= <<<NAV
@@ -656,41 +716,56 @@ NAV;
 }
 
 // ------------------------------
-function generate_menus_CSI() {
-	$crud = <<<NAV
+function generate_menus_CSI($classes) {
+	$if_begin = classes_have_login_bean ( $classes ) ? "<?php if (isset(\$nav['rol']) && \$nav['rol']->nombre == 'admin'): ?>" : '';
+	$if_end = classes_have_login_bean ( $classes ) ? "<?php endif; ?>" : '';
+	
+	$csi = <<<NAV
+	
 
-		<li class="nav-item">
-			<a class="nav-link" href="<?=base_url()?>_casei">
-				CSI
-			</a>
-		</li>
-
+		$if_begin
+			<li class="nav-item">
+				<a class="nav-link" href="<?=base_url()?>_casei">
+					CSI
+				</a>
+			</li>
+		$if_end
+		
 NAV;
-	return $crud;
+	return $csi;
 }
 
 // ------------------------------
 function generate_menus_CRUD($classes) {
+	$if_begin = classes_have_login_bean ( $classes ) ? "<?php if (isset(\$nav['rol']) && \$nav['rol']->nombre == 'admin'): ?>" : '';
+	$if_end = classes_have_login_bean ( $classes ) ? "<?php endif; ?>" : '';
+	
 	$crud = <<<NAV
 
-		<li class="nav-item dropdown">
-			<a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">
-				BEANS 
-			</a>
-
-			<div class="dropdown-menu">
+		$if_begin
+			<li class="nav-item dropdown">
+				<a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">
+					BEANS 
+				</a>
+	
+				<div class="dropdown-menu">
 
 NAV;
+	
 	foreach ( $classes as $class ) {
 		$n = $class->name;
 		$crud .= <<<NAV
+
 				<a class="dropdown-item" href="<?=base_url()?>$n/list">$n</a>
+
 NAV;
 	}
 	$crud .= <<<NAV
 			</div>
 
 		</li>
+		
+		$if_end
 NAV;
 	return $crud;
 }
@@ -742,14 +817,15 @@ function frame(\$controller, \$path_to_view, \$data = []) {
 	if (isset ( \$_SESSION ['user'] ) && isset ( \$_SESSION ['rol'] )) {
 		\$data ['header'] ['user'] = \$_SESSION ['user'];
 		\$data ['header'] ['rol'] = \$_SESSION ['rol'];
+		\$data ['nav'] ['rol'] = \$_SESSION ['rol'];
 	}
 	$login_bean_assign
-	\$controller->load->view ( 'templates/head', \$data );
-	\$controller->load->view ( 'templates/header', \$data );
-	\$controller->load->view ( 'templates/nav', \$data );
+	\$controller->load->view ( '_templates/head', \$data );
+	\$controller->load->view ( '_templates/header', \$data );
+	\$controller->load->view ( '_templates/nav', \$data );
 	\$controller->load->view ( \$path_to_view, \$data );
-	\$controller->load->view ( 'templates/footer', \$data );
-	\$controller->load->view ( 'templates/end' );
+	\$controller->load->view ( '_templates/footer', \$data );
+	\$controller->load->view ( '_templates/end' );
 }
 ?>
 CODE;
@@ -785,7 +861,7 @@ function generate_controller($class, $classes) {
 	if ($class->usecases != [ ]) {
 		foreach ( $class->usecases as $usecase ) {
 			foreach ( $usecase as $usecase_name => $roles ) {
-				$code .= generate_controller_additional_usecase ( $class, $usecase_name, $roles , $classes);
+				$code .= generate_controller_additional_usecase ( $class, $usecase_name, $roles, $classes );
 			}
 		}
 	}
@@ -985,7 +1061,7 @@ CODE;
 
 // ------------------------------
 function generate_controller_delete($class, $classes) {
-	$rol_check_code = get_role_checking_code ( classes_have_login_bean ( $classes ) );
+	$rol_check_code = get_role_checking_code ( classes_have_login_bean ( $classes ), $class->d );
 	$code = <<<CODE
 
 
@@ -1017,7 +1093,7 @@ CODE;
 
 // ------------------------------
 function generate_controller_update($class, $classes) {
-	$rol_check_code = get_role_checking_code ( classes_have_login_bean ( $classes ) );
+	$rol_check_code = get_role_checking_code ( classes_have_login_bean ( $classes ), $class->u );
 	$code = <<<CODE
 	
 	
@@ -1066,7 +1142,7 @@ CODE;
 // ------------------------------
 function generate_controller_update_post($class, $classes) {
 	$code = '';
-	$code .= generate_controller_update_post_header ( $class->name , $classes);
+	$code .= generate_controller_update_post_header ( $class, $classes );
 	$code .= generate_controller_update_post_middle ( $class );
 	$code .= generate_controller_update_post_end ( $class->name );
 	return $code;
@@ -1075,6 +1151,7 @@ function generate_controller_update_post($class, $classes) {
 // ------------------------------
 function generate_controller_end() {
 	return <<<CODE
+
 }
 ?>
 CODE;
@@ -1092,7 +1169,7 @@ CODE;
 }
 // ------------------------------
 function generate_controller_create($class, $classes) {
-	$rol_check_code = get_role_checking_code ( classes_have_login_bean ( $classes ) );
+	$rol_check_code = get_role_checking_code ( classes_have_login_bean ( $classes ), $class->c );
 	$code = <<<CODE
 	
 	
@@ -1137,7 +1214,7 @@ CODE;
 // ------------------------------
 function generate_controller_create_post($class, $classes) {
 	$code = '';
-	$code .= generate_controller_create_post_header ( $class->name, $classes );
+	$code .= generate_controller_create_post_header ( $class, $classes );
 	$code .= generate_controller_create_post_middle ( $class );
 	$code .= generate_controller_create_post_end ( $class->name );
 	return $code;
@@ -1272,19 +1349,19 @@ CATCH;
 }
 
 // ------------------------------
-function generate_controller_create_post_header($class_name, $classes) {
-	$rol_check_code = get_role_checking_code ( classes_have_login_bean ( $classes ) );
+function generate_controller_create_post_header($class, $classes) {
+	$rol_check_code = get_role_checking_code ( classes_have_login_bean ( $classes ), $class->c );
 	$code = <<<CODE
 	
 	
 	/**
-	* Controller action CREATE POST for controller $class_name
+	* Controller action CREATE POST for controller $class->name
 	* autogenerated by CASE IGNITER
 	*/
 	public function create_post() {
 		
 		$rol_check_code
-		\$this->load->model('{$class_name}_model');
+		\$this->load->model('{$class->name}_model');
 
 
 CODE;
@@ -1292,21 +1369,21 @@ CODE;
 }
 
 // ------------------------------
-function generate_controller_update_post_header($class_name, $classes) {
-	$rol_check_code = get_role_checking_code ( classes_have_login_bean ( $classes ) );
+function generate_controller_update_post_header($class, $classes) {
+	$rol_check_code = get_role_checking_code ( classes_have_login_bean ( $classes ), $class->u );
 	
 	$code = <<<CODE
 	
 	
 	/**
-	* Controller action UPDATE POST for controller $class_name
+	* Controller action UPDATE POST for controller $class->name
 	* autogenerated by CASE IGNITER
 	*/
 	public function updatePost() {
 	
 		$rol_check_code
 
-		\$this->load->model('{$class_name}_model');
+		\$this->load->model('{$class->name}_model');
 			
 
 CODE;
@@ -1350,7 +1427,7 @@ CODE;
 
 // ------------------------------
 function generate_controller_list($class, $classes) {
-	$rol_check_code = get_role_checking_code ( classes_have_login_bean ( $classes ) );
+	$rol_check_code = get_role_checking_code ( classes_have_login_bean ( $classes ), $class->r );
 	$cn = $class->name;
 	$code = <<<CODE
 
@@ -2055,33 +2132,29 @@ function get_role_checking_code($has_login_bean, $roles = []) {
 		if (session_status () == PHP_SESSION_NONE) {session_start ();}
 		\$rol_ok = false;
 		\$login_rol = (isset(\$_SESSION['rol']) ? \$_SESSION['rol']->nombre : null );
+		\$login_id = (isset(\$_SESSION['user']) ? \$_SESSION['user']->id: null );
+		\$bean_id = (isset(\$_POST['id']) ? \$_POST['id']: null );
 CODE;
+		$conditions = [ ];
 		foreach ( $roles as $rol ) {
+			if ($rol == 'all') {
+			}
 			if ($rol == 'auth') {
-				$code .= <<<CODE
-
-		if (\$login_rol != null ) {\$rol_ok = true;}
-
-CODE;
+				$conditions [] = "\$login_rol != null";
 			} else if ($rol == 'anon') {
-				$code .= <<<CODE
-
-		if (\$login_rol == null) {\$rol_ok = true;}
-			
-CODE;
-			} else {
-				$code .= <<<CODE
-
-		if (\$login_rol == '$rol') {\$rol_ok = true;}
-
-CODE;
+				$conditions [] = "\$login_rol == null";
+			} else if ($rol == 'me') {
+				$conditions [] = "\$login_id == \$bean_id";
+			} else { // Explicit rol
+				$conditions [] = "\$login_rol == '$rol'";
 			}
 		}
+		$conditions_clause = implode ( ' || ', $conditions );
+		$if_conditions = $conditions != [ ] ? "if ( $conditions_clause ) { \$rol_ok=true; }" : '';
 		$code .= <<<CODE
 
-		if ( !\$rol_ok ) {
-			show_404();
-		} 
+		$if_conditions
+		if ( !\$rol_ok ) { show_404(); } 
 
 		// =============================================
 		// ROLE CHECKING END
@@ -2235,10 +2308,10 @@ CODE;
 			$code .= <<<HTML
 	
 	$jquery_file_code
-
+	
 	<div class="row form-inline form-group">
 		<label for="id-{$a->name}" class="col-2 justify-content-end">$capitalized</label>
-		<input id="id-{$a->name}" type="$type" name="{$a->name}" class="col-$size form-control" $autofocus>
+		<input id="id-{$a->name}" type="$type" name="{$a->name}" class="col-$size form-control" $autofocus >
 		$preview
 	</div>
 

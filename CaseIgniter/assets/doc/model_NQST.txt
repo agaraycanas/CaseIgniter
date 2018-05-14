@@ -22,8 +22,8 @@ anyoini:# [M]
 =========================
 USUARIO [login]
 .........................
-apuno
-apdos
+ape1
+ape2
 foto:@
 
 *> participa:cursoacademico
@@ -33,6 +33,7 @@ foto:@
 <* profesor:imparticion
 
 ** profesores:departamento
+
 =========================
 
 
@@ -54,7 +55,8 @@ DEPARTAMENTO
 <* imparte:asignatura
 
 ** profesores:usuario
-
+.........................
+[jefedpto] estadisticasdpto()
 =========================
 
 
@@ -114,7 +116,10 @@ PLANTILLAENCUESTA
 <* componepc:preguntacerrada
 <* componepa:preguntaabierta
 <* tieneepub:encuestapublicada
+.........................
+[profesor] confeccionarplantilla()
 =========================
+
 
 =========================
 ENCUESTAPUBLICADA
@@ -125,7 +130,8 @@ nivel
 *> asociaa:imparticion
 
 <* acercade:encuesta
-
+.......................
+[profesor] publicarencuesta()
 
 =========================
 
@@ -141,6 +147,8 @@ fecha:% [M]
 
 <* responderc:respuestacerrada
 <* respondera:respuestaabierta
+.........................
+[alumno] realizarencuesta()
 =========================
 
 
