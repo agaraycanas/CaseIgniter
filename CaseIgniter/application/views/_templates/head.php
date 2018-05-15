@@ -21,6 +21,8 @@
 	<!-- ADDITIONAL STYLES -->
 	<link rel="stylesheet" href="<?=base_url()?>assets/css/jquery.tablesorter.pager.css">
 	<style>.tablesorter-pager .btn-group-sm .btn {font-size: 1.2em;}</style>
+	<style>* {font-size:15px;line-height: 1.428;}</style>
+	
 	
 	<title><?=$title?></title>
 </head>

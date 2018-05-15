@@ -8,7 +8,7 @@
 			<?php if (isset ($header['user']) && isset ($header['rol']) ) : ?>
 				<form action="<?=base_url().$header['login_bean'].'/update'?>" method="post">
 				<input type="hidden" name="id" value="<?= $header['user']->id ?>" />
-				<input type="submit" class="btn btn-primary btn-sm" value="<?= $header['user']->loginname ?>" />
+				<input type="submit" class="btn btn-primary btn-sm" value="<?= $header['user']->nombre ?>" />
 			</form>
 			<form action="<?=base_url().$header['login_bean'].'/changeRol'?>"
 				method="post">
@@ -16,16 +16,16 @@
 				<input type="submit" class="btn btn-secondary btn-sm" value="<?= $header['rol']->descripcion ?>" />
 			</form>
 			<form action="<?=base_url().$header['login_bean'].'/logout'?>">
-				<input type="submit" class="btn btn-info btn-sm" value="Cerrar sesión" />
+				<input type="submit" class="btn btn-info" value="Cerrar sesión" />
 			</form>
 			<?php else: ?>
 				<?php if (isset ($header['login_bean'])): ?>
 
-					<form  action="<?=base_url().$header['login_bean'].'/login'?>"  >
-						<input type="submit" class="btn btn-primary btn-sm" value="ENTRAR" />
-					</form>
 					<form  action="<?=base_url().$header['login_bean'].'/create'?>"  >
 						<input type="submit" class="btn btn-secondary btn-sm" value="Crear cuenta" />
+					</form>
+					<form  action="<?=base_url().$header['login_bean'].'/login'?>"  >
+						<input type="submit" class="btn btn-primary" value="ENTRAR" />
 					</form>
 				<?php endif; ?>
 			<?php endif; ?>
