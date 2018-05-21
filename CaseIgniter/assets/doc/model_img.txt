@@ -1,1 +1,1 @@
-<img src="http://yuml.me/diagram/dir:td;scale:150/class/[PERSONA|** nombre;loginname;password;{bg:yellowgreen}],[Rol|** nombre;descripcion;{bg:yellow}],[persona]-  roles  [rol],">
+<img src="http://yuml.me/diagram/dir:td;scale:150/class/[PERSONA|** nombre;foto:file;loginname;password;{bg:yellowgreen}],[Rol|** nombre;descripcion;{bg:yellow}],[persona]-  roles  [rol],">

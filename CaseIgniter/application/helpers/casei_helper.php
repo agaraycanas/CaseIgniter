@@ -633,7 +633,7 @@ function generate_menus($menuData, $appTitle, $classes) {
 		if (preg_match ( $pattern, $line, $m )) {
 			if (isset ( $m [1] )) { // Process ROL
 				$if_cond = [ ];
-				foreach ( explode ( ',', trim($m [1] , '[]') ) as $rol ) {
+				foreach ( explode ( ',', trim ( $m [1], '[]' ) ) as $rol ) {
 					$if_cond [] = "\$nav['rol']->nombre == '$rol'";
 				}
 				$if_cond = implode ( ' || ', $if_cond );
@@ -829,8 +829,72 @@ function frame(\$controller, \$path_to_view, \$data = []) {
 }
 ?>
 CODE;
+	
 	file_put_contents ( APPPATH . 'helpers' . DIRECTORY_SEPARATOR . 'frame_helper.php', $code );
 }
+
+// ------------------------------
+function get_jquery_ajax_code($uri_post) {
+	$uri_post = base_url().$uri_post;
+	return <<<CODEJQ
+	
+		<script type="text/javascript">
+		$(document).ready(function(){
+	 		$("#id-form").submit(function(e){
+                e.preventDefault();
+                $('#id-modal').on('shown.bs.modal', function() {
+                	  $(this).find('[autofocus]').focus();
+                });
+                $.ajax({
+                    url: '$uri_post',
+                    type: 'POST',
+                    data: $("#id-form").serialize(),
+                    dataType:"json",
+                    success: function(data){
+                     	$("#id-modal-message").html(data.message);
+                     	if (data.severity == "ERROR" ) {
+                         	$("#id-modal-header").html("ERROR");
+                     		$("#id-modal-message").attr('class', 'modal-title text-center bg-danger');
+            				$("#id-modal").modal('show');
+                 	}
+                     	else if (data.severity == "WARNING" ) {
+                         	$("#id-modal-header").html("Atención");
+                     		$("#id-modal-message").attr('class', 'modal-title text-center bg-warning');
+	        				$("#id-modal").modal('show');
+                     	}
+                     	else { //SUCCESS
+                     		$(location).attr("href", data.message);
+
+                         }
+			
+	              	}
+              	})
+            });
+        });
+			
+		</script>
+CODEJQ;
+}
+
+// ------------------------------
+function get_modal_code() {
+	return <<<CODE
+
+<div class="modal fade" id="id-modal" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header text-center" id="id-modal-header">ERROR</div>
+			<h4 class="modal-title text-center bg-success" id="id-modal-message">SIN AJAX</h4>
+			<div class="modal-footer">
+				<button type="button" class="btn " data-dismiss="modal" id="id-modal-button" autofocus="autofocus">Aceptar</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+CODE;
+}
+	
 
 // ------------------------------
 function backup_and_save($filename, $code) {
@@ -854,8 +918,8 @@ function generate_controller($class, $classes) {
 	if ($class->login_bean) {
 		$code .= generate_controller_change_password ( $class );
 		$code .= generate_controller_change_password_post ( $class );
-		$code .= generate_controller_change_rol($class);
-		$code .= generate_controller_change_rol_post($class);
+		$code .= generate_controller_change_rol ( $class );
+		$code .= generate_controller_change_rol_post ( $class );
 		$code .= generate_controller_login ( $class );
 		$code .= generate_controller_login_post ( $class );
 		$code .= generate_controller_logout ( $class );
@@ -1040,7 +1104,6 @@ CODE;
 	return $code;
 }
 
-
 // ------------------------------
 function generate_controller_logout($class) {
 	$code = <<<CODE
@@ -1066,7 +1129,7 @@ CODE;
 // ------------------------------
 function generate_controller_login_post($class) {
 	
-	// TODO Cambiar excepciones por mensajes de error
+	$redirect_uri = base_url().'_home';
 	$code = <<<CODE
 	
 	/**
@@ -1080,28 +1143,35 @@ function generate_controller_login_post($class) {
 		\$this->load->model('{$class->name}_model');
 		\$user = \$this->{$class->name}_model->get_by_loginname(\$loginname);
 		
-		
-		if (\$user != null) {
-			if ( password_verify(\$password, \$user->password) ) {
-					if (sizeof( \$user->ownRolesList ) == 0) {
-						throw new Exception("ERROR: No rol assgined");
-					}
-					\$rol = \$user->aggr('ownRolesList','rol')[0];
-					if (session_status () == PHP_SESSION_NONE) {session_start ();}
+		try {
+			if (\$user != null) {
+				if ( password_verify(\$password, \$user->password) ) {
+						if (sizeof( \$user->ownRolesList ) == 0) { // No rol available
+							throw new Exception("Usuario inhabilitado");
+						}
+						\$rol = \$user->aggr('ownRolesList','rol')[0];
+						if (session_status () == PHP_SESSION_NONE) {session_start ();}
+	
+						\$_SESSION['user'] = \$user;
+						\$_SESSION['rol'] = \$rol;
 
-					\$_SESSION['user'] = \$user;
-					\$_SESSION['rol'] = \$rol;
-
-					frame(\$this,'_home/index');
-			} 
-			else {
-				throw new Exception("Password incorrecta");
+						\$response['severity'] = 'OK';
+						\$response['message'] = '$redirect_uri';
+						echo json_encode ( \$response );;
+				} 
+				else { // Bad password
+					throw new Exception("Usuario o contraseña incorrecta");
+				}
+			}
+			else { // Bad user
+				throw new Exception("Usuario o contraseña incorrecta");
 			}
 		}
-		else {
-			throw new Exception("Usuario inexistente");
+		catch (Exception \$e) {
+			\$response['severity'] = 'ERROR';
+			\$response['message'] = \$e->getMessage();
+			echo json_encode ( \$response );;
 		}
-		
 	}
 	
 CODE;
@@ -1880,7 +1950,7 @@ O2M;
 				$if_for_roles_begin = '';
 				$if_for_roles_end = '';
 				if ($class->login_bean && $a->name == 'roles') {
-					$if_for_roles_begin = "if (\$roles != [] && \$is_admin ) {\n";
+					$if_for_roles_begin = "if ( \$is_admin ) {\n";
 					$if_for_roles_end = '}';
 				}
 				$code .= <<<M2M
@@ -2072,13 +2142,12 @@ function generate_view_additional_usecase($class, $usecase_name, $roles) {
 </div>
 
 CODE;
-
-	file_put_contents ( APPPATH . 'views' . DIRECTORY_SEPARATOR . $class->name . DIRECTORY_SEPARATOR . $usecase_name . '.php', $code );
 	
+	file_put_contents ( APPPATH . 'views' . DIRECTORY_SEPARATOR . $class->name . DIRECTORY_SEPARATOR . $usecase_name . '.php', $code );
 }
 
 // ------------------------------
-function generate_view_change_rol($class, $classes ) {
+function generate_view_change_rol($class, $classes) {
 	$code = <<<CODE
 		
 		
@@ -2155,15 +2224,20 @@ CODE;
 
 // ------------------------------
 function generate_view_login($class, $classes) {
+	$jquery_ajax_code = get_jquery_ajax_code($class->name.'/loginPost');
+	$modal_code = get_modal_code();
 	$code = <<<CODE
 
-
 <div class="container">
+
+$modal_code
+	
+$jquery_ajax_code
 
 <h2> Bienvenido </h2>
 <h5> Introduce tus credenciales</h5>
 
-<form class="form" role="form" id="idForm" action="<?= base_url() ?>{$class->name}/loginPost" method="post">
+<form class="form" role="form" id="id-form">
 
 	<div class="row form-inline form-group">
 		<label for="id-loginname" class="col-2 justify-content-end">Usuario</label>
@@ -2324,10 +2398,17 @@ JS;
 
 // ------------------------------
 function generate_view_create_header($class_name) {
+	$jquery_ajax_code = get_jquery_ajax_code($class_name.'/create_post');
+	$modal_code = get_modal_code();
 	$code = <<<HTML
 
 
 <div class="container">
+
+$jquery_ajax_code
+	
+$modal_code
+	
 <h2> Crear $class_name </h2>
 
 <form class="form" role="form" id="idForm" enctype="multipart/form-data" action="<?= base_url() ?>$class_name/create_post" method="post">

@@ -8,7 +8,7 @@
 	
 	<!--  BOOTSTRAP 4 OFFLINE --> 
 	<link  href="<?=base_url()?>assets/css/bs4/bootstrap.min.css" rel="stylesheet">
-	<script src="<?=base_url()?>assets/js/bs4/jquery-3.2.1.slim.min.js"></script>
+	<script src="<?=base_url()?>assets/js/bs4/jquery-3.2.1.min.js"></script>
 	<script src="<?=base_url()?>assets/js/bs4/popper.min.js"></script>
 	<script src="<?=base_url()?>assets/js/bs4/bootstrap.min.js"></script>
 	
