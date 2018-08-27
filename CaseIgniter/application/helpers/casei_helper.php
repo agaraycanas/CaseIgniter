@@ -190,7 +190,11 @@ function generate_admin($classes) {
 		}
 	} catch ( Exception $e ) {
 	}
+	
+	// GENERATING 
 }
+
+
 
 // ---------------------------------------------
 function set_login_bean_class($classes) {
@@ -207,6 +211,7 @@ function set_login_bean_class($classes) {
 	}
 	return $rol_class;
 }
+
 
 // ---------------------------------------------
 function process_domain_model($modelData) {
@@ -236,7 +241,7 @@ function process_domain_model($modelData) {
 		if (preg_match ( "/^((\*\*|\*>|<>|<\*)\s)?[a-z0-9]+(:([a-z]+|\@|\%|\#))?(\s\[[a-zA-Z\-]+(,[a-zA-Z\-]+)*\])?$/", $line )) {
 			$type = 'ATTRIBUTE';
 		}
-		if (preg_match ( "/^\[([a-z]+[\,a-z]*)\]\s([a-z]+)\(\)$/", $line )) {
+		if (preg_match ( "/^\[([a-z]+[\,a-z]*)\]\s([a-z\_]+)\(\)$/", $line )) {
 			$type = 'USE_CASE';
 		}
 		
@@ -321,7 +326,7 @@ function process_domain_model($modelData) {
 	
 	// =============================================================
 	function pdm_process_usecase($line) {
-		$pattern = "/^\[([a-z]+[\,a-z]*)\]\s([a-z]+)\(\)$/";
+		$pattern = "/^\[([a-z]+[\,a-z]*)\]\s([a-z\_]+)\(\)$/";
 		preg_match ( $pattern, $line, $matches );
 		$roles = $matches [1];
 		$usecase = $matches [2];
@@ -621,7 +626,7 @@ function change_title($title) {
 
 // ------------------------------
 function generate_menus($menuData, $appTitle, $classes) {
-	function generate_menus_process_line($line) {
+	function generate_menus_process_line($line, $classes ) {
 		$roles = '\[[a-z0-9,]+\]';
 		$menu = '[A-Za-z0-9]+';
 		$uri = '[A-Za-z0-9\-\/]+';
@@ -701,10 +706,12 @@ NAV;
 	
 	$nav .= generate_menus_CRUD ( $classes );
 	$nav .= generate_menus_CSI ( $classes );
+
+	
 	
 	foreach ( explode ( "\n", $menuData ) as $line ) {
 		if (trim ( $line ) != '') {
-			$nav .= generate_menus_process_line ( $line );
+			$nav .= generate_menus_process_line ( $line , $classes );
 		}
 	}
 	$nav .= <<<NAV
@@ -733,6 +740,51 @@ function generate_menus_CSI($classes) {
 		
 NAV;
 	return $csi;
+}
+
+// ------------------------------
+
+function generate_menus_USECASE($classes, $usecase) {
+/*
+	foreach ($usecase as $rol => $action) {
+		
+	$if_begin = classes_have_login_bean ( $classes ) ? "<?php if (isset(\$nav['rol']) && \$nav['rol']->nombre == 'admin'): ?>" : '';
+	$if_end = classes_have_login_bean ( $classes ) ? "<?php endif; ?>" : '';
+	
+	
+	$crud = <<<USECASE
+	
+		$if_begin
+			<li class="nav-item dropdown">
+				<a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">
+					BEANS
+				</a>
+				
+				<div class="dropdown-menu">
+				
+USECASE;
+	
+	foreach ( $classes as $class ) {
+		$n = $class->name;
+		$crud .= <<<USECASE
+		
+				<a class="dropdown-item" href="<?=base_url()?>$n/list">$n</a>
+				
+USECASE;
+	}
+	$crud .= <<<USECASE
+			</div>
+			
+		</li>
+		
+		$if_end
+USECASE;
+
+
+	return $crud;
+	
+	}
+*/
 }
 
 // ------------------------------
@@ -920,9 +972,17 @@ function generate_controller($class, $classes) {
 		$code .= generate_controller_change_password_post ( $class );
 		$code .= generate_controller_change_rol ( $class );
 		$code .= generate_controller_change_rol_post ( $class );
+		
+		$code .= generate_controller_request_change_rol ( $class );
+		$code .= generate_controller_request_change_rol_post ( $class );
+		$code .= generate_controller_set_change_rol ( $class );
+		$code .= generate_controller_set_change_rol_OK_post ( $class );
+		$code .= generate_controller_set_change_rol_REJECT_post ( $class );
+		
 		$code .= generate_controller_login ( $class );
 		$code .= generate_controller_login_post ( $class );
 		$code .= generate_controller_logout ( $class );
+		
 	}
 	if ($class->usecases != [ ]) {
 		foreach ( $class->usecases as $usecase ) {

@@ -1,9 +1,11 @@
 =
 PERSONA [login]
-r (auth)
-u (me)
-d (me)
-c (anon)
+  c (anon)
+  r (auth)
+  u (me)
+  d (me)
 .
 foto:@
+.
+[admin] soloadmin()
 =
