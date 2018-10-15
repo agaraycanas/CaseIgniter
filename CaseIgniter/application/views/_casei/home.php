@@ -31,10 +31,10 @@
 				<textarea name="modelData" class="form-control" cols="15" rows="15" id="idModel" style="overflow:scroll;"
 					placeholder="============================
 BEANNAME [login]
-	c [rol1]
-	r [auth,anon]
-	u [auth]
-	d [auth]
+	c (rol1)
+	r (auth,anon)
+	u (me)
+	d (auth)
 ............................
 textattribute
 numberattribute:#

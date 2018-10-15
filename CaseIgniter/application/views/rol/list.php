@@ -33,6 +33,7 @@
 	<tr>
 		<th>nombre</th>		<th>descripcion</th>
 		<th>roles - nombre(persona)</th>
+		<th>rolrequest - nombre(persona)</th>
 		<th>Acciones</th>
 	</tr>
 	</thead>
@@ -46,6 +47,12 @@
 					
 			<td>
 			<?php foreach ($rol -> aggr('ownRolesList', 'persona') as $data): ?>
+				<span><?= str_ireplace($body['filter'], '<kbd>'.$body['filter'].'</kbd>', $data -> nombre ) ?> </span>
+			<?php endforeach; ?>
+			</td>
+									
+			<td>
+			<?php foreach ($rol -> aggr('ownRolrequestList', 'persona') as $data): ?>
 				<span><?= str_ireplace($body['filter'], '<kbd>'.$body['filter'].'</kbd>', $data -> nombre ) ?> </span>
 			<?php endforeach; ?>
 			</td>

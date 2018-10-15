@@ -1,2 +1,0 @@
-[default]Persona>Listar(persona/list)
-[profe]Profesores>Listar(persona/list)

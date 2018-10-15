@@ -30,38 +30,6 @@
 				</a>
 			</li>
 		<?php endif; ?>
-		
-			<?php if (isset ($nav['rol']) && ( $nav['rol']->nombre == 'default' ) ): ?> 
-
-			<li class="nav-item dropdown">
-				<a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">
-					Persona
-				</a>
-
-				<div class="dropdown-menu">
-
-					<a class="dropdown-item" href="<?=base_url()?>persona/list">Listar</a>
-
-				</div>
-			</li>		
-				
-			<?php endif; ?>
-			
-			<?php if (isset ($nav['rol']) && ( $nav['rol']->nombre == 'profe' ) ): ?> 
-
-			<li class="nav-item dropdown">
-				<a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">
-					Profesores
-				</a>
-
-				<div class="dropdown-menu">
-
-					<a class="dropdown-item" href="<?=base_url()?>persona/list">Listar</a>
-
-				</div>
-			</li>		
-				
-			<?php endif; ?>
-			 
+		 
    </ul>
 </nav>

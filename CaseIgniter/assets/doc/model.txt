@@ -1,4 +1,4 @@
-=
+==
 PERSONA [login]
   c (anon)
   r (auth)
@@ -6,6 +6,4 @@ PERSONA [login]
   d (me)
 .
 foto:@
-.
-[admin] soloadmin()
-=
+==

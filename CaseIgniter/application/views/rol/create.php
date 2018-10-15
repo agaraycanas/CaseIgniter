@@ -93,6 +93,23 @@
 	</div>
 
 
+	<div class="row form-inline form-group">
+
+		<label class="col-2 justify-content-end">Rolrequest</label>
+		<div class="col-6 form-check form-check-inline justify-content-start">
+
+			<?php foreach ($body['persona'] as $persona ): ?>
+				
+					<div class="form-check form-check-inline">
+						<input class="form-check-input" type="checkbox" id="id-rolrequest-<?=$persona->id?>" name="rolrequest[]" value="<?= $persona->id ?>">
+						<label class="form-check-label" for="id-rolrequest-<?=$persona->id?>" ><?= $persona->nombre ?></label>
+					</div>
+				
+			<?php endforeach; ?>
+		</div>
+	</div>
+
+
 <div class="row offset-2 col-6">
 	<input type="submit" class="btn btn-primary" value="Crear">
 
