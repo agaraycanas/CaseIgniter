@@ -1,0 +1,9 @@
+==
+PERSONA [login]
+  c (anon)
+  r (auth)
+  u (me)
+  d (me)
+.
+foto:@
+==
