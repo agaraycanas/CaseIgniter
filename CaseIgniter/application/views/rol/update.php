@@ -30,14 +30,14 @@
 
 	<div class="row form-inline form-group" >
 		<label for="id-nombre" class="col-2 justify-content-end">Nombre</label>
-		<input id="id-nombre" type="text" name="nombre" value="<?=  $body['rol']->nombre ?>" class="col-6 form-control">
+		<input id="id-nombre" type="text" name="nombre" value="<?=  $body['rol']->nombre ?>" class="col-6 form-control" >
 		
 	</div>
 				
 				
 	<div class="row form-inline form-group" >
 		<label for="id-descripcion" class="col-2 justify-content-end">Descripcion</label>
-		<input id="id-descripcion" type="text" name="descripcion" value="<?=  $body['rol']->descripcion ?>" class="col-6 form-control">
+		<input id="id-descripcion" type="text" name="descripcion" value="<?=  $body['rol']->descripcion ?>" class="col-6 form-control" >
 		
 	</div>
 				
