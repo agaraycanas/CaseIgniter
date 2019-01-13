@@ -3572,7 +3572,7 @@ function db_bean_test_create($class)
                     $bean->$name = "TEST";
                     break;
                 case "number":
-                    $bean->$name = "0";
+                    $bean->$name = "70000";
                     break;
                 case "date":
                     $bean->$name = "1900-12-31";

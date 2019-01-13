@@ -47,11 +47,11 @@
 		<label class="col-2 justify-content-end">Roles</label>
 		<div class="col-6 form-check form-check-inline justify-content-start">
 
-			<?php foreach ($body['persona'] as $persona ): ?>
+			<?php foreach ($body['usuario'] as $usuario ): ?>
 				
 				<div class="form-check form-check-inline">
-					<input class="form-check-input" type="checkbox" id="id-roles-<?=$persona->id ?>" name="roles[]" value="<?= $persona->id ?>" <?= checked($body['rol']->aggr('ownRolesList','persona'), $persona->id ) ?>>
-					<label class="form-check-label" for="id-roles-<?=$persona->id?>" ><?= $persona->nombre ?></label>
+					<input class="form-check-input" type="checkbox" id="id-roles-<?=$usuario->id ?>" name="roles[]" value="<?= $usuario->id ?>" <?= checked($body['rol']->aggr('ownRolesList','usuario'), $usuario->id ) ?>>
+					<label class="form-check-label" for="id-roles-<?=$usuario->id?>" ><?= $usuario->nombre ?></label>
 				</div>
 				
 			<?php endforeach; ?>
@@ -66,11 +66,11 @@
 		<label class="col-2 justify-content-end">Rolrequest</label>
 		<div class="col-6 form-check form-check-inline justify-content-start">
 
-			<?php foreach ($body['persona'] as $persona ): ?>
+			<?php foreach ($body['usuario'] as $usuario ): ?>
 				
 				<div class="form-check form-check-inline">
-					<input class="form-check-input" type="checkbox" id="id-rolrequest-<?=$persona->id ?>" name="rolrequest[]" value="<?= $persona->id ?>" <?= checked($body['rol']->aggr('ownRolrequestList','persona'), $persona->id ) ?>>
-					<label class="form-check-label" for="id-rolrequest-<?=$persona->id?>" ><?= $persona->nombre ?></label>
+					<input class="form-check-input" type="checkbox" id="id-rolrequest-<?=$usuario->id ?>" name="rolrequest[]" value="<?= $usuario->id ?>" <?= checked($body['rol']->aggr('ownRolrequestList','usuario'), $usuario->id ) ?>>
+					<label class="form-check-label" for="id-rolrequest-<?=$usuario->id?>" ><?= $usuario->nombre ?></label>
 				</div>
 				
 			<?php endforeach; ?>

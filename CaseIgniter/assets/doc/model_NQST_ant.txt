@@ -2,7 +2,6 @@
 IES
 .........................
 <* ocurre:cursoacademico
-<* tienepe:plantillaencuesta
 =========================
 
 
@@ -19,21 +18,28 @@ anyoini:# [M]
 <* participa:usuario
 =========================
 
-=========================
-USUARIO [login]
-.........................
-ape1
-ape2
-foto:@
 
-*> participa:cursoacademico
+=========================
+ROL
+.........................
+** roles:usuario
+=========================
+
+
+=========================
+USUARIO
+.........................
+pwd [r-]
+
+
 *> grreferencia:grupo
 
 <* realiza:encuesta
-<* profesor:imparticion
+<* desarrolla:imparticion
 
-** profesores:departamento
-
+** roles:rol
+*> participa:cursoacademico
+** pertenece:departamento
 =========================
 
 
@@ -54,9 +60,8 @@ DEPARTAMENTO
 .........................
 <* imparte:asignatura
 
-** profesores:usuario
-.........................
-[jefedpto] estadisticasdpto()
+** pertenece:usuario
+** gestiona:titulacion
 =========================
 
 
@@ -75,13 +80,14 @@ ASIGNATURA
 =========================
 IMPARTICION
 .........................
-
-*> profesor:usuario
+*> desarrolla:usuario
 *> impartida:grupo
 *> refierea:asignatura
 *> tieneim:cursoacademico
 
-<* asociaa:encuestapublicada
+<* realizada:encuesta
+
+** asociaa:plantillaencuesta
 =========================
 
 
@@ -95,14 +101,6 @@ nivel:# [M]
 <* pertenecec:asignatura
 
 *> tienetit:titulacion
-
-=========================
-
-
-=========================
-TITULACION
-.........................
-<* tienetit:curso
 =========================
 
 
@@ -110,29 +108,11 @@ TITULACION
 =========================
 PLANTILLAENCUESTA
 .........................
-
-*> tienepe:ies
+** asociaa:imparticion
 
 <* componepc:preguntacerrada
 <* componepa:preguntaabierta
-<* tieneepub:encuestapublicada
-.........................
-[profesor] confeccionarplantilla()
-=========================
-
-
-=========================
-ENCUESTAPUBLICADA
-.........................
-nivel
-
-*> tieneepub:plantillaencuesta
-*> asociaa:imparticion
-
 <* acercade:encuesta
-.......................
-[profesor] publicarencuesta()
-
 =========================
 
 
@@ -143,12 +123,11 @@ ENCUESTA
 fecha:% [M]
 
 *> realiza:usuario
-*> acercade:encuestapublicada
+*> realizada:imparticion
+*> acercade:plantillaencuesta
 
 <* responderc:respuestacerrada
 <* respondera:respuestaabierta
-.........................
-[alumno] realizarencuesta()
 =========================
 
 
@@ -156,8 +135,7 @@ fecha:% [M]
 =========================
 PREGUNTACERRADA
 .........................
-orden
-enunciado [M]
+enunciado
 enunciadofacil
 min:#
 max:#
@@ -174,7 +152,6 @@ peso:#
 =========================
 PREGUNTAABIERTA
 .........................
-orden
 enunciado [M]
 enunciadofacil
 
@@ -217,5 +194,9 @@ CATEGORIA
 
 
 
-
+=========================
+TITULACION
+.........................
+<* tienetit:curso
+=========================
 

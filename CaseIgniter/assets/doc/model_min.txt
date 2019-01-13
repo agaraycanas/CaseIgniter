@@ -6,4 +6,5 @@ PERSONA [login]
   d (me)
 .
 foto:@
+unico [U]
 ==
